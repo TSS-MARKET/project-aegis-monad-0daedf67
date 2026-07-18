@@ -15,13 +15,13 @@ const items = [
 export function SidebarNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border/60 bg-sidebar/40 backdrop-blur-xl">
-      <div className="p-5 border-b border-border/60">
+    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-[rgba(34,211,238,0.12)] bg-black/60 backdrop-blur-xl">
+      <div className="p-5 border-b border-[rgba(34,211,238,0.12)]">
         <Link to="/">
           <AegisLogo />
         </Link>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-0.5">
         {items.map((it) => {
           const active = it.exact ? pathname === it.to : pathname.startsWith(it.to);
           return (
@@ -29,22 +29,36 @@ export function SidebarNav() {
               key={it.to}
               to={it.to}
               className={cn(
-                "group flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-all",
+                "group relative flex items-center gap-3 rounded-[6px] px-3 py-2.5 text-sm transition-colors",
                 active
-                  ? "bg-sidebar-accent text-foreground shadow-[inset_0_0_0_1px_var(--sidebar-border)]"
-                  : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50",
+                  ? "text-foreground bg-[rgba(34,211,238,0.06)] shadow-[inset_0_0_0_1px_rgba(34,211,238,0.2)]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.02]",
               )}
+              style={{ fontFamily: "var(--font-sans)" }}
             >
-              <it.icon className={cn("h-4 w-4", active && "text-primary")} />
+              {active && (
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 rounded-r"
+                  style={{ background: "#22d3ee", boxShadow: "0 0 8px rgba(34,211,238,0.7)" }}
+                />
+              )}
+              <it.icon className={cn("h-4 w-4", active ? "text-[#22d3ee]" : "")} strokeWidth={1.75} />
               <span>{it.label}</span>
             </Link>
           );
         })}
       </nav>
-      <div className="p-4 border-t border-border/60 text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-[oklch(0.72_0.17_155)] animate-pulse-glow" />
-          Monad testnet · live
+      <div className="p-4 border-t border-[rgba(34,211,238,0.12)]">
+        <div
+          className="flex items-center gap-2 text-[0.66rem] uppercase tracking-[0.14em] text-muted-foreground"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
+          <span
+            className="h-1.5 w-1.5 rounded-full"
+            style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }}
+          />
+          Monad · Live
         </div>
       </div>
     </aside>
