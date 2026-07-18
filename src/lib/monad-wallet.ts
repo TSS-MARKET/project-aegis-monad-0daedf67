@@ -48,12 +48,12 @@ export function useMonadWallet() {
         .then((c) => setChainId(c as string))
         .catch(() => {});
     }
-    const onAcc = (accs: unknown[]) => {
-      const list = accs as string[];
-      setAddress(list?.[0] ?? null);
-      if (!list?.[0]) localStorage.removeItem("aegis_wallet");
+    const onAcc = (...args: unknown[]) => {
+      const list = (args[0] as string[]) ?? [];
+      setAddress(list[0] ?? null);
+      if (!list[0]) localStorage.removeItem("aegis_wallet");
     };
-    const onChain = (c: unknown) => setChainId(c as string);
+    const onChain = (...args: unknown[]) => setChainId(args[0] as string);
     e.on?.("accountsChanged", onAcc);
     e.on?.("chainChanged", onChain);
     return () => {
