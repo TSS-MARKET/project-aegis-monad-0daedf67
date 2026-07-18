@@ -13,8 +13,10 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppWhalesRouteImport } from './routes/app.whales'
+import { Route as AppWalletRouteImport } from './routes/app.wallet'
 import { Route as AppTokensRouteImport } from './routes/app.tokens'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
+import { Route as AppChatRouteImport } from './routes/app.chat'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const AppRoute = AppRouteImport.update({
@@ -37,6 +39,11 @@ const AppWhalesRoute = AppWhalesRouteImport.update({
   path: '/whales',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWalletRoute = AppWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTokensRoute = AppTokensRouteImport.update({
   id: '/tokens',
   path: '/tokens',
@@ -45,6 +52,11 @@ const AppTokensRoute = AppTokensRouteImport.update({
 const AppOpportunitiesRoute = AppOpportunitiesRouteImport.update({
   id: '/opportunities',
   path: '/opportunities',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChatRoute = AppChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => AppRoute,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -57,16 +69,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/app/chat': typeof AppChatRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/tokens': typeof AppTokensRoute
+  '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/chat': typeof AppChatRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/tokens': typeof AppTokensRoute
+  '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
   '/app': typeof AppIndexRoute
 }
@@ -75,8 +91,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/app/chat': typeof AppChatRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/tokens': typeof AppTokensRoute
+  '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
   '/app/': typeof AppIndexRoute
 }
@@ -86,16 +104,20 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/api/chat'
+    | '/app/chat'
     | '/app/opportunities'
     | '/app/tokens'
+    | '/app/wallet'
     | '/app/whales'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/api/chat'
+    | '/app/chat'
     | '/app/opportunities'
     | '/app/tokens'
+    | '/app/wallet'
     | '/app/whales'
     | '/app'
   id:
@@ -103,8 +125,10 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/api/chat'
+    | '/app/chat'
     | '/app/opportunities'
     | '/app/tokens'
+    | '/app/wallet'
     | '/app/whales'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -145,6 +169,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWhalesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/wallet': {
+      id: '/app/wallet'
+      path: '/wallet'
+      fullPath: '/app/wallet'
+      preLoaderRoute: typeof AppWalletRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/tokens': {
       id: '/app/tokens'
       path: '/tokens'
@@ -159,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOpportunitiesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/chat': {
+      id: '/app/chat'
+      path: '/chat'
+      fullPath: '/app/chat'
+      preLoaderRoute: typeof AppChatRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -170,15 +208,19 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppChatRoute: typeof AppChatRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppTokensRoute: typeof AppTokensRoute
+  AppWalletRoute: typeof AppWalletRoute
   AppWhalesRoute: typeof AppWhalesRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChatRoute: AppChatRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppTokensRoute: AppTokensRoute,
+  AppWalletRoute: AppWalletRoute,
   AppWhalesRoute: AppWhalesRoute,
   AppIndexRoute: AppIndexRoute,
 }
