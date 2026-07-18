@@ -1,0 +1,17 @@
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { SidebarNav } from "@/components/aegis/sidebar-nav";
+
+export const Route = createFileRoute("/app")({
+  component: AppShell,
+});
+
+function AppShell() {
+  return (
+    <div className="flex min-h-screen">
+      <SidebarNav />
+      <main className="flex-1 min-w-0">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
