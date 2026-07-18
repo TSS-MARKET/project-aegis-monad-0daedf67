@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppWhalesRouteImport } from './routes/app.whales'
+import { Route as AppTokensRouteImport } from './routes/app.tokens'
+import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const AppRoute = AppRouteImport.update({
@@ -29,6 +32,21 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWhalesRoute = AppWhalesRouteImport.update({
+  id: '/whales',
+  path: '/whales',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTokensRoute = AppTokensRouteImport.update({
+  id: '/tokens',
+  path: '/tokens',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOpportunitiesRoute = AppOpportunitiesRouteImport.update({
+  id: '/opportunities',
+  path: '/opportunities',
+  getParentRoute: () => AppRoute,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -39,11 +57,17 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/tokens': typeof AppTokensRoute
+  '/app/whales': typeof AppWhalesRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/tokens': typeof AppTokensRoute
+  '/app/whales': typeof AppWhalesRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -51,14 +75,38 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/app/opportunities': typeof AppOpportunitiesRoute
+  '/app/tokens': typeof AppTokensRoute
+  '/app/whales': typeof AppWhalesRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/api/chat' | '/app/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/api/chat'
+    | '/app/opportunities'
+    | '/app/tokens'
+    | '/app/whales'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/chat' | '/app'
-  id: '__root__' | '/' | '/app' | '/api/chat' | '/app/'
+  to:
+    | '/'
+    | '/api/chat'
+    | '/app/opportunities'
+    | '/app/tokens'
+    | '/app/whales'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/api/chat'
+    | '/app/opportunities'
+    | '/app/tokens'
+    | '/app/whales'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,6 +138,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/whales': {
+      id: '/app/whales'
+      path: '/whales'
+      fullPath: '/app/whales'
+      preLoaderRoute: typeof AppWhalesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/tokens': {
+      id: '/app/tokens'
+      path: '/tokens'
+      fullPath: '/app/tokens'
+      preLoaderRoute: typeof AppTokensRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/opportunities': {
+      id: '/app/opportunities'
+      path: '/opportunities'
+      fullPath: '/app/opportunities'
+      preLoaderRoute: typeof AppOpportunitiesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -101,10 +170,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppOpportunitiesRoute: typeof AppOpportunitiesRoute
+  AppTokensRoute: typeof AppTokensRoute
+  AppWhalesRoute: typeof AppWhalesRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppOpportunitiesRoute: AppOpportunitiesRoute,
+  AppTokensRoute: AppTokensRoute,
+  AppWhalesRoute: AppWhalesRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
