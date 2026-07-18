@@ -1,19 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { useState } from "react";
-import { GlassCard } from "@/components/aegis/glass-card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUp, Sparkles, TrendingUp, Fish, ShieldAlert, Radar, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export const Route = createFileRoute("/app/chat")({ component: ChatPage });
 
+const MONO = "var(--font-mono)";
+const SERIF = "var(--font-serif)";
+
 const suggestions = [
-  "Summarize the Monad ecosystem right now",
-  "Which AI tokens on Monad look strongest?",
-  "Explain the recent whale activity",
-  "What are the biggest risks in the market today?",
+  { icon: Sparkles, label: "Ecosystem read", prompt: "Give me a full read on the Monad ecosystem right now — sentiment, dominant narrative, key movers." },
+  { icon: TrendingUp, label: "Strongest AI plays", prompt: "Which AI-narrative tokens on Monad look strongest right now, and why?" },
+  { icon: Fish, label: "Whale activity", prompt: "Walk me through the most important whale activity in the last hour and what it implies." },
+  { icon: ShieldAlert, label: "Biggest risks", prompt: "What are the biggest risks in the Monad market right now?" },
 ];
 
 function ChatPage() {
@@ -22,82 +24,184 @@ function ChatPage() {
   });
   const [input, setInput] = useState("");
   const busy = status === "submitted" || status === "streaming";
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, busy]);
+
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   function submit(text?: string) {
     const t = (text ?? input).trim();
     if (!t || busy) return;
     sendMessage({ text: t });
     setInput("");
+    requestAnimationFrame(() => inputRef.current?.focus());
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-6 md:p-10 flex flex-col h-[calc(100vh-0px)]">
-      <header className="pb-6">
-        <div className="text-xs uppercase tracking-widest text-muted-foreground">Analyst</div>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Ask Aegis</h1>
+    <div className="flex flex-col h-screen">
+      <header
+        className="px-6 md:px-10 py-5 border-b border-[rgba(34,211,238,0.12)] flex items-center justify-between"
+        style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.55), transparent)" }}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            className="inline-flex h-9 w-9 items-center justify-center rounded-[8px]"
+            style={{ background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.28)" }}
+          >
+            <Radar className="h-4 w-4" style={{ color: "#22d3ee" }} />
+          </span>
+          <div>
+            <div
+              style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}
+            >
+              AEGIS · COPILOT
+            </div>
+            <div style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>
+              Ask <em style={{ color: "#22d3ee" }}>Aegis</em>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span
+            className="h-1.5 w-1.5 rounded-full animate-pulse-glow"
+            style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }}
+          />
+          <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
+            Grounded · Monad live state
+          </span>
+        </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto space-y-4 pb-6">
-        {messages.length === 0 && (
-          <GlassCard>
-            <p className="text-sm text-muted-foreground">
-              Aegis is grounded in the live Monad market state. Every answer cites specific tokens and numbers.
-            </p>
-            <div className="mt-4 grid md:grid-cols-2 gap-2">
-              {suggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => submit(s)}
-                  className="text-left text-sm p-3 rounded-lg border border-border/60 hover:border-primary/60 hover:bg-card/60 transition-colors"
-                >
-                  {s}
-                </button>
-              ))}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-3xl px-6 md:px-10 py-8 space-y-6">
+          {messages.length === 0 && (
+            <div className="space-y-6">
+              <div>
+                <h2 style={{ fontFamily: SERIF, fontSize: "clamp(1.75rem,3vw,2.5rem)", color: "#f5f7fa", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+                  What are we reading <em style={{ color: "#22d3ee" }}>on Monad</em> today?
+                </h2>
+                <p className="mt-3 text-sm" style={{ color: "rgba(245,247,250,0.65)" }}>
+                  Every answer is grounded in the live Monad market state — token prices, narrative rotation, whale flows.
+                  No advice, no invented numbers.
+                </p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-2.5">
+                {suggestions.map((s) => (
+                  <button
+                    key={s.label}
+                    onClick={() => submit(s.prompt)}
+                    className="group relative text-left p-4 rounded-[8px] transition-all hover:-translate-y-0.5"
+                    style={{
+                      background: "linear-gradient(180deg, rgba(10,18,28,0.6), rgba(4,10,16,0.6))",
+                      border: "1px solid rgba(34,211,238,0.14)",
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <s.icon className="h-4 w-4 mt-0.5" style={{ color: "#22d3ee" }} strokeWidth={1.75} />
+                      <div>
+                        <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
+                          {s.label}
+                        </div>
+                        <div className="mt-1 text-sm" style={{ color: "rgba(245,247,250,0.9)" }}>{s.prompt}</div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </GlassCard>
-        )}
-        {messages.map((m: UIMessage) => (
-          <Message key={m.id} m={m} />
-        ))}
-        {busy && <div className="text-xs text-muted-foreground animate-pulse-glow">Aegis is thinking…</div>}
+          )}
+
+          {messages.map((m) => (
+            <MessageRow key={m.id} m={m} />
+          ))}
+
+          {busy && messages[messages.length - 1]?.role === "user" && (
+            <div className="flex items-center gap-2" style={{ fontFamily: MONO, fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(34,211,238,0.7)" }}>
+              <Loader2 className="h-3 w-3 animate-spin" /> Aegis is reasoning…
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="border-t border-border/60 pt-4">
-        <div className="relative">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                submit();
-              }
+      <div className="border-t border-[rgba(34,211,238,0.12)] px-6 md:px-10 py-4" style={{ background: "linear-gradient(180deg, transparent, rgba(4,10,16,0.6))" }}>
+        <div className="mx-auto max-w-3xl">
+          <div
+            className="relative rounded-[10px]"
+            style={{
+              background: "linear-gradient(180deg, rgba(10,18,28,0.85), rgba(4,10,16,0.85))",
+              border: "1px solid rgba(34,211,238,0.22)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 3px rgba(34,211,238,0.05)",
             }}
-            placeholder="Ask about Monad tokens, narratives, whales, opportunities…"
-            className="min-h-[80px] pr-14 bg-card/60"
-          />
-          <Button size="icon" className="absolute right-2 bottom-2 h-9 w-9" disabled={busy || !input.trim()} onClick={() => submit()}>
-            <ArrowUp className="h-4 w-4" />
-          </Button>
+          >
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submit(); }
+              }}
+              placeholder="Ask about Monad tokens, narratives, whales, opportunities…"
+              rows={2}
+              className="w-full resize-none bg-transparent px-4 py-3.5 pr-14 text-sm outline-none placeholder:text-muted-foreground/60"
+              style={{ color: "#f5f7fa", fontFamily: "var(--font-sans)" }}
+            />
+            <button
+              onClick={() => submit()}
+              disabled={busy || !input.trim()}
+              className="absolute right-2 bottom-2 h-9 w-9 rounded-[6px] inline-flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed cta-cyan hover:scale-105"
+              aria-label="Send"
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" strokeWidth={2.5} />}
+            </button>
+          </div>
+          <div className="mt-2 text-center" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.4)" }}>
+            Not financial advice · Grounded in live Monad on-chain state
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function Message({ m }: { m: UIMessage }) {
+function MessageRow({ m }: { m: UIMessage }) {
   const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
   if (m.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-primary text-primary-foreground px-4 py-2.5 text-sm">{text}</div>
+        <div
+          className="max-w-[80%] px-4 py-2.5 text-sm"
+          style={{
+            background: "rgba(34,211,238,0.10)",
+            border: "1px solid rgba(34,211,238,0.28)",
+            borderRadius: "12px 12px 2px 12px",
+            color: "#f5f7fa",
+          }}
+        >
+          {text}
+        </div>
       </div>
     );
   }
   return (
-    <div className="max-w-[85%]">
-      <div className="text-[10px] uppercase tracking-widest text-primary mb-1">Aegis</div>
-      <div className="text-sm leading-relaxed whitespace-pre-wrap">{text}</div>
+    <div className="flex gap-3">
+      <span
+        className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-[6px] mt-0.5"
+        style={{ background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.3)" }}
+      >
+        <Radar className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
+      </span>
+      <div className="flex-1 min-w-0">
+        <div style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(34,211,238,0.75)" }}>
+          AEGIS
+        </div>
+        <div className="mt-1 markdown-body text-sm" style={{ color: "rgba(245,247,250,0.92)" }}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+        </div>
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
+import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 
 export const Route = createFileRoute("/")({ component: Landing });
 
@@ -92,13 +93,17 @@ function Landing() {
           <a href="#capabilities" className="hover:text-foreground transition-colors">Capabilities</a>
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
-        <Link
-          to="/app"
-          className="inline-flex items-center gap-2 rounded-[6px] px-4 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.16em] cta-cyan"
-          style={{ fontFamily: 'var(--font-display)' }}
-        >
-          Launch <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
-        </Link>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:block"><WalletConnectButton compact /></div>
+          <Link
+            to="/app"
+            className="group relative inline-flex items-center gap-2 rounded-[6px] px-4 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.16em] cta-cyan overflow-hidden"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)" }} />
+            <span className="relative">Launch</span> <ArrowRight className="h-3.5 w-3.5 relative transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
+          </Link>
+        </div>
       </header>
 
       {/* HERO */}
@@ -123,9 +128,7 @@ function Landing() {
                 letterSpacing: "0.14em",
               }}
             >
-              <span style={{ color: "#f5f7fa" }}>AEGIS</span>
-              <span style={{ color: "rgba(34,211,238,0.5)" }}>//</span>
-              <span style={{ color: "#f5f7fa" }}>MONAD MARKET INTELLIGENCE</span>
+              <span style={{ color: "#f5f7fa" }}>MONAD · MARKET INTELLIGENCE</span>
               <span style={{ color: "rgba(34,211,238,0.5)" }}>//</span>
               <span style={{ color: "rgba(245,247,250,0.55)" }}>
                 READ-ONLY: <span style={{ color: "#f5f7fa" }}>NEVER TOUCHES YOUR KEYS</span>

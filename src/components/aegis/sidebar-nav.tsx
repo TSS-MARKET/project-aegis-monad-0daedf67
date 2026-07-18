@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Activity, Compass, MessageSquare, Radar, Wallet, LineChart } from "lucide-react";
 import { AegisLogo } from "./logo";
 import { cn } from "@/lib/utils";
+import { WalletConnectButton } from "./wallet-connect";
 
 const items = [
   { to: "/app", label: "Market Brief", icon: Activity, exact: true },
@@ -50,6 +51,8 @@ export function SidebarNav() {
         })}
       </nav>
       <div className="p-4 border-t border-[rgba(34,211,238,0.12)]">
+        <WalletConnectButton />
+        <div className="mt-3" />
         <div
           className="flex items-center gap-2 text-[0.66rem] uppercase tracking-[0.14em] text-muted-foreground"
           style={{ fontFamily: "var(--font-mono)" }}
