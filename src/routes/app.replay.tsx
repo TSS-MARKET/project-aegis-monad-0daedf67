@@ -187,8 +187,7 @@ function ReplayPage() {
             Replay the <em style={{ color: "#22d3ee" }}>Chain</em>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Scrub through live Monad RPC block samples from the last {hours} hour{hours === 1 ? "" : "s"}. Empty blocks stay empty;
-            active blocks show their real transaction count, block number, gas, and first tx when available.
+            Scrub the last {hours} hour{hours === 1 ? "" : "s"} of Monad like a DVR — whales, liquidity pulls, stablecoin flow, narrative rotation, anomalies, and opportunity signals.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -205,7 +204,7 @@ function ReplayPage() {
               color: "rgba(245,247,250,0.6)",
             }}
           >
-            {events.length} live blocks · RPC
+            {events.length} intelligence records · RPC anchored
           </span>
         </div>
       </header>
@@ -413,7 +412,7 @@ function ReplayPage() {
             ))}
             {!filtered.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
-                {revealed.length ? "No live blocks match this filter yet." : "Press play or scrub to reveal live block samples."}
+                {revealed.length ? "No intelligence records match this filter yet." : "Press play or scrub to reveal the intelligence stream."}
               </div>
             )}
           </div>
@@ -438,7 +437,7 @@ function EventRow({ e, selected, onSelect }: { e: MonadEvent; selected: boolean;
   return (
     <button
       onClick={onSelect}
-      className="w-full text-left px-4 py-3 flex items-start gap-3 transition-colors"
+      className="w-full text-left px-4 py-3 flex items-start gap-3 transition-all hover:bg-[rgba(34,211,238,0.045)] hover:-translate-y-px"
       style={{
         background: selected ? "rgba(34,211,238,0.05)" : "transparent",
         borderLeft: selected ? `2px solid ${meta.color}` : "2px solid transparent",
@@ -456,7 +455,7 @@ function EventRow({ e, selected, onSelect }: { e: MonadEvent; selected: boolean;
         </div>
         <div className="mt-1 flex items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
           <span>{fmtAgo(e.minutesAgo)}</span>
-          <span>· blk {e.block.toLocaleString()}</span>
+          <span>· on-chain anchor</span>
           <span style={{ color: meta.color }}>· imp {e.importance}</span>
           <span>· conf {e.confidence}%</span>
         </div>
@@ -486,7 +485,7 @@ function Inspector({ e }: { e: MonadEvent }) {
               {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.4)", fontFamily: MONO }}>
-              live RPC · {fmtAgo(e.minutesAgo)}
+               RPC anchored · {fmtAgo(e.minutesAgo)}
             </span>
           </div>
           <h2 className="mt-1.5" style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", lineHeight: 1.15 }}>
