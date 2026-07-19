@@ -3,6 +3,7 @@
 // DNA → Ask Aegis) with captions. Built for hackathon judging in under a
 // minute. Pure client-side; no data needs to be pre-loaded.
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
 import { Play, X, ChevronRight, Sparkles } from "lucide-react";
 
@@ -68,12 +69,32 @@ const STEPS: Step[] = [
 
 const TOTAL_MS = STEPS.reduce((a, s) => a + s.ms, 0);
 
-export function DemoModeButton({ variant = "floating" }: { variant?: "floating" | "inline" }) {
+const DEMO_EVENT = "aegis:start-demo";
+
+export function startAegisDemo() {
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(DEMO_EVENT));
+}
+
+/**
+ * Global mount — put this once in __root so the overlay survives route
+ * unmounts. Buttons only dispatch the start event.
+ */
+export function DemoModeHost() {
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const on = () => setOpen(true);
+    window.addEventListener(DEMO_EVENT, on);
+    return () => window.removeEventListener(DEMO_EVENT, on);
+  }, []);
+  if (!open) return null;
+  if (typeof document === "undefined") return null;
+  return createPortal(<DemoOverlay onClose={() => setOpen(false)} />, document.body);
+}
+
+export function DemoModeButton({ variant = "floating" }: { variant?: "floating" | "inline" }) {
   return (
-    <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => startAegisDemo()}
         className={
           variant === "floating"
             ? "fixed bottom-5 left-5 z-40 group inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs uppercase tracking-[0.14em] transition-all hover:-translate-y-0.5"
@@ -95,8 +116,6 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
         <span>30s Tour</span>
         <ChevronRight className={variant === "floating" ? "h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" : "h-3 w-3 transition-transform group-hover:translate-x-0.5"} />
       </button>
-      {open && <DemoOverlay onClose={() => setOpen(false)} />}
-    </>
   );
 }
 
