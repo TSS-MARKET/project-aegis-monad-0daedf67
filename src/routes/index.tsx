@@ -18,6 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
+import { LiveFirehose } from "@/components/aegis/live-firehose";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
 
@@ -407,6 +408,11 @@ function Landing() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Live Monad firehose — real RPC blocks */}
+      <section aria-label="Monad live firehose" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pt-8">
+        <LiveFirehose />
       </section>
 
       {/* Capabilities */}
