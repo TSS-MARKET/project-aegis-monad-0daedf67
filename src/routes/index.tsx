@@ -109,14 +109,6 @@ function Landing() {
         </nav>
         <div className="flex items-center gap-3">
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
-          <Link
-            to="/app"
-            className="group relative inline-flex items-center gap-2 rounded-[6px] px-3 py-2 sm:px-4 sm:py-2.5 text-[0.68rem] sm:text-[0.72rem] font-bold uppercase tracking-[0.16em] cta-cyan overflow-hidden"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)" }} />
-            <span className="relative">Launch</span> <ArrowRight className="h-3.5 w-3.5 relative transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
-          </Link>
         </div>
       </header>
 
@@ -125,8 +117,13 @@ function Landing() {
         className="relative mx-auto max-w-[1560px] px-6 md:px-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start pt-2 md:pt-6 pb-24"
         style={{ minHeight: "82vh" }}
       >
+        {/* Ambient hero motion */}
+        <div aria-hidden className="gl-hero__grid" />
+        <div aria-hidden className="gl-hero__orb" style={{ width: 520, height: 520, left: "-8%", top: "-10%", background: "radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%)" }} />
+        <div aria-hidden className="gl-hero__orb" style={{ width: 460, height: 460, right: "-6%", top: "35%", background: "radial-gradient(circle, rgba(103,232,249,0.22), transparent 70%)", animationDelay: "-6s" }} />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent)" }} />
         {/* LEFT */}
-        <div className="flex flex-col gap-8 min-w-0">
+        <div className="relative flex flex-col gap-8 min-w-0">
           <div
             className="gl-hero__reveal flex items-center gap-x-2 gap-y-1 min-w-0 flex-wrap"
             style={{
@@ -164,15 +161,19 @@ function Landing() {
               margin: 0,
             }}
           >
-            <span className="block">The Monad firehose,</span>
+            <span className="block">
+              {["The", "Monad", "firehose,"].map((w, i) => (
+                <span key={i} className="gl-hero__word" style={{ animationDelay: `${220 + i * 90}ms`, marginRight: "0.28em" }}>{w}</span>
+              ))}
+            </span>
             <span className="block">
               <em
-                className="gl-hero__shimmer"
-                style={{ fontStyle: "italic", fontFamily: SERIF, fontWeight: 400 }}
+                className="gl-hero__word gl-hero__shimmer"
+                style={{ animationDelay: "560ms", fontStyle: "italic", fontFamily: SERIF, fontWeight: 400, marginRight: "0.12em" }}
               >
                 translated into edge
               </em>
-              <span style={{ color: "#f5f7fa" }}>.</span>
+              <span className="gl-hero__word" style={{ animationDelay: "820ms", color: "#22d3ee" }}>.</span>
             </span>
           </h1>
 
@@ -195,7 +196,7 @@ function Landing() {
           <div className="gl-hero__reveal flex flex-wrap items-center gap-3.5 pt-1" style={{ animationDelay: "440ms" }}>
             <Link
               to="/app"
-              className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden"
+              className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden gl-hero__cta-pulse"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: "0.82rem",
@@ -205,8 +206,9 @@ function Landing() {
                 padding: "1rem 1.6rem",
               }}
             >
+              <span aria-hidden className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)" }} />
               <span className="relative whitespace-nowrap">Launch Dashboard</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
+              <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
 
             <Link

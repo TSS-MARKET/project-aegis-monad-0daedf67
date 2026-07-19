@@ -262,6 +262,65 @@
   }
 }
 
+/* Per-word hero title stagger (mirrors Glavior gl-hero-phrase) */
+.gl-hero__word {
+  display: inline-block;
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  animation: gl-hero-phrase 620ms cubic-bezier(.22,.98,.24,1) forwards;
+  will-change: transform, opacity;
+}
+@keyframes gl-hero-phrase {
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+/* CTA breathing glow */
+.gl-hero__cta-pulse {
+  position: relative;
+  animation: gl-hero-cta-pulse 3.2s ease-in-out infinite;
+}
+@keyframes gl-hero-cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,238,0.55), 0 18px 40px -18px rgba(34,211,238,0.45); }
+  50%      { box-shadow: 0 0 0 10px rgba(34,211,238,0), 0 22px 60px -18px rgba(34,211,238,0.7); }
+}
+
+/* Ambient hero orbs */
+.gl-hero__orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.55;
+  animation: gl-hero-orb 14s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes gl-hero-orb {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50%      { transform: translate3d(3%, -4%, 0) scale(1.08); }
+}
+
+/* Slow grid drift */
+.gl-hero__grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(34,211,238,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,0.055) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at 20% 20%, black 20%, transparent 70%);
+  animation: gl-hero-grid 30s linear infinite;
+}
+@keyframes gl-hero-grid {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 60px 60px, 60px 60px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-hero__word, .gl-hero__cta-pulse, .gl-hero__orb, .gl-hero__grid {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
 .markdown-body p { margin: 0.5rem 0; line-height: 1.65; }
 .markdown-body strong { color: #f5f7fa; font-weight: 600; }
 .markdown-body em { color: #22d3ee; font-style: normal; font-weight: 500; }
