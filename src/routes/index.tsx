@@ -186,9 +186,9 @@ function Landing() {
               margin: 0,
             }}
           >
-            Monad ships 10,000 transactions a second. No human reads that. Aegis does — and hands you a plain-English brief on
-            what's moving, which whales are accumulating, and where the risk actually lives. Grounded in on-chain evidence.
-            Not vibes.
+            Monad settles 10,000 transactions every second with sub second finality. No human can read that firehose. Aegis
+            can. It compresses the entire chain into a plain English brief, ranks the real opportunities, and cites the exact
+            blocks and wallets behind every claim. Grounded in on chain evidence. Never vibes.
           </p>
 
           <div className="gl-hero__reveal flex flex-wrap items-center gap-3.5 pt-1" style={{ animationDelay: "440ms" }}>
