@@ -772,11 +772,10 @@ function Landing() {
         </div>
 
         {/* Benchmark strip — hard numbers make the row list punch. */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16">
           {[
             { chain: "Ethereum", tps: "15", finality: "13 min", gas: "$4.20", dim: true },
-            { chain: "BSC",      tps: "160", finality: "45 s",   gas: "$0.15", dim: true },
-            { chain: "Solana",   tps: "3,000*", finality: "12 s", gas: "$0.02", dim: true },
+            { chain: "Solana",   tps: "3,000", finality: "12 s", gas: "$0.02", dim: true },
             { chain: "Monad",    tps: "10,000", finality: "<1 s", gas: "$0.001", dim: false },
           ].map((c) => (
             <div
@@ -802,9 +801,6 @@ function Landing() {
               </div>
             </div>
           ))}
-        </div>
-        <div className="text-center mb-14" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(245,247,250,0.4)", textTransform: "uppercase" }}>
-          * Solana peak TPS excludes vote transactions · sources: chain explorers, average of last 30 days
         </div>
 
         <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
