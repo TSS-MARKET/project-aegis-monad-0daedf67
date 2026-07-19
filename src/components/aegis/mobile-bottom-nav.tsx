@@ -1,9 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Activity, Radar, PlayCircle, Newspaper, MessageSquare } from "lucide-react";
+import { Coffee, Radar, PlayCircle, Newspaper, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { to: "/app", label: "Brief", icon: Activity, exact: true },
+  { to: "/app/digest", label: "Digest", icon: Coffee },
   { to: "/app/replay", label: "Replay", icon: PlayCircle },
   { to: "/app/timeline", label: "Feed", icon: Newspaper },
   { to: "/app/radar", label: "Radar", icon: Radar },

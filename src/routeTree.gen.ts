@@ -20,6 +20,7 @@ import { Route as AppReplayRouteImport } from './routes/app.replay'
 import { Route as AppRadarRouteImport } from './routes/app.radar'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as AppOnchainRouteImport } from './routes/app.onchain'
+import { Route as AppDigestRouteImport } from './routes/app.digest'
 import { Route as AppChatRouteImport } from './routes/app.chat'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
@@ -78,6 +79,11 @@ const AppOnchainRoute = AppOnchainRouteImport.update({
   path: '/onchain',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDigestRoute = AppDigestRouteImport.update({
+  id: '/digest',
+  path: '/digest',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppChatRoute = AppChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AppChatRoute
+  '/app/digest': typeof AppDigestRoute
   '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AppChatRoute
+  '/app/digest': typeof AppDigestRoute
   '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AppChatRoute
+  '/app/digest': typeof AppDigestRoute
   '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/api/chat'
     | '/app/chat'
+    | '/app/digest'
     | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/'
     | '/api/chat'
     | '/app/chat'
+    | '/app/digest'
     | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/api/chat'
     | '/app/chat'
+    | '/app/digest'
     | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
@@ -266,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOnchainRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/digest': {
+      id: '/app/digest'
+      path: '/digest'
+      fullPath: '/app/digest'
+      preLoaderRoute: typeof AppDigestRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/chat': {
       id: '/app/chat'
       path: '/chat'
@@ -285,6 +304,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppChatRoute: typeof AppChatRoute
+  AppDigestRoute: typeof AppDigestRoute
   AppOnchainRoute: typeof AppOnchainRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppRadarRoute: typeof AppRadarRoute
@@ -298,6 +318,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppChatRoute: AppChatRoute,
+  AppDigestRoute: AppDigestRoute,
   AppOnchainRoute: AppOnchainRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppRadarRoute: AppRadarRoute,
@@ -319,13 +340,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
