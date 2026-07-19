@@ -19,7 +19,8 @@ function TokensPage() {
       </header>
 
       <GlassCard className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[860px] text-sm">
           <thead className="text-xs uppercase tracking-widest text-muted-foreground">
             <tr className="border-b border-border/60">
               <th className="text-left px-4 py-3">Token</th>
@@ -27,8 +28,8 @@ function TokensPage() {
               <th className="text-right px-4 py-3">Price</th>
               <th className="text-right px-4 py-3">24h</th>
               <th className="text-right px-4 py-3">Volume</th>
-              <th className="text-right px-4 py-3">Liquidity</th>
-              <th className="text-right px-4 py-3">Whales</th>
+              <th className="text-right px-4 py-3">Market Cap</th>
+              <th className="text-right px-4 py-3">Source</th>
               <th className="text-right px-4 py-3">Momentum</th>
             </tr>
           </thead>
@@ -51,8 +52,8 @@ function TokensPage() {
                   {t.change24h.toFixed(2)}%
                 </td>
                 <td className="px-4 py-3 text-right text-muted-foreground">{formatUsd(t.volume24hUsd)}</td>
-                <td className="px-4 py-3 text-right text-muted-foreground">{formatUsd(t.liquidityUsd)}</td>
-                <td className="px-4 py-3 text-right text-muted-foreground">{(t.whaleConcentration * 100).toFixed(0)}%</td>
+                <td className="px-4 py-3 text-right text-muted-foreground">{formatUsd(t.marketCapUsd)}</td>
+                <td className="px-4 py-3 text-right text-muted-foreground">{t.chain === "Monad" ? "Monad" : "CoinGecko"}</td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex h-1.5 w-16 rounded-full bg-muted overflow-hidden">
                     <div
@@ -65,6 +66,7 @@ function TokensPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </GlassCard>
     </div>
   );
