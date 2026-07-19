@@ -158,7 +158,7 @@ function Landing() {
                 className="gl-pulse-dot block w-1.5 h-1.5 rounded-full shrink-0"
                 style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.18)" }}
               />
-              <span style={{ color: "#f5f7fa" }}>AEGIS · MONAD INTELLIGENCE</span>
+              <span style={{ color: "#f5f7fa" }}>AEGIS · MONAD MAINNET · LIVE</span>
             </span>
             <span style={{ color: "rgba(34,211,238,0.5)" }}>//</span>
             <span style={{ color: "rgba(245,247,250,0.55)" }}>
