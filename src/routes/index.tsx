@@ -18,7 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
-import { DemoModeButton, startAegisDemo } from "@/components/aegis/demo-mode";
+// demo tour buttons removed from landing per design
 import { WalletGuardian } from "@/components/aegis/wallet-guardian";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
@@ -85,17 +85,16 @@ function Landing() {
   const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
   return (
     <div className="min-h-screen relative overflow-x-clip" style={{ background: "#000" }}>
-      {/* Ambient */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-70" />
+      {/* Ambient — pure obsidian, no grid overlay (matches Glavior reference) */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.18), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.14), transparent 70%)" }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute top-1/3 -right-40 h-[520px] w-[520px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(103,232,249,0.10), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(103,232,249,0.06), transparent 70%)" }}
       />
 
       <header className="relative mx-auto flex max-w-[1560px] items-center justify-between px-6 md:px-10 py-3 md:py-4">
@@ -110,7 +109,6 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
-          <DemoModeButton variant="inline" />
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
@@ -131,8 +129,6 @@ function Landing() {
         {/* Glavior ambient layers */}
         <div aria-hidden className="gl-hero__aurora pointer-events-none absolute inset-0" />
         <div aria-hidden className="gl-hero__scan pointer-events-none absolute inset-x-0 top-0 h-px" />
-        {/* Ambient hero motion */}
-        <div aria-hidden className="gl-hero__grid" />
         <div aria-hidden className="gl-hero__orb" style={{ width: 520, height: 520, left: "-8%", top: "-10%", background: "radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%)" }} />
         <div aria-hidden className="gl-hero__orb" style={{ width: 460, height: 460, right: "-6%", top: "35%", background: "radial-gradient(circle, rgba(103,232,249,0.22), transparent 70%)", animationDelay: "-6s" }} />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent)" }} />
