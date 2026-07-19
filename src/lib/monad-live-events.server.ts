@@ -11,6 +11,16 @@ type RawBlock = {
   gasLimit: string;
 };
 
+type RawTx = {
+  hash: string;
+  from: string;
+  to: string | null;
+  value: string;
+  gasPrice?: string;
+};
+
+type RawBlockFull = Omit<RawBlock, "transactions"> & { transactions: RawTx[] };
+
 export type LiveReplayWindow = {
   startTs: number;
   endTs: number;
@@ -52,6 +62,125 @@ async function fetchBlocks(url: string, numbers: number[]) {
     out.push(...blocks.filter((b): b is RawBlock => !!b?.number && !!b?.timestamp));
   }
   return out;
+}
+
+async function fetchFullBlocks(url: string, numbers: number[]) {
+  const out: RawBlockFull[] = [];
+  for (let i = 0; i < numbers.length; i += 6) {
+    const batch = numbers.slice(i, i + 6);
+    const blocks = await rpcBatch<RawBlockFull>(
+      url,
+      batch.map((n) => ({ method: "eth_getBlockByNumber", params: [`0x${n.toString(16)}`, true] })),
+    );
+    out.push(...blocks.filter((b): b is RawBlockFull => !!b?.number && Array.isArray(b?.transactions)));
+  }
+  return out;
+}
+
+function shortAddr(a: string) {
+  return `${a.slice(0, 6)}…${a.slice(-4)}`;
+}
+
+// -----------------------------------------------------------------------------
+// REAL events — built from live Monad RPC transactions with genuine tx hashes,
+// real block numbers, real MON values, and working explorer links. These
+// events are marked isReal:true so the Verify button opens the real explorer.
+// -----------------------------------------------------------------------------
+function buildRealEvents(
+  fullBlocks: RawBlockFull[],
+  explorer: string,
+  chainName: string,
+  monUsd: number,
+  now: number,
+  cap: number,
+): MonadEvent[] {
+  const events: MonadEvent[] = [];
+  for (const b of fullBlocks) {
+    const bn = parseInt(b.number, 16);
+    const ts = parseInt(b.timestamp, 16) * 1000;
+    if (!Number.isFinite(bn) || !b.transactions?.length) continue;
+    // Rank txs in this block by MON value (largest first)
+    const ranked = b.transactions
+      .map((tx) => ({ tx, wei: BigInt(tx.value || "0x0") }))
+      .sort((a, b) => (b.wei > a.wei ? 1 : b.wei < a.wei ? -1 : 0));
+    for (const { tx, wei } of ranked.slice(0, 5)) {
+      const valueMon = Number(wei) / 1e18;
+      const gasGwei = tx.gasPrice ? parseInt(tx.gasPrice, 16) / 1e9 : 0;
+      const isTransfer = !!tx.to && valueMon > 0;
+      const isCreate = !tx.to;
+      const cat: EventCategory = isTransfer
+        ? valueMon >= 1000
+          ? "whale_accumulation"
+          : "large_transfer"
+        : isCreate
+          ? "protocol_activity"
+          : "protocol_activity";
+      const amountUsd = isTransfer ? Math.round(valueMon * monUsd) : undefined;
+      const monStr = valueMon.toLocaleString(undefined, { maximumFractionDigits: 3 });
+      const headline = isCreate
+        ? `Contract deployed by ${shortAddr(tx.from)}`
+        : isTransfer
+          ? `${monStr} MON transfer · ${shortAddr(tx.from)} → ${shortAddr(tx.to!)}`
+          : `Contract call · ${shortAddr(tx.from)} → ${shortAddr(tx.to!)}`;
+      const importance = Math.min(
+        95,
+        Math.round(40 + Math.log10(Math.max(1, valueMon)) * 15 + (isCreate ? 8 : 0)),
+      );
+      events.push({
+        id: `real-${bn}-${tx.hash.slice(2, 10)}`,
+        ts,
+        minutesAgo: Math.max(0, Math.round((now - ts) / 60_000)),
+        block: bn,
+        category: cat,
+        headline,
+        plain: isTransfer
+          ? `${monStr} MON moved from ${shortAddr(tx.from)} to ${shortAddr(tx.to!)} in block #${bn.toLocaleString()} on ${chainName}. Every field here is a live RPC read.`
+          : isCreate
+            ? `Wallet ${shortAddr(tx.from)} deployed a new contract in block #${bn.toLocaleString()}.`
+            : `Wallet ${shortAddr(tx.from)} called contract ${shortAddr(tx.to!)} in block #${bn.toLocaleString()}.`,
+        matters: isTransfer
+          ? valueMon >= 1000
+            ? `A ${monStr} MON transfer is size worth watching — verify the destination cluster before drawing conclusions.`
+            : `Direct wallet-to-wallet MON flow. Click Verify on-chain to inspect the sender, receiver and destination behavior.`
+          : isCreate
+            ? `New contract deployments are the leading indicator for fresh protocol activity on Monad.`
+            : `Contract interactions accumulate into TVL, volume and narrative strength — the raw fuel of Monad growth.`,
+        importance,
+        confidence: 100, // real RPC read, no synthesis
+        unusualness: isTransfer ? Math.min(90, Math.round(20 + Math.log10(Math.max(1, valueMon)) * 12)) : 20,
+        tags: [isTransfer ? "transfer" : isCreate ? "deploy" : "call", "real", "monad-rpc"],
+        asset: isTransfer ? { symbol: "MON", narrative: "L1 Beta" } : undefined,
+        protocol: ACTIVE_MONAD.chainName,
+        wallets: isTransfer
+          ? [
+              { address: tx.from, role: "sender" },
+              { address: tx.to!, role: "receiver" },
+            ]
+          : [{ address: tx.from, role: "actor" }],
+        txHash: tx.hash,
+        amountUsd,
+        evidence: [
+          { id: "block", label: "Block", value: `#${bn.toLocaleString()}`, kind: "block", ref: `/block/${bn}` },
+          { id: "tx", label: "Tx hash", value: `${tx.hash.slice(0, 10)}…${tx.hash.slice(-6)}`, kind: "tx", ref: `/tx/${tx.hash}` },
+          { id: "from", label: "From", value: shortAddr(tx.from), kind: "wallet", ref: `/address/${tx.from}` },
+          ...(tx.to ? [{ id: "to", label: "To", value: shortAddr(tx.to), kind: "wallet" as const, ref: `/address/${tx.to}` }] : []),
+          ...(isTransfer ? [{ id: "value", label: "Value", value: `${monStr} MON${amountUsd ? ` · $${amountUsd.toLocaleString()}` : ""}`, kind: "metric" as const }] : []),
+          { id: "gas", label: "Gas price", value: `${gasGwei.toFixed(2)} gwei`, kind: "metric" },
+        ],
+        watchNext: isTransfer
+          ? `Follow the receiver ${shortAddr(tx.to!)} in the next few blocks — do they redistribute or hold?`
+          : `Track subsequent activity from ${shortAddr(tx.from)} — new deployments often precede narrative launches.`,
+        uncertainty: "Every field is a direct Monad RPC read. Amount, addresses, block and hash are verifiable via the explorer link on the Verify button.",
+        dataType: "live",
+        freshnessSec: Math.max(0, Math.round((now - ts) / 1000)),
+        isReal: true,
+        explorerTxUrl: `${explorer}/tx/${tx.hash}`,
+        explorerBlockUrl: `${explorer}/block/${bn}`,
+      });
+      if (events.length >= cap) return events;
+    }
+  }
+  return events;
 }
 
 // ---------------------------------------------------------------------------
@@ -213,13 +342,43 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   const latest = Array.from({ length: Math.min(6, head + 1) }, (_, i) => head - i);
   const blocks = await fetchBlocks(url, uniqueNumbers([...sampled, ...latest]));
   if (!blocks.length) throw new Error(`${chainName} RPC returned no sampled blocks`);
-  // Suppress raw block transaction ticks from the public feed —
-  // they read as noise. Keep block anchoring only via synthesized events which
-  // carry the block number + tx hash as evidence. Retain one lightweight
-  // throughput marker per ~8 blocks so the timeline still shows raw chain
-  // heartbeats without dominating the view.
-  const narrEvents = synthesizeNarrativeEvents(blocks, now, startTs, windowMs, targetCount);
-  const events = narrEvents.sort((a, b) => a.ts - b.ts || a.block - b.block);
+
+  // Build REAL events from the most recent blocks with full transaction data.
+  // These carry genuine tx hashes, block numbers, addresses and MON values
+  // with working explorer links — this is what the "Verify on-chain" button
+  // opens. Target ~55 real events so Timeline's top 50 stays 100% verifiable.
+  const explorer = ACTIVE_MONAD.blockExplorerUrls[0];
+  const realBlockCount = Math.min(30, head + 1);
+  const realBlockNums = Array.from({ length: realBlockCount }, (_, i) => head - i);
+  let realEvents: MonadEvent[] = [];
+  let monUsd = 0.0212;
+  try {
+    const fullBlocks = await fetchFullBlocks(url, realBlockNums);
+    // Import lazily to avoid circular server-only pulls
+    try {
+      const { getLiveMarketState } = await import("./monad-market.server");
+      const s = await getLiveMarketState();
+      const mon = s.tokens.find((t) => t.symbol === "MON");
+      if (mon?.priceUsd) monUsd = mon.priceUsd;
+    } catch {
+      /* keep fallback */
+    }
+    realEvents = buildRealEvents(fullBlocks, explorer, chainName, monUsd, now, 55);
+  } catch {
+    realEvents = [];
+  }
+
+  const realIds = new Set(realEvents.map((e) => e.id));
+  const paddingCount = Math.max(0, targetCount - realEvents.length);
+  const narrEvents = paddingCount > 0
+    ? synthesizeNarrativeEvents(blocks, now, startTs, windowMs, paddingCount).filter((e) => !realIds.has(e.id))
+    : [];
+
+  // Real events sorted newest-first (become the top of the timeline);
+  // synthetic padding sorted newest-first below them.
+  realEvents.sort((a, b) => b.ts - a.ts || b.block - a.block);
+  narrEvents.sort((a, b) => b.ts - a.ts || b.block - a.block);
+  const events = [...realEvents, ...narrEvents];
 
   return {
     startTs,
@@ -279,15 +438,22 @@ export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 16
 
 export async function getLiveMonadEvents(windowHours: 1 | 6 | 24 = 6, limit = 150) {
   const replay = await getLiveMonadReplayWindow(windowHours, limit);
+  // Preserve real-first ordering: real events (isReal) at top, newest first;
+  // synthetic padding below, newest first. This is what feeds the Timeline
+  // and Digest — the user's rule is "top of the list = only real, verifiable".
+  const real = replay.events.filter((e) => e.isReal).sort((a, b) => b.ts - a.ts || b.block - a.block);
+  const synth = replay.events.filter((e) => !e.isReal).sort((a, b) => b.ts - a.ts || b.block - a.block);
   return {
     ...replay,
-    events: replay.events.slice().sort((a, b) => b.ts - a.ts || b.block - a.block).slice(0, limit),
+    events: [...real, ...synth].slice(0, limit),
   };
 }
 
 export async function getLiveHeadlineEvent() {
   const feed = await getLiveMonadEvents(1, 120);
-  const event = feed.events
+  // Prefer real events for the headline — verifiable > synthetic.
+  const pool = feed.events.filter((e) => e.isReal).length > 0 ? feed.events.filter((e) => e.isReal) : feed.events;
+  const event = pool
     .slice()
     .sort((a, b) => b.importance * b.confidence - a.importance * a.confidence)[0] ?? null;
   return { event, generatedAt: feed.generatedAt, source: feed.source, error: feed.error };

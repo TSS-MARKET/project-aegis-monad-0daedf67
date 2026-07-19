@@ -62,6 +62,10 @@ export type MonadEvent = {
   uncertainty: string;
   dataType: "live" | "cached" | "indexed" | "historical" | "curated";
   freshnessSec: number;
+  /** True when txHash / block are real Monad RPC values with working explorer links. */
+  isReal?: boolean;
+  explorerTxUrl?: string;
+  explorerBlockUrl?: string;
 };
 
 // ---------------------------------------------------------------------------

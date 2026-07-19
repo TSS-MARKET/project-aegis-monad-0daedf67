@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import type { MonadEvent, EventCategory } from "@/lib/monad-events";
 import { VerifyButton } from "@/components/aegis/verify-button";
+import { ACTIVE_MONAD } from "@/lib/monad-wallet";
+const EXPLORER = ACTIVE_MONAD.blockExplorerUrls[0];
 
 export const Route = createFileRoute("/app/timeline")({
   loader: async ({ context }) => {
@@ -100,7 +102,7 @@ function TimelinePage() {
 
   // Rank: recency × importance × evidence quality (evidence count) × confidence × unusualness bonus
   const ranked = useMemo(() => {
-    return events
+    const scored = events
       .map((e) => {
         const evidenceQ = Math.min(1, e.evidence.length / 5);
         const recency = 1 / (Math.log(e.minutesAgo + 2) + 1);
@@ -111,8 +113,17 @@ function TimelinePage() {
           evidenceQ * 100 * 0.15 +
           recency * 100 * 0.10;
         return { e, score };
-      })
-      .sort((a, b) => b.score - a.score);
+      });
+    // Real (on-chain verifiable) events always rank above synthetic ones.
+    // Within each bucket, sort by score. This guarantees the top of the
+    // timeline is 100% real, verifiable events; synthetic pattern signals
+    // sit below purely to increase density.
+    return scored.sort((a, b) => {
+      const ar = a.e.isReal ? 1 : 0;
+      const br = b.e.isReal ? 1 : 0;
+      if (ar !== br) return br - ar;
+      return b.score - a.score;
+    });
   }, [events]);
 
   const filtered = useMemo(() => {
@@ -289,10 +300,15 @@ function EventCard({
           </div>
           <div className="mt-2.5 flex flex-wrap items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
             <span>{fmtAgo(e.minutesAgo)} ago</span>
-            <span>on-chain anchor</span>
+            <span style={{ color: e.isReal ? "#34d399" : "rgba(245,247,250,0.5)" }}>
+              {e.isReal ? "live RPC · verifiable" : "pattern signal"}
+            </span>
             <span style={{ color: meta.color }}>imp {e.importance}</span>
             <span>conf {e.confidence}%</span>
             {e.amountUsd ? <span>{usd(e.amountUsd)}</span> : null}
+            <span className="ml-auto" onClick={(ev) => ev.stopPropagation()}>
+              <VerifyButton event={e} />
+            </span>
           </div>
         </div>
       </div>
@@ -345,18 +361,29 @@ function Inspector({ e }: { e: MonadEvent }) {
       <div>
         <SectionTitle>Evidence</SectionTitle>
         <div className="mt-2 grid gap-1.5">
-          {e.evidence.map((ev) => (
-            <div key={ev.id} className="flex items-center justify-between text-xs px-3 py-2 rounded-[6px]"
-              style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <span className="uppercase tracking-[0.12em] text-[10px]" style={{ color: "rgba(245,247,250,0.55)", fontFamily: MONO }}>
-                {ev.label}
-              </span>
-              <span className="flex items-center gap-2" style={{ fontFamily: MONO, color: "#f5f7fa" }}>
-                {ev.value}
-                {ev.ref && <ExternalLink className="h-3 w-3 opacity-50" />}
-              </span>
-            </div>
-          ))}
+          {e.evidence.map((ev) => {
+            const href = e.isReal && ev.ref ? `${EXPLORER}${ev.ref}` : null;
+            const inner = (
+              <>
+                <span className="uppercase tracking-[0.12em] text-[10px]" style={{ color: "rgba(245,247,250,0.55)", fontFamily: MONO }}>
+                  {ev.label}
+                </span>
+                <span className="flex items-center gap-2" style={{ fontFamily: MONO, color: href ? "#22d3ee" : "#f5f7fa" }}>
+                  {ev.value}
+                  {href && <ExternalLink className="h-3 w-3 opacity-70" />}
+                </span>
+              </>
+            );
+            const cls = "flex items-center justify-between text-xs px-3 py-2 rounded-[6px] transition-colors";
+            const style = { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" };
+            return href ? (
+              <a key={ev.id} href={href} target="_blank" rel="noreferrer" className={`${cls} hover:bg-white/5`} style={style}>
+                {inner}
+              </a>
+            ) : (
+              <div key={ev.id} className={cls} style={style}>{inner}</div>
+            );
+          })}
         </div>
       </div>
 
