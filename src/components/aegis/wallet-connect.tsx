@@ -1,5 +1,5 @@
 import { useMonadWallet, short, isInIframe, topLevelUrl, eth } from "@/lib/monad-wallet";
-import { Wallet, LogOut, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
+import { Wallet, LogOut, AlertTriangle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function WalletConnectButton({ compact = false }: { compact?: boolean }) {
