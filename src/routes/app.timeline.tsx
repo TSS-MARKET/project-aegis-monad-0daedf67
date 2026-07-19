@@ -22,6 +22,7 @@ import {
   Clock,
 } from "lucide-react";
 import type { MonadEvent, EventCategory } from "@/lib/monad-events";
+import { VerifyButton } from "@/components/aegis/verify-button";
 
 export const Route = createFileRoute("/app/timeline")({
   loader: async ({ context }) => {
@@ -400,6 +401,7 @@ function Inspector({ e }: { e: MonadEvent }) {
         >
           <MessageSquare className="h-3.5 w-3.5" /> Explain with Aegis
         </Link>
+        <VerifyButton event={e} />
         <Link
           to="/app/replay"
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs hover-lift"
