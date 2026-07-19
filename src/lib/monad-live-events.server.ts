@@ -139,8 +139,7 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number, startTs: num
     const whaleLabel = WHALE_LABELS[(number * 13) % WHALE_LABELS.length];
     const wallet1 = synthWallet(number, 1 + i * 2);
     const wallet2 = synthWallet(number, 2 + i * 2);
-    const firstTx = b.transactions?.[0];
-    const usdStr = amountUsd >= 1_000_000 ? `$${(amountUsd / 1_000_000).toFixed(2)}M` : `$${(amountUsd / 1_000).toFixed(1)}K`;
+    const usdStr = `$${(amountUsd / 1_000).toFixed(1)}K`;
     out.push({
       id: `nar-${pick.cat}-${number}-${i}`,
       ts,
