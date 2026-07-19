@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
-import { Play, X, ChevronRight, Sparkles } from "lucide-react";
+import { Play, X, ChevronRight } from "lucide-react";
 
 type Step = {
   to: string;
@@ -91,31 +91,66 @@ export function DemoModeHost() {
   return createPortal(<DemoOverlay onClose={() => setOpen(false)} />, document.body);
 }
 
-export function DemoModeButton({ variant = "floating" }: { variant?: "floating" | "inline" }) {
-  return (
+export function DemoModeButton({ variant = "floating" }: { variant?: "floating" | "inline" | "premium" }) {
+  if (variant === "premium") {
+    return (
       <button
         onClick={() => startAegisDemo()}
-        className={
-          variant === "floating"
-            ? "fixed bottom-5 left-5 z-40 group inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs uppercase tracking-[0.14em] transition-all hover:-translate-y-0.5"
-            : "group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-all hover:-translate-y-0.5"
-        }
+        className="group relative inline-flex items-center gap-2 overflow-hidden rounded-[8px] px-4 py-2 transition-transform duration-300 hover:-translate-y-0.5"
         style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: variant === "floating" ? undefined : "0.6rem",
-          letterSpacing: "0.16em",
+          fontFamily: "var(--font-display)",
+          fontSize: "0.68rem",
+          fontWeight: 800,
+          letterSpacing: "0.22em",
           textTransform: "uppercase",
-          background: "linear-gradient(180deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))",
-          border: "1px solid rgba(34,211,238,0.3)",
-          color: "#22d3ee",
-          boxShadow: variant === "floating" ? "0 8px 30px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.05)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
+          color: "#eafcff",
+          background:
+            "linear-gradient(180deg, rgba(10,22,32,0.95), rgba(4,12,18,0.95))",
+          border: "1px solid rgba(34,211,238,0.5)",
+          boxShadow:
+            "0 10px 30px -10px rgba(34,211,238,0.45), inset 0 1px 0 rgba(255,255,255,0.07)",
         }}
         aria-label="Play 30-second judge tour"
       >
-        <Sparkles className={variant === "floating" ? "h-3.5 w-3.5" : "h-3 w-3"} />
-        <span>30s Tour</span>
-        <ChevronRight className={variant === "floating" ? "h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" : "h-3 w-3 transition-transform group-hover:translate-x-0.5"} />
+        <span
+          aria-hidden
+          className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
+          style={{ background: "linear-gradient(90deg,transparent,rgba(34,211,238,0.35),transparent)" }}
+        />
+        <span className="relative inline-flex items-center gap-2">
+          <span
+            className="h-1.5 w-1.5 rounded-full"
+            style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.8)" }}
+          />
+          <span className="whitespace-nowrap">30-Second Tour</span>
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={2.5} />
+        </span>
       </button>
+    );
+  }
+  return (
+    <button
+      onClick={() => startAegisDemo()}
+      className={
+        variant === "floating"
+          ? "fixed bottom-5 left-5 z-40 group inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs uppercase tracking-[0.14em] transition-all hover:-translate-y-0.5"
+          : "group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-all hover:-translate-y-0.5"
+      }
+      style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: variant === "floating" ? undefined : "0.6rem",
+        letterSpacing: "0.16em",
+        textTransform: "uppercase",
+        background: "linear-gradient(180deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))",
+        border: "1px solid rgba(34,211,238,0.3)",
+        color: "#22d3ee",
+        boxShadow: variant === "floating" ? "0 8px 30px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.05)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
+      }}
+      aria-label="Play 30-second judge tour"
+    >
+      <span>30s Tour</span>
+      <ChevronRight className={variant === "floating" ? "h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" : "h-3 w-3 transition-transform group-hover:translate-x-0.5"} />
+    </button>
   );
 }
 
