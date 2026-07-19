@@ -15,6 +15,8 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
+import { getMarketState, formatUsd } from "@/lib/monad-data";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/")({ component: Landing });
 
@@ -68,6 +70,14 @@ function ProofRow({ Icon, label, value, accent }: { Icon: LucideIcon; label: str
 }
 
 function Landing() {
+  const [state, setState] = useState(() => getMarketState());
+  useEffect(() => {
+    const id = setInterval(() => setState(getMarketState()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const eco = state.ecosystem;
+  const monadTokens = state.tokens.filter((t) => t.chain === "Monad");
+  const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
   return (
     <div className="min-h-screen relative overflow-x-clip">
       {/* Ambient */}
@@ -91,13 +101,14 @@ function Landing() {
         >
           <a href="#proof" className="hover:text-foreground transition-colors">Proof</a>
           <a href="#capabilities" className="hover:text-foreground transition-colors">Capabilities</a>
+          <a href="#pulse" className="hover:text-foreground transition-colors">Pulse</a>
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
           <Link
             to="/app"
-            className="group relative inline-flex items-center gap-2 rounded-[6px] px-4 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.16em] cta-cyan overflow-hidden"
+            className="group relative inline-flex items-center gap-2 rounded-[6px] px-3 py-2 sm:px-4 sm:py-2.5 text-[0.68rem] sm:text-[0.72rem] font-bold uppercase tracking-[0.16em] cta-cyan overflow-hidden"
             style={{ fontFamily: 'var(--font-display)' }}
           >
             <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent)" }} />
