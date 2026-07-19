@@ -369,7 +369,7 @@ function BriefPanel({ state }: { state: ReturnType<typeof useQuery<Awaited<Retur
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
         </div>
-      ) : data.ok ? (
+      ) : (
         <>
           <h3 className="mt-3" style={{ fontFamily: SERIF, fontSize: "1.4rem", color: "#f5f7fa", lineHeight: 1.25 }}>
             {data.data.headline}
@@ -390,10 +390,6 @@ function BriefPanel({ state }: { state: ReturnType<typeof useQuery<Awaited<Retur
             <MiniList icon={Eye} label="Watch" items={data.data.watch} tone="#22d3ee" />
           </div>
         </>
-      ) : (
-        <div className="mt-4 text-sm" style={{ color: "#fb7185" }}>
-          AI brief unavailable ({data.error}). Chain intelligence below still live.
-        </div>
       )}
     </div>
   );

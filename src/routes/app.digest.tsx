@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState, useEffect } from "react";
 import { Sun, Coffee, Clock, TrendingUp, TrendingDown, Waves, Sparkles, ArrowRight, CheckCircle2, AlertTriangle, PlayCircle, Share2, Bell } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
-import { getMonadEvents } from "@/lib/monad-events";
 import { computeOpportunities } from "@/lib/opportunity-engine";
 import { ExplainButton } from "@/components/aegis/explain-button";
+import { getEventFeed } from "@/lib/intelligence.functions";
 
 export const Route = createFileRoute("/app/digest")({ component: DigestPage });
 
@@ -21,25 +23,26 @@ function greetingFor(hour: number): { label: string; icon: LucideIcon } {
 }
 
 function DigestPage() {
+  const feedFn = useServerFn(getEventFeed);
+  const feed = useQuery({ queryKey: ["digest-events-24h"], queryFn: () => feedFn({ data: { windowHours: 24, limit: 180 } }), staleTime: 60_000, refetchInterval: 60_000 });
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  const { state, events, opps, greeting, dateLabel } = useMemo(() => {
+  const { state, opps, greeting, dateLabel } = useMemo(() => {
     const s = getMarketState(now);
-    const ev = getMonadEvents({ now, windowMs: 12 * 60 * 60 * 1000, limit: 200 });
     const o = computeOpportunities(now, 3);
     const d = new Date(now);
     return {
       state: s,
-      events: ev,
       opps: o,
       greeting: greetingFor(d.getHours()),
       dateLabel: d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }),
     };
   }, [now]);
+  const events = feed.data?.events ?? [];
 
   const monad = state.tokens.filter((t) => t.chain === "Monad" && t.narrative !== "Stable");
   const gainers = [...monad].sort((a, b) => b.change24h - a.change24h).slice(0, 3);
@@ -68,7 +71,7 @@ function DigestPage() {
             Your Monad, <em style={{ color: "#22d3ee", fontStyle: "italic" }}>in 1 minute</em>.
           </h1>
           <p className="mt-3 max-w-xl" style={{ fontFamily: SANS, color: "rgba(245,247,250,0.65)", fontSize: "0.95rem", lineHeight: 1.6 }}>
-            Skip the doom scroll. Aegis read every block on Monad overnight and boiled it down to what actually matters for you today. Every claim links back to on chain evidence.
+            Skip the doom scroll. Aegis compresses Monad into a trader-ready brief: whales, liquidity, narratives, risks, and evidence you can ask about.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -206,7 +209,7 @@ function DigestPage() {
       </div>
 
       <div className="mt-6 text-center" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.14em", color: "rgba(245,247,250,0.4)", textTransform: "uppercase" }}>
-        Digest built from {events.length} on chain events · Monad · Refreshes every minute
+        Digest built from {events.length} intelligence records · Monad · Refreshes every minute
       </div>
     </div>
   );
