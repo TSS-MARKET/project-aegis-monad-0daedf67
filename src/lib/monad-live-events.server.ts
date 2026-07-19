@@ -126,16 +126,20 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number, startTs: num
 
     const pick = NARR_CATEGORIES[(number + i * 5) % NARR_CATEGORIES.length];
     const token = NARR_TOKENS[(number * 7 + i * 3) % NARR_TOKENS.length];
-    const amountBase = 18_500 + ((number * 977 + i * 4111) % 720_000);
-    const amountMult = pick.cat === "whale_accumulation" || pick.cat === "whale_distribution" || pick.cat === "large_transfer" ? 3.2 : 1.4;
-    const amountUsd = Math.round(amountBase * amountMult * (1 + utilization));
-    const importance = Math.max(28, Math.min(96, Math.round(38 + txCount * 3 + utilization * 45 + (pick.tone === "up" ? 6 : pick.tone === "down" ? 8 : 0))));
-    const confidence = 84 + ((number + i) % 12); // 84..95
+    // Synthetic narrative amounts are capped to small-ticket ranges
+    // ($1.5k–$70k). We do not fabricate six/seven-figure notionals for
+    // events that lack a matching indexed transfer. Real large flows
+    // surface in the Live On-Chain panel, which streams straight from RPC.
+    const amountBase = 1_500 + ((number * 977 + i * 4111) % 55_000);
+    const amountMult = pick.cat === "whale_accumulation" || pick.cat === "whale_distribution" || pick.cat === "large_transfer" ? 1.25 : 1;
+    const amountUsd = Math.round(amountBase * amountMult);
+    // Curated pattern signals — keep the scores honest (not measurements).
+    const importance = Math.max(24, Math.min(70, Math.round(30 + txCount * 2 + utilization * 22 + (pick.tone === "up" ? 4 : pick.tone === "down" ? 5 : 0))));
+    const confidence = 42 + ((number + i) % 14); // 42..55
     const whaleLabel = WHALE_LABELS[(number * 13) % WHALE_LABELS.length];
     const wallet1 = synthWallet(number, 1 + i * 2);
     const wallet2 = synthWallet(number, 2 + i * 2);
-    const firstTx = b.transactions?.[0];
-    const usdStr = amountUsd >= 1_000_000 ? `$${(amountUsd / 1_000_000).toFixed(2)}M` : `$${(amountUsd / 1_000).toFixed(1)}K`;
+    const usdStr = `$${(amountUsd / 1_000).toFixed(1)}K`;
     out.push({
       id: `nar-${pick.cat}-${number}-${i}`,
       ts,
@@ -147,27 +151,32 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number, startTs: num
       matters: pick.matters,
       importance,
       confidence,
-      unusualness: Math.max(15, Math.min(100, Math.round(30 + txCount * 5 + utilization * 55))),
+      unusualness: Math.max(12, Math.min(48, Math.round(18 + txCount * 1.5 + utilization * 18))),
       tags: [pick.cat, token.narrative, "monad-rpc"],
       asset: { symbol: token.symbol, narrative: token.narrative },
       protocol: ACTIVE_MONAD.chainName,
       wallets: [
-        { address: wallet1, role: "actor", label: `${whaleLabel} · ${pick.cat.startsWith("whale") ? "whale" : "cluster"}` },
+        { address: wallet1, role: "actor", label: `${whaleLabel} · pattern` },
         { address: wallet2, role: "counterparty", label: "counterparty" },
       ],
-      txHash: firstTx ?? "",
+      txHash: "",
       amountUsd,
+      // Evidence for narrative events is intentionally non-linkable — the
+      // only real values here are the block context (number, tx count, gas
+      // utilization); the notional / wallet / asset attribution is a
+      // curated pattern signal, not an indexed transfer. Anything with a
+      // real explorer URL lives in the Live On-Chain panel.
       evidence: [
-        { id: "block", label: "On-chain anchor", value: `#${number.toLocaleString()}`, kind: "block", ref: `/block/${number}` },
-        { id: "tx-count", label: "Sampled txs", value: txCount.toLocaleString(), kind: "metric" },
-        { id: "asset", label: "Asset", value: token.symbol, kind: "metric" },
-        { id: "size", label: "Est size", value: usdStr, kind: "metric" },
+        { id: "block-ctx", label: "Block context", value: `#${number.toLocaleString()}`, kind: "metric" },
+        { id: "tx-count", label: "Txs in block", value: txCount.toLocaleString(), kind: "metric" },
         { id: "gas", label: "Gas util", value: `${(utilization * 100).toFixed(1)}%`, kind: "metric" },
-        ...(firstTx ? [{ id: "tx", label: "Anchor tx", value: `${firstTx.slice(0, 10)}…${firstTx.slice(-6)}`, kind: "tx" as const, ref: `/tx/${firstTx}` }] : []),
+        { id: "size", label: "Notional (est.)", value: usdStr, kind: "metric" },
+        { id: "asset", label: "Asset", value: token.symbol, kind: "metric" },
+        { id: "confidence", label: "Confidence", value: `${confidence}%`, kind: "metric" },
       ],
       watchNext: pick.watch,
-      uncertainty: "Verified against live Monad RPC block evidence. Wallet and cluster labels are Aegis intelligence classifications derived from the anchored block flow.",
-      dataType: "indexed",
+      uncertainty: "Curated pattern signal anchored to a real Monad block for timing context. Notional and wallet attribution are Aegis heuristics, not indexed transfers — verifiable large flows appear in the Live On-Chain panel.",
+      dataType: "curated",
       freshnessSec: Math.max(0, Math.round((now - ts) / 1000)),
     });
   }
