@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouter, useRouterState } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { SidebarNav } from "@/components/aegis/sidebar-nav";
 import { MobileBottomNav } from "@/components/aegis/mobile-bottom-nav";
 import { AegisLogo } from "@/components/aegis/logo";
@@ -9,7 +10,32 @@ export const Route = createFileRoute("/app")({
   component: AppShell,
 });
 
+const APP_ROUTES = [
+  "/app",
+  "/app/digest",
+  "/app/replay",
+  "/app/timeline",
+  "/app/radar",
+  "/app/opportunities",
+  "/app/tokens",
+  "/app/whales",
+  "/app/wallet",
+  "/app/onchain",
+  "/app/chat",
+] as const;
+
 function AppShell() {
+  const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    const idle = (cb: () => void) =>
+      (window as any).requestIdleCallback ? (window as any).requestIdleCallback(cb) : setTimeout(cb, 200);
+    idle(() => {
+      APP_ROUTES.forEach((to) => {
+        router.preloadRoute({ to }).catch(() => {});
+      });
+    });
+  }, [router]);
   return (
     <div className="flex min-h-screen">
       <SidebarNav />
@@ -21,7 +47,9 @@ function AppShell() {
         <div className="hidden md:flex justify-end px-6 pt-4">
           <DemoModeButton variant="inline" />
         </div>
-        <Outlet />
+        <div key={pathname} className="animate-in fade-in duration-150">
+          <Outlet />
+        </div>
       </main>
       <MobileBottomNav />
     </div>
