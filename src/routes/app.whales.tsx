@@ -97,7 +97,7 @@ function WhalesPage() {
   }, [stats.buyVol]);
 
   return (
-    <div className="mx-auto max-w-7xl p-6 md:p-10 space-y-6">
+    <div className="mx-auto max-w-7xl px-4 md:px-10 pt-4 md:pt-6 pb-8 space-y-6">
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div>
           <div style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>

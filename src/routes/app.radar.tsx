@@ -160,7 +160,7 @@ function RadarPage() {
   const maxVol = Math.max(1, ...tokens.map((t) => t.volume24hUsd));
 
   return (
-    <div className="mx-auto max-w-[1600px] p-6 md:p-10 space-y-6">
+    <div className="mx-auto max-w-[1600px] px-4 md:px-10 pt-4 md:pt-6 pb-8 space-y-6">
       {/* Title */}
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div>

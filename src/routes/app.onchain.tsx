@@ -148,7 +148,7 @@ function OnChainPage() {
   }
 
   return (
-    <div className="min-h-screen p-6 md:p-10 max-w-[1400px] mx-auto">
+    <div className="min-h-screen px-4 md:px-10 pt-4 md:pt-6 pb-8 max-w-[1400px] mx-auto">
       <header className="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div className="min-w-0">
           <div style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
