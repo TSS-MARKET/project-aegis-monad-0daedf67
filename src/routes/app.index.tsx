@@ -11,6 +11,7 @@ import { formatUsd } from "@/lib/monad-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NetworkStatus } from "@/components/aegis/network-status";
 import { VerifyButton } from "@/components/aegis/verify-button";
+import { getLiveChainEvents } from "@/lib/monad-chain-events.functions";
 import {
   TrendingUp,
   TrendingDown,
@@ -22,6 +23,8 @@ import {
   ArrowRight,
   ShieldAlert,
   Sparkles,
+  Radio,
+  ExternalLink,
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
@@ -31,6 +34,7 @@ export const Route = createFileRoute("/app/")({
       context.queryClient.ensureQueryData({ queryKey: ["snap"], queryFn: () => getMarketSnapshot() }),
       context.queryClient.ensureQueryData({ queryKey: ["headline"], queryFn: () => getHeadline() }),
       context.queryClient.ensureQueryData({ queryKey: ["feed-6h"], queryFn: () => getEventFeed({ data: { windowHours: 6, limit: 8 } }) }),
+      context.queryClient.ensureQueryData({ queryKey: ["chain-events"], queryFn: () => getLiveChainEvents() }),
     ]);
     // Brief is expensive — prefetch in the background but don't block first paint.
     context.queryClient.prefetchQuery({ queryKey: ["brief"], queryFn: () => getMarketBrief() });
