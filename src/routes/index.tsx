@@ -456,12 +456,14 @@ function Landing() {
           ].map((s) => (
             <div
               key={s.label}
-              className="rounded-[10px] p-4 hover-lift"
+              className="rounded-[10px] p-4 hover-lift flex flex-col justify-between h-[128px]"
               style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.14)" }}
             >
-              <div style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.label}</div>
-              <div className="mt-2 text-2xl font-bold tabular-nums" style={{ color: s.tone, fontFamily: SANS, letterSpacing: "-0.01em" }}>{s.value}</div>
-              <div className="mt-3 h-0.5 rounded-full" style={{ background: `linear-gradient(90deg, ${s.tone}, transparent)` }} />
+              <div className="min-h-[1.9em] leading-[1.15]" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.label}</div>
+              <div>
+                <div className="text-2xl font-bold tabular-nums truncate" style={{ color: s.tone, fontFamily: SANS, letterSpacing: "-0.01em", lineHeight: 1 }}>{s.value}</div>
+                <div className="mt-3 h-0.5 rounded-full" style={{ background: `linear-gradient(90deg, ${s.tone}, transparent)` }} />
+              </div>
             </div>
           ))}
         </div>
