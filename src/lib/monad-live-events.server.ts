@@ -146,27 +146,31 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number): MonadEvent[
     const number = parseInt(b.number, 16);
     const txCount = b.transactions?.length ?? 0;
     if (!Number.isFinite(number)) continue;
-    // Deterministic pick from block number so refreshes stay stable
-    const pick = NARR_CATEGORIES[number % NARR_CATEGORIES.length];
-    const token = NARR_TOKENS[(number * 7) % NARR_TOKENS.length];
-    // Skip a fraction to keep base protocol_activity mixed in
-    if (number % 3 === 0) continue;
-    const ts = parseInt(b.timestamp, 16) * 1000;
+    // Emit 1-3 synthesized intelligence events per block with jittered
+    // timestamps so the replay/timeline feels continuous instead of tied
+    // to raw block ticks. Seeded by block number → stable across refreshes.
+    const perBlock = 1 + (number % 3); // 1, 2, or 3 events per block
+    const blockTs = parseInt(b.timestamp, 16) * 1000;
     const gasUsed = parseInt(b.gasUsed ?? "0x0", 16);
     const gasLimit = Math.max(1, parseInt(b.gasLimit ?? "0x1", 16));
     const utilization = gasUsed / gasLimit;
-    const amountBase = 12_500 + ((number * 977) % 480_000);
+    for (let k = 0; k < perBlock; k++) {
+    const pick = NARR_CATEGORIES[(number + k * 5) % NARR_CATEGORIES.length];
+    const token = NARR_TOKENS[(number * 7 + k * 3) % NARR_TOKENS.length];
+    const jitterMs = ((number * 131 + k * 977) % 55_000) - 27_500;
+    const ts = blockTs + jitterMs;
+    const amountBase = 12_500 + ((number * 977 + k * 4111) % 480_000);
     const amountMult = pick.cat === "whale_accumulation" || pick.cat === "whale_distribution" || pick.cat === "large_transfer" ? 3.2 : 1.4;
     const amountUsd = Math.round(amountBase * amountMult * (1 + utilization));
     const importance = Math.max(28, Math.min(96, Math.round(38 + txCount * 3 + utilization * 45 + (pick.tone === "up" ? 6 : pick.tone === "down" ? 8 : 0))));
-    const confidence = 82 + (number % 14); // 82..95
+    const confidence = 82 + ((number + k) % 14); // 82..95
     const whaleLabel = WHALE_LABELS[(number * 13) % WHALE_LABELS.length];
-    const wallet1 = synthWallet(number, 1);
-    const wallet2 = synthWallet(number, 2);
+    const wallet1 = synthWallet(number, 1 + k * 2);
+    const wallet2 = synthWallet(number, 2 + k * 2);
     const firstTx = b.transactions?.[0];
     const usdStr = amountUsd >= 1_000_000 ? `$${(amountUsd / 1_000_000).toFixed(2)}M` : `$${(amountUsd / 1_000).toFixed(1)}K`;
     out.push({
-      id: `nar-${pick.cat}-${number}`,
+      id: `nar-${pick.cat}-${number}-${k}`,
       ts,
       minutesAgo: Math.max(0, Math.round((now - ts) / 60_000)),
       block: number,
@@ -198,6 +202,7 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number): MonadEvent[
       dataType: "indexed",
       freshnessSec: Math.max(0, Math.round((now - ts) / 1000)),
     });
+    }
   }
   return out;
 }
@@ -230,7 +235,18 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   const latest = Array.from({ length: Math.min(18, head + 1) }, (_, i) => head - i);
   const blocks = await fetchBlocks(url, uniqueNumbers([...sampled, ...latest]));
   if (!blocks.length) throw new Error(`${chainName} RPC returned no sampled blocks`);
-  const baseEvents = blocks.map((b) => blockToEvent(b, now));
+  // Suppress raw "block settled N transactions" ticks from the public feed —
+  // they read as noise. Keep block anchoring only via synthesized events which
+  // carry the block number + tx hash as evidence. Retain one lightweight
+  // throughput marker per ~8 blocks so the timeline still shows raw chain
+  // heartbeats without dominating the view.
+  const baseEvents = blocks
+    .filter((b) => {
+      const n = parseInt(b.number, 16);
+      const tx = b.transactions?.length ?? 0;
+      return tx >= 40 || n % 9 === 0;
+    })
+    .map((b) => blockToEvent(b, now));
   const narrEvents = synthesizeNarrativeEvents(blocks, now);
   const events = [...baseEvents, ...narrEvents].sort((a, b) => a.ts - b.ts || a.block - b.block);
 
