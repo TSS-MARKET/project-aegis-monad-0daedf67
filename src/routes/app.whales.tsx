@@ -83,7 +83,9 @@ function WhalesPage() {
         seen.set(k, { ...w, count: 1 });
       }
     }
-    return Array.from(seen.values()).sort((a, b) => a.minutesAgo - b.minutesAgo);
+    return Array.from(seen.values())
+      .filter((w) => w.amountUsd > 0)
+      .sort((a, b) => a.minutesAgo - b.minutesAgo);
   }, [events]);
   const [expanded, setExpanded] = useState(false);
   const visibleWhales = expanded ? whales : whales.slice(0, 6);
