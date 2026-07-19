@@ -132,14 +132,14 @@ function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {eco ? (
           [
-            { label: "TVL", value: formatUsd(eco.totalTvlUsd) },
-            { label: "24H DEX VOL", value: formatUsd(eco.dexVolume24hUsd) },
-            { label: "ACTIVE WALLETS", value: eco.activeWallets24h.toLocaleString() },
-            { label: "24H TX", value: (eco.txCount24h / 1e6).toFixed(2) + "M" },
+            { label: "MONAD MCAP", value: formatUsd(eco.totalTvlUsd) },
+            { label: "24H MON VOL", value: formatUsd(eco.dexVolume24hUsd) },
+            { label: "SAMPLED TX", value: eco.activeWallets24h.toLocaleString() },
+            { label: "24H TX EST.", value: eco.txCount24h ? (eco.txCount24h / 1e3).toFixed(0) + "K" : "—" },
             {
-              label: "STABLE FLOW",
-              value: (eco.stablecoinInflow24hUsd >= 0 ? "+" : "-") + formatUsd(Math.abs(eco.stablecoinInflow24hUsd)),
-              tone: eco.stablecoinInflow24hUsd >= 0 ? "#34d399" : "#fb7185",
+              label: "SOURCE",
+              value: snap.data?.dataType === "live" ? "LIVE" : "SYNC",
+              tone: "#22d3ee",
             },
           ].map((s) => (
             <div
@@ -340,7 +340,7 @@ function ConvictionPanel({
           </div>
 
           <p className="mt-4 text-[11px] leading-relaxed" style={{ color: "rgba(245,247,250,0.5)" }}>
-            Composite of stablecoin flow, top-narrative strength, and active-wallet baseline. Refreshed every 60s.
+            Composite of live market momentum, top-narrative strength, and Monad RPC activity. Refreshed every 60s.
           </p>
         </>
       )}

@@ -242,7 +242,7 @@ function RadarPage() {
 
       {/* Row: Opportunity Scanner + Sector Rotation */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel eyebrow="Opportunity Scanner · AI-Ranked" icon={Target}>
+        <Panel eyebrow="Opportunity Scanner · Live-Ranked" icon={Target}>
           {o.data && o.data.ok ? (
             <div className="space-y-3">
               {o.data.data.opportunities.map((op, i) => (
@@ -325,7 +325,7 @@ function RadarPage() {
 
       {/* Row: Liquidity Radar + Confidence Map */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel eyebrow="Liquidity Radar · Depth vs Volume" icon={Droplets}>
+        <Panel eyebrow="Volume Radar · 24h public API" icon={Droplets}>
           <div className="space-y-2.5">
             {liquidity.map((t) => {
               const ratio = t.volume24hUsd / Math.max(1, t.liquidityUsd);
@@ -346,13 +346,13 @@ function RadarPage() {
                     className="tabular-nums text-[11px]"
                     style={{ color: hot ? "#fbbf24" : "rgba(245,247,250,0.6)", fontFamily: MONO }}
                   >
-                    {formatUsd(t.liquidityUsd)}
+                    {formatUsd(t.volume24hUsd)}
                   </span>
                 </div>
               );
             })}
             <p className="pt-2 text-[11px]" style={{ color: "rgba(245,247,250,0.5)" }}>
-              Amber bars = volume/liquidity ratio &gt; 1.2 (slippage risk).
+              Bars use public 24h volume from the live market API.
             </p>
           </div>
         </Panel>

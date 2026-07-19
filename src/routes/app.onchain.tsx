@@ -195,7 +195,7 @@ function OnChainPage() {
             className="cta-cyan rounded-[6px] px-4 py-2.5"
             style={{ fontFamily: "var(--font-display)", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase" }}
           >
-            {connecting ? "Connecting…" : "Connect Wallet"}
+            {connecting ? "Connecting…" : "Connect"}
           </button>
         </div>
       )}

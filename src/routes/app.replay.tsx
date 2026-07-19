@@ -187,8 +187,8 @@ function ReplayPage() {
             Replay the <em style={{ color: "#22d3ee" }}>Chain</em>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Scrub through the last {hours} hour{hours === 1 ? "" : "s"} of Monad. Every event carries evidence — tx, block,
-            wallets, and why it matters. Curated demo dataset, live-swappable.
+            Scrub through live Monad RPC block samples from the last {hours} hour{hours === 1 ? "" : "s"}. Empty blocks stay empty;
+            active blocks show their real transaction count, block number, gas, and first tx when available.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -205,7 +205,7 @@ function ReplayPage() {
               color: "rgba(245,247,250,0.6)",
             }}
           >
-            {events.length} events · curated
+            {events.length} live blocks · RPC
           </span>
         </div>
       </header>
@@ -413,7 +413,7 @@ function ReplayPage() {
             ))}
             {!filtered.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
-                {revealed.length ? "No events match this filter yet." : "Press play or scrub to reveal events."}
+                {revealed.length ? "No live blocks match this filter yet." : "Press play or scrub to reveal live block samples."}
               </div>
             )}
           </div>
@@ -486,7 +486,7 @@ function Inspector({ e }: { e: MonadEvent }) {
               {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.4)", fontFamily: MONO }}>
-              curated · {fmtAgo(e.minutesAgo)}
+              live RPC · {fmtAgo(e.minutesAgo)}
             </span>
           </div>
           <h2 className="mt-1.5" style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", lineHeight: 1.15 }}>

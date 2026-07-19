@@ -7,7 +7,7 @@
 // so the UI (and Ask Aegis) can prove the setup, not just describe it.
 // ============================================================================
 
-import { getMarketState, type MonadToken } from "./monad-data";
+import { getMarketState, type MarketState, type MonadToken } from "./monad-data";
 import { getMonadEvents, type MonadEvent } from "./monad-events";
 
 export type OpportunitySetup =
@@ -42,7 +42,7 @@ export type Opportunity = {
   risks: string[];
   evidence: MonadEvent[]; // top 3 grounding events
   invalidatesIf: string;
-  dataType: "curated";
+  dataType: "live" | "fallback";
 };
 
 // ---------------------------------------------------------------------------
@@ -263,6 +263,10 @@ function invalidationFor(t: MonadToken, setup: OpportunitySetup): string {
 export function computeOpportunities(now = Date.now(), limit = 6): Opportunity[] {
   const state = getMarketState(now);
   const events = getMonadEvents({ now, windowMs: 6 * 60 * 60 * 1000, limit: 200 });
+  return computeOpportunitiesFrom(state, events, now, limit);
+}
+
+export function computeOpportunitiesFrom(state: MarketState, events: MonadEvent[], now = Date.now(), limit = 6): Opportunity[] {
   const narrativeByName = new Map(state.narratives.map((n) => [n.name, n.strength]));
 
   const candidates = state.tokens.filter(
@@ -291,7 +295,7 @@ export function computeOpportunities(now = Date.now(), limit = 6): Opportunity[]
       reasoning: components.map((c) => `${c.label}: ${c.raw} (+${Math.round(c.value * c.weight)} of ${c.weight})`),
       evidence: sig.evidence,
       invalidatesIf: invalidationFor(t, setup),
-      dataType: "curated" as const,
+      dataType: state.dataType === "live" ? ("live" as const) : ("fallback" as const),
     };
   });
 

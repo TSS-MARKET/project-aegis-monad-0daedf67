@@ -136,7 +136,7 @@ function TimelinePage() {
             Intelligence <em style={{ color: "#22d3ee" }}>Timeline</em>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Ranked by impact, confidence, evidence, unusualness, and recency. Every event traces back to a transaction.
+            Ranked by impact, confidence, evidence, unusualness, and recency. Every item comes from live Monad RPC blocks.
           </p>
         </div>
 
@@ -312,7 +312,7 @@ function Inspector({ e }: { e: MonadEvent }) {
               {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.4)", fontFamily: MONO }}>
-              curated · {fmtAgo(e.minutesAgo)} ago
+              live RPC · {fmtAgo(e.minutesAgo)} ago
             </span>
           </div>
           <h2 className="mt-1.5" style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", lineHeight: 1.15 }}>

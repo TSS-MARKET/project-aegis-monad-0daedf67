@@ -21,7 +21,9 @@ import { FloatingChat } from "@/components/aegis/floating-chat";
 import { DemoModeButton } from "@/components/aegis/demo-mode";
 import { WalletGuardian } from "@/components/aegis/wallet-guardian";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
-import { useEffect, useState } from "react";
+import { getMarketSnapshot } from "@/lib/intelligence.functions";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute("/")({ component: Landing });
 
@@ -75,11 +77,9 @@ function ProofRow({ Icon, label, value, accent }: { Icon: LucideIcon; label: str
 }
 
 function Landing() {
-  const [state, setState] = useState(() => getMarketState());
-  useEffect(() => {
-    const id = setInterval(() => setState(getMarketState()), 60_000);
-    return () => clearInterval(id);
-  }, []);
+  const marketFn = useServerFn(getMarketSnapshot);
+  const market = useQuery({ queryKey: ["landing-market"], queryFn: () => marketFn(), refetchInterval: 60_000, staleTime: 45_000 });
+  const state = market.data ?? getMarketState();
   const eco = state.ecosystem;
   const monadTokens = state.tokens.filter((t) => t.chain === "Monad");
   const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
@@ -99,17 +99,8 @@ function Landing() {
 
       <header className="relative mx-auto flex max-w-[1560px] items-center justify-between px-6 md:px-10 py-3 md:py-4">
         <AegisLogo />
-        <nav
-          className="hidden md:flex items-center gap-8 text-[0.72rem] uppercase tracking-[0.14em] text-muted-foreground"
-          style={{ fontFamily: MONO }}
-        >
-          <a href="#proof" className="hover:text-foreground transition-colors">Proof</a>
-          <a href="#capabilities" className="hover:text-foreground transition-colors">Capabilities</a>
-          <a href="#pulse" className="hover:text-foreground transition-colors">Pulse</a>
-          <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
-        </nav>
         <div className="flex items-center gap-3">
-          <div className="hidden sm:block"><WalletConnectButton compact /></div>
+          <WalletConnectButton compact />
         </div>
       </header>
 
@@ -214,9 +205,8 @@ function Landing() {
               margin: 0,
             }}
           >
-            Monad settles 10,000 transactions every second with sub second finality. No human can read that firehose. Aegis
-            can. It compresses the entire chain into a plain English brief, ranks the real opportunities, and cites the exact
-            blocks and wallets behind every claim. Grounded in on chain evidence. Never vibes.
+              Aegis reads live Monad blocks and public market APIs, then compresses the firehose into plain English: prices,
+              block samples, opportunity ranks, and evidence links. Grounded in on chain proof. Never vibes.
           </p>
 
           <div className="gl-hero__reveal flex flex-wrap items-center gap-3.5 pt-1" style={{ animationDelay: "440ms" }}>
@@ -547,8 +537,8 @@ function Landing() {
         {/* Big-number strip — different card shape than pulse strip */}
         <div className="mt-14 grid gap-3 md:grid-cols-4">
           {[
-            { k: "10,000", v: "Monad TPS read live", tone: "#22d3ee" },
-            { k: "<1s", v: "chain finality", tone: "#6ee7b7" },
+            { k: state.dataType === "live" ? "LIVE" : "SYNC", v: "Monad RPC + prices", tone: "#22d3ee" },
+            { k: eco.txCount24h ? (eco.txCount24h / 1000).toFixed(0) + "K" : "—", v: "24h tx estimate", tone: "#6ee7b7" },
             { k: "6", v: "flagship surfaces", tone: "#c4b5fd" },
             { k: "100%", v: "answers cited to evidence", tone: "#fcd34d" },
           ].map((m, i) => (
@@ -574,7 +564,7 @@ function Landing() {
             </h2>
             <div className="flex items-center gap-3" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
               <span className="gl-pulse-dot h-1.5 w-1.5 rounded-full" style={{ background: "#6ee7b7" }} />
-              tick · 60s · block {(21_530_412 + Math.floor(Date.now()/12000)%1000).toLocaleString()}
+              tick · 60s · {state.source ?? "live RPC"}
             </div>
           </div>
         </div>
@@ -583,10 +573,10 @@ function Landing() {
         <div className="rounded-[10px] p-1" style={{ background: "linear-gradient(135deg, rgba(34,211,238,0.25), rgba(110,231,183,0.15) 50%, transparent)" }}>
         <div className="rounded-[9px] grid grid-cols-2 md:grid-cols-4" style={{ background: "#04070c" }}>
           {[
-            { label: "Monad TVL", value: formatUsd(eco.totalTvlUsd), tone: "#22d3ee", delta: "+3.2%" },
-            { label: "24h DEX Vol", value: formatUsd(eco.dexVolume24hUsd), tone: "#67e8f9", delta: "+8.1%" },
-            { label: "Active Wallets", value: eco.activeWallets24h.toLocaleString(), tone: "#6ee7b7", delta: "+2.4%" },
-            { label: "24h Tx", value: (eco.txCount24h / 1_000_000).toFixed(2) + "M", tone: "#c4b5fd", delta: "+11.7%" },
+            { label: "Monad MCap", value: formatUsd(eco.totalTvlUsd), tone: "#22d3ee", delta: state.dataType === "live" ? "LIVE" : "SYNC" },
+            { label: "24h MON Vol", value: formatUsd(eco.dexVolume24hUsd), tone: "#67e8f9", delta: "API" },
+            { label: "Sampled Tx", value: eco.activeWallets24h.toLocaleString(), tone: "#6ee7b7", delta: "RPC" },
+            { label: "24h Tx Est.", value: eco.txCount24h ? (eco.txCount24h / 1_000).toFixed(0) + "K" : "—", tone: "#c4b5fd", delta: "RPC" },
           ].map((s, i) => (
             <div key={s.label} className="relative p-5 flex flex-col justify-between h-[140px]" style={{ borderRight: i<3 ? "1px solid rgba(34,211,238,0.08)" : "none" }}>
               <div className="flex items-center justify-between">
