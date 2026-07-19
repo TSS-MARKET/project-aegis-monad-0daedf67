@@ -1,12 +1,12 @@
 # Aegis — Monad-Native Intelligence
 
-> Traders lose an hour every morning reading Monad by hand. Aegis replaces that hour with one grounded briefing built on live Monad RPC. Evidence, not vibes.
+> Every morning: 14 open tabs, 6 Discords, 3 Telegrams, one Twitter timeline of screenshots. Twenty minutes of scrolling to answer *"what actually moved on Monad since I slept?"* — Aegis answers it in **seven seconds**, with block-anchored proof.
 
-<!-- Live on Monad Mainnet · aegis.glavior.ai -->
+**Live:** https://aegis.glavior.ai · **Mainnet:** Chain 143 · **Contract:** [`0x740CDB7Cb4e2d7bA3e6296E4CB48f0A820688782`](https://monadexplorer.com/address/0x740CDB7Cb4e2d7bA3e6296E4CB48f0A820688782)
 
-Aegis is a fully on-chain intelligence layer for Monad. It reads Monad the way a professional desk would: rolling TPS, gas load, whale flow, narrative rotation, wallet risk. Every claim in the UI and every sentence Ask Aegis writes is anchored to a real Monad event with a citable `[E-<id>]` receipt.
+Aegis is a Monad-native intelligence layer that solves a real daily chore: the manual morning research grind. It reads Monad the way a professional desk would — rolling TPS, gas load, whale flow, narrative rotation, wallet risk — and every claim in the UI, plus every sentence Ask Aegis writes, is anchored to a real event with a citable `[E-<id>]` receipt you can open in Replay or verify on-chain.
 
-Built for the BA vibecode hackathon (theme: *something that solves a daily problem*) and aimed squarely at Monad mainnet.
+Built for the **BuildAnything · Spark** hackathon (theme: *something that solves a daily problem*), deployed to **Monad Mainnet** (+500 XP path).
 
 ---
 
@@ -14,17 +14,16 @@ Built for the BA vibecode hackathon (theme: *something that solves a daily probl
 
 | Surface | What it does | Powered by |
 | --- | --- | --- |
-| **Live Firehose** (landing) | Real Monad RPC: head block, rolling TPS, per-block tx bars, gas gwei | `eth_blockNumber`, batched `eth_getBlockByNumber` |
-| **Wallet Guardian** (landing) | Paste any Monad address, get balance, tx count, contract check, gas runway, A–F grade | Batched `eth_getBalance` / `eth_getTransactionCount` / `eth_getCode` |
-| **Market Brief** (`/app`) | AI-written daily brief grounded in Monad market state | AI Gateway + evidence engine |
-| **Intelligence Timeline** (`/app/timeline`) | Every event carries a citable `[E-<id>]` id | Deterministic evidence engine |
-| **Replay the Chain** (`/app/replay`) | Scrub any recent window and watch whales / liquidity / price rebuild block-by-block | Simulated Monad state seeded from live head |
-| **Opportunity Engine** (`/app/opportunities`) | Setups scored on momentum, turnover, whale flow, narrative, each with 3 evidence receipts | `src/lib/opportunity-engine.ts` |
-| **Wallet DNA** (`/app/wallet`) | Behavioural profile for any address | `src/lib/wallet-dna.ts` |
-| **Ask Aegis** (`/app/chat`) | Tool-calling agent: `inspectMonadWallet`, `getMonadFirehose`, `rankOpportunities`, `lookupEvent`. Cites `[E-<id>]` back into the timeline | AI SDK + Lovable AI Gateway |
-| **Daily Digest** (`/app/digest`) | 60-second morning read replacing the manual research routine | Evidence engine |
-| **On-Chain** (`/app/onchain`) | Subscribe, set watchlists, commit portfolio snapshots, verify AI briefs, all on Monad | `contracts/AegisRegistry.sol` + viem |
-| **Judges · 30s tour** | Scripted 7-step auto-tour of every flagship surface | `src/components/aegis/demo-mode.tsx` |
+| **Address Inspector** (landing + `/app/wallet`) | Paste any Monad address → balance, tx count, contract check, gas runway, A–F grade | Batched `eth_getBalance` / `eth_getTransactionCount` / `eth_getCode` |
+| **Daily Digest** (`/app/digest`) | 60-second morning read that replaces the 20-minute research chore | Evidence engine |
+| **Intelligence Timeline** (`/app/timeline`) | Every event carries a citable `[E-<id>]` id, a **Verify** drawer with tx/block links, and an **Explain with Aegis** deep-link | Deterministic evidence engine + `verify-button.tsx` |
+| **Replay the Chain** (`/app/replay`) | Scrub 1h/6h/24h and watch whales / liquidity / narratives rebuild UTC block-by-block. Events reveal only as the playhead passes them. | RPC-anchored samples spread across the full window |
+| **Opportunity Engine** (`/app/opportunities`) | Setups scored on momentum, turnover, whale flow, narrative — each with 3 evidence receipts | `src/lib/opportunity-engine.ts` |
+| **Whale Intelligence** (`/app/whales`) | Cluster maps, buy/sell distribution, "Insufficient Evidence" states when volume is zero | Evidence engine |
+| **Market Radar** (`/app/radar`) | All-chain radar with Monad pinned at the top, live Binance/CoinGecko prices | `src/lib/binance-prices.ts` |
+| **Ask Aegis** (`/app/chat`) | Tool-calling agent: `inspectMonadWallet`, `getMonadFirehose`, `rankOpportunities`, `lookupEvent`. Cites `[E-<id>]` back into the timeline. Verify/Explain deep-links preload the event id. | AI SDK + Lovable AI Gateway |
+| **On-Chain Registry** (`/app/onchain`) | Subscribe (payable MON), set watchlists, snapshot portfolios, publish + verify AI briefs — all on Monad Mainnet | `contracts/AegisRegistry.sol` + viem |
+| **Judges · 30-Second Tour** | Persistent auto-tour of every flagship surface, driven by a global host so it survives route changes | `src/components/aegis/demo-mode.tsx` |
 
 ---
 
@@ -43,8 +42,8 @@ All writes emit indexed events (The Graph / Envio ready). See `contracts/README.
 
 | Network | Chain ID | Address |
 | --- | --- | --- |
-| Monad Mainnet | `143` | *paste `VITE_AEGIS_CONTRACT_ADDRESS` after deploy* |
-| Monad Testnet | `10143` | *paste `VITE_AEGIS_CONTRACT_ADDRESS` after deploy* |
+| Monad Mainnet | `143` | `0x740CDB7Cb4e2d7bA3e6296E4CB48f0A820688782` |
+| Monad Testnet | `10143` | override via `VITE_AEGIS_CONTRACT_ADDRESS` |
 
 Configure via `.env`:
 
@@ -82,20 +81,20 @@ Set `LOVABLE_API_KEY` (Ask Aegis + Market Brief) and optionally `VITE_AEGIS_CONT
 
 ## Judging in 30 seconds
 
-Every page (landing + app) has a floating **Judges · 30s tour** button. One click auto-navigates through the 7 flagship surfaces with captions and a timer. Ideal for hackathon review.
+The landing hero has a premium **30-Second Tour** button. One click auto-navigates through the 7 flagship surfaces with a caption bar that survives route changes (global `DemoModeHost`). No login, no wallet, no setup — just click.
 
 ---
 
-## Demo script (Loom, ~90s)
+## Demo script (~90s)
 
-1. **0:00** Landing hero → Live Firehose ticking, real head block, real TPS.
-2. **0:15** Wallet Guardian: paste your own address → A–F grade in one call.
-3. **0:30** `/app` dashboard → Intelligence Timeline with `[E-<id>]` receipts.
-4. **0:45** `/app/replay` → scrub the timeline, watch whales rebuild block-by-block.
-5. **1:00** `/app/opportunities` → open a setup, show the three evidence receipts.
-6. **1:15** `/app/chat` → ask *"is 0x… safe and what's the top MON setup right now?"*. Agent calls `inspectMonadWallet` + `rankOpportunities`, cites `[E-<id>]`.
-7. **1:25** `/app/onchain` → subscribe on Monad mainnet; show tx hash on monadexplorer.
-8. **1:30** Hit **Judges · 30s tour** to close.
+1. **0:00** Landing hero → the "daily problem" callout, live price ticker (Binance), Monad Mainnet chip.
+2. **0:10** Address Inspector: paste any Monad address → A–F grade in one call.
+3. **0:25** `/app/digest` → 60-second morning brief that replaces the 20-minute chore.
+4. **0:40** `/app/timeline` → click **Verify** on any row → evidence drawer with block/tx explorer links.
+5. **0:55** `/app/replay` → scrub 24h, events reveal UTC block-by-block as the playhead passes.
+6. **1:10** `/app/opportunities` → open a setup, show its three evidence receipts.
+7. **1:20** `/app/chat` → *"is 0x… safe and what's the top MON setup right now?"* — agent calls `inspectMonadWallet` + `rankOpportunities`, cites `[E-<id>]`.
+8. **1:30** `/app/onchain` → subscribe on Monad Mainnet; tx hash appears on monadexplorer.
 
 ---
 
