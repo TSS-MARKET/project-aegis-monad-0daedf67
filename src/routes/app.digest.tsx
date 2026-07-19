@@ -59,7 +59,10 @@ function DigestPage() {
   const losers = [...monad].sort((a, b) => a.change24h - b.change24h).slice(0, 2);
 
   const whales = [...events]
-    .filter((e) => e.category === "whale_accumulation" || e.category === "whale_distribution")
+    // Only surface events with a real on-chain anchor (working explorer link).
+    // Synthetic pattern signals are hidden from the daily brief per user rule:
+    // digest = only real, verifiable data.
+    .filter((e) => e.isReal && (e.amountUsd ?? 0) > 0)
     .sort((a, b) => (b.amountUsd ?? 0) - (a.amountUsd ?? 0))
     .slice(0, 4);
 
@@ -143,16 +146,21 @@ function DigestPage() {
         <section className="rounded-[10px] p-5 md:p-6 backdrop-blur-xl hover-lift" style={{ border: "1px solid rgba(34,211,238,0.14)", background: "linear-gradient(180deg,rgba(10,18,28,0.7),rgba(4,10,16,0.7))" }}>
           <SectionTitle icon={Waves} label="Whales that mattered" />
           <ul className="space-y-2.5 mt-4">
-            {whales.length === 0 && <li className="text-sm text-muted-foreground">Quiet window. No whale flows above $250K.</li>}
+            {whales.length === 0 && <li className="text-sm text-muted-foreground">No verifiable large MON transfers in the last 24h window.</li>}
             {whales.map((e) => (
-              <li key={e.id} className="flex items-center justify-between gap-3 py-1.5" style={{ borderBottom: "1px solid rgba(34,211,238,0.06)" }}>
+              <li key={e.id} className="flex items-center justify-between gap-3 py-2" style={{ borderBottom: "1px solid rgba(34,211,238,0.06)" }}>
                 <div className="min-w-0">
                   <div style={{ fontFamily: SANS, fontSize: "0.88rem", color: "#f5f7fa", fontWeight: 600 }}>
-                    {e.asset?.symbol ?? "MON"} · <span style={{ color: e.category === "whale_accumulation" ? "#22d3ee" : "#f97316", fontWeight: 700 }}>{e.category === "whale_accumulation" ? "Accumulating" : "Distributing"}</span>
+                    {e.asset?.symbol ?? "MON"} · <span style={{ color: "#22d3ee", fontWeight: 700 }}>Transfer</span>
                   </div>
-                  <div style={{ fontFamily: MONO, fontSize: "0.68rem", color: "rgba(245,247,250,0.5)" }}>{e.minutesAgo}m ago · {e.wallets[0]?.label ?? "Anon whale"}</div>
+                  <div style={{ fontFamily: MONO, fontSize: "0.66rem", color: "rgba(245,247,250,0.5)" }}>
+                    {e.minutesAgo}m ago · block #{e.block.toLocaleString()}
+                  </div>
                 </div>
-                <div style={{ fontFamily: MONO, fontSize: "0.82rem", color: "#f5f7fa", fontWeight: 700 }}>{formatUsd(e.amountUsd ?? 0)}</div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div style={{ fontFamily: MONO, fontSize: "0.82rem", color: "#f5f7fa", fontWeight: 700 }}>{formatUsd(e.amountUsd ?? 0)}</div>
+                  <VerifyButton event={e} />
+                </div>
               </li>
             ))}
           </ul>
