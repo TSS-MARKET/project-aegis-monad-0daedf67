@@ -43,7 +43,24 @@ function WhalesPage() {
   const fn = useServerFn(getEventFeed);
   const q = useQuery({ queryKey: ["whale-live-blocks"], queryFn: () => fn({ data: { windowHours: 1, limit: 60 } }), refetchInterval: 60_000 });
   const events: MonadEvent[] = q.data?.events ?? [];
-  const whales: { wallet: string; action: "accumulate" | "distribute" | "rotate"; token: string; amountUsd: number; minutesAgo: number }[] = [];
+  // Derive live whale attribution from the enriched Monad event stream
+  // (whale_accumulation / whale_distribution / large_transfer / capital_rotation).
+  const whales = events
+    .filter((e) => e.category === "whale_accumulation" || e.category === "whale_distribution" || e.category === "large_transfer" || e.category === "capital_rotation")
+    .slice(0, 24)
+    .map((e) => ({
+      wallet: `${e.wallets[0]?.address.slice(0, 8) ?? "0x000000"}…${e.wallets[0]?.address.slice(-4) ?? "0000"}`,
+      label: e.wallets[0]?.label ?? "actor",
+      action: (e.category === "whale_accumulation"
+        ? "accumulate"
+        : e.category === "whale_distribution"
+        ? "distribute"
+        : "rotate") as "accumulate" | "distribute" | "rotate",
+      token: e.asset?.symbol ?? "MON",
+      amountUsd: e.amountUsd ?? 0,
+      minutesAgo: e.minutesAgo,
+      block: e.block,
+    }));
   const txCounts = events.map((e) => Number(e.evidence.find((x) => x.id === "tx-count")?.value.replace(/,/g, "") ?? 0));
   const totalTx = txCounts.reduce((s, n) => s + n, 0);
   const activeBlocks = txCounts.filter((n) => n > 0).length;
