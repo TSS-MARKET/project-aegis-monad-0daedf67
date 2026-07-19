@@ -24,6 +24,16 @@ import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { getMarketSnapshot } from "@/lib/intelligence.functions";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useSyncExternalStore } from "react";
+import { fetchBinancePrices, getBinanceCache, subscribeBinance, type BinanceQuote } from "@/lib/binance-prices";
+
+function useBinancePrices(): Record<string, BinanceQuote> {
+  return useSyncExternalStore(
+    (fn) => subscribeBinance(fn),
+    () => getBinanceCache(),
+    () => ({}),
+  );
+}
 
 export const Route = createFileRoute("/")({ component: Landing });
 
@@ -84,6 +94,21 @@ function Landing() {
   const eco = state.ecosystem;
   const monadTokens = state.tokens.filter((t) => t.chain === "Monad");
   const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
+  const livePrices = useBinancePrices();
+  // Ensure a fetch is kicked off on mount (safe if already running)
+  useQuery({ queryKey: ["binance-prices"], queryFn: () => fetchBinancePrices(true), refetchInterval: 20_000, staleTime: 15_000 });
+  const fmtLive = (sym: string, fallback: number, fallbackChange: number) => {
+    const q = livePrices[sym];
+    const price = q?.price ?? fallback;
+    const change = q?.change24h ?? fallbackChange;
+    const priceStr = price >= 1000
+      ? `$${price.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+      : price >= 1
+        ? `$${price.toFixed(2)}`
+        : `$${price.toFixed(price < 0.0001 ? 8 : 4)}`;
+    const changeStr = `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
+    return [priceStr, changeStr] as [string, string];
+  };
   return (
     <div className="min-h-screen relative overflow-x-clip" style={{ background: "#000" }}>
       {/* Ambient — pure obsidian, no grid overlay (matches Glavior reference) */}
@@ -109,7 +134,7 @@ function Landing() {
       <section
         className="relative mx-auto w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start"
         style={{
-          minHeight: "88vh",
+          minHeight: "78vh",
           maxWidth: "min(1560px, 96vw)",
           paddingLeft: "clamp(0.75rem, 4vw, 3rem)",
           paddingRight: "clamp(0.75rem, 4vw, 3rem)",
@@ -348,11 +373,17 @@ function Landing() {
               {[...Array(2)].map((_, dup) => (
                 <div key={dup} className="flex items-center gap-12 shrink-0" style={{ fontFamily: MONO, fontSize: "0.72rem", letterSpacing: "0.06em", color: "rgba(245,247,250,0.85)" }}>
                   {[
-                    ["MON", "$4.82", "+6.4%"],
-                    ["ETH", "$4,120", "+1.8%"],
-                    ["BTC", "$118,240", "+0.6%"],
-                    ["SOL", "$284", "+3.1%"],
-                    ...monadTokens.slice(0, 5).map((t) => [t.symbol, `$${t.priceUsd.toFixed(t.priceUsd < 1 ? 4 : 2)}`, `${t.change24h >= 0 ? "+" : ""}${t.change24h.toFixed(1)}%`] as [string, string, string]),
+                    ["MON", ...fmtLive("MON", 4.82, 6.4)] as [string, string, string],
+                    ["BTC", ...fmtLive("BTC", 118240, 0.6)] as [string, string, string],
+                    ["ETH", ...fmtLive("ETH", 4120, 1.8)] as [string, string, string],
+                    ["SOL", ...fmtLive("SOL", 284, 3.1)] as [string, string, string],
+                    ["BNB", ...fmtLive("BNB", 712, 0.4)] as [string, string, string],
+                    ["XRP", ...fmtLive("XRP", 2.28, 0.9)] as [string, string, string],
+                    ["DOGE", ...fmtLive("DOGE", 0.38, 1.1)] as [string, string, string],
+                    ["AVAX", ...fmtLive("AVAX", 42.1, 1.5)] as [string, string, string],
+                    ["LINK", ...fmtLive("LINK", 22.4, 0.8)] as [string, string, string],
+                    ["SUI", ...fmtLive("SUI", 4.28, 2.1)] as [string, string, string],
+                    ["PEPE", ...fmtLive("PEPE", 0.0000213, 3.2)] as [string, string, string],
                     ["MONAD TPS", "10,000", "SUB-SEC FINALITY"],
                   ].map((row, i) => (
                     <span key={`${dup}-${i}`} className="inline-flex items-center gap-2 whitespace-nowrap">
@@ -545,10 +576,10 @@ function Landing() {
         {/* Big-number strip — different card shape than pulse strip */}
         <div className="mt-14 grid gap-3 md:grid-cols-4">
           {[
-            { k: "10,000", v: "peak TPS on Monad", tone: "#22d3ee" },
-            { k: "0.5s", v: "block finality", tone: "#67e8f9" },
-            { k: "$0.001", v: "gas per transaction", tone: "#6ee7b7" },
-            { k: "100%", v: "answers cited to evidence", tone: "#fcd34d" },
+            { k: "6", v: "flagship intelligence surfaces", tone: "#22d3ee" },
+            { k: "100%", v: "AI answers cited to evidence", tone: "#67e8f9" },
+            { k: "8s", v: "live RPC refresh cadence", tone: "#6ee7b7" },
+            { k: "24h", v: "on-chain replay window", tone: "#fcd34d" },
           ].map((m, i) => (
             <div key={m.v} className="gl-bignum-card rounded-[10px] p-5 flex flex-col justify-between h-[140px] relative overflow-hidden">
               <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{"\n"}</span>

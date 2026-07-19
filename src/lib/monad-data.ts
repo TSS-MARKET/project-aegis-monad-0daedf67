@@ -1,5 +1,6 @@
 // Local fallback market state. Production screens use src/lib/monad-market.server.ts
 // for live CoinGecko + Monad RPC data; keep this file only for offline rendering.
+import { getBinanceCache } from "./binance-prices";
 
 export type MonadToken = {
   symbol: string;
@@ -106,10 +107,22 @@ function seeded(seed: number) {
 export function getMarketState(now = Date.now()): MarketState {
   const bucket = Math.floor(now / 120_000);
   const rand = seeded(bucket);
+  const live = getBinanceCache();
+  const monLive = live["MON"]?.price;
   const tokens: MonadToken[] = SEED_TOKENS.map((t) => {
     const drift = (rand() - 0.45) * t.drift;
-    const priceUsd = +(t.basePrice * (1 + drift)).toFixed(t.basePrice < 0.01 ? 8 : t.basePrice < 1 ? 4 : 2);
-    const change24h = +(drift * 100).toFixed(2);
+    // Real live price if Binance has it; MON siblings (wMON/sMON/iMON/rMON) mirror MON.
+    const monSibling = ["wMON", "sMON", "iMON", "rMON"].includes(t.symbol);
+    const liveQuote = live[t.symbol];
+    const basePrice =
+      liveQuote?.price ??
+      (monSibling && monLive ? monLive : t.basePrice);
+    const priceUsd = liveQuote
+      ? +liveQuote.price.toFixed(liveQuote.price < 0.0001 ? 10 : liveQuote.price < 0.01 ? 8 : liveQuote.price < 1 ? 4 : 2)
+      : +(basePrice * (1 + drift)).toFixed(basePrice < 0.01 ? 8 : basePrice < 1 ? 4 : 2);
+    const change24h = liveQuote
+      ? +liveQuote.change24h.toFixed(2)
+      : +(drift * 100).toFixed(2);
     const volume24hUsd = Math.round(t.volFloor + rand() * (t.volCeil - t.volFloor));
     const liquidityUsd = Math.round(volume24hUsd * (0.4 + rand() * 0.9));
     const marketCapUsd = Math.round(priceUsd * (t.holders * (200 + rand() * 800)));
