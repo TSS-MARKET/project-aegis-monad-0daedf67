@@ -133,21 +133,22 @@ function DashboardPage() {
         {eco ? (
           [
             { label: "TVL", value: formatUsd(eco.totalTvlUsd) },
-            { label: "24h DEX Vol", value: formatUsd(eco.dexVolume24hUsd) },
-            { label: "Active Wallets", value: eco.activeWallets24h.toLocaleString() },
-            { label: "24h Tx", value: (eco.txCount24h / 1e6).toFixed(2) + "M" },
+            { label: "24H DEX VOL", value: formatUsd(eco.dexVolume24hUsd) },
+            { label: "ACTIVE WALLETS", value: eco.activeWallets24h.toLocaleString() },
+            { label: "24H TX", value: (eco.txCount24h / 1e6).toFixed(2) + "M" },
             {
-              label: "Stable Flow",
+              label: "STABLE FLOW",
               value: (eco.stablecoinInflow24hUsd >= 0 ? "+" : "-") + formatUsd(Math.abs(eco.stablecoinInflow24hUsd)),
               tone: eco.stablecoinInflow24hUsd >= 0 ? "#34d399" : "#fb7185",
             },
           ].map((s) => (
             <div
               key={s.label}
-              className="rounded-[10px] p-4 hover-lift"
+              className="rounded-[10px] p-4 hover-lift flex flex-col justify-between h-[104px]"
               style={{ background: PANEL_BG, border: BORDER }}
             >
               <div
+                className="leading-[1.15] min-h-[1.9em]"
                 style={{
                   fontFamily: MONO,
                   fontSize: "0.6rem",
@@ -159,15 +160,15 @@ function DashboardPage() {
                 {s.label}
               </div>
               <div
-                className="mt-1.5 tabular-nums"
-                style={{ color: s.tone ?? "#f5f7fa", fontSize: "1.3rem", fontWeight: 600, fontFamily: MONO }}
+                className="tabular-nums truncate"
+                style={{ color: s.tone ?? "#f5f7fa", fontSize: "1.35rem", lineHeight: 1, fontWeight: 700, fontFamily: MONO, letterSpacing: "-0.01em" }}
               >
                 {s.value}
               </div>
             </div>
           ))
         ) : (
-          Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-[10px]" />)
+          Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-[104px] rounded-[10px]" />)
         )}
       </div>
 

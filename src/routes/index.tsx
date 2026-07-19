@@ -13,6 +13,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Coffee, ShoppingCart, Send, Wallet, Bell, Zap } from "lucide-react";
+import { Rewind, Timer, Fingerprint, Sparkles, Gauge, Link2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
@@ -186,9 +187,9 @@ function Landing() {
               margin: 0,
             }}
           >
-            Monad ships 10,000 transactions a second. No human reads that. Aegis does — and hands you a plain-English brief on
-            what's moving, which whales are accumulating, and where the risk actually lives. Grounded in on-chain evidence.
-            Not vibes.
+            Monad settles 10,000 transactions every second with sub second finality. No human can read that firehose. Aegis
+            can. It compresses the entire chain into a plain English brief, ranks the real opportunities, and cites the exact
+            blocks and wallets behind every claim. Grounded in on chain evidence. Never vibes.
           </p>
 
           <div className="gl-hero__reveal flex flex-wrap items-center gap-3.5 pt-1" style={{ animationDelay: "440ms" }}>
@@ -389,10 +390,10 @@ function Landing() {
 
         <div className="grid gap-px md:grid-cols-4 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
           {[
-            { icon: Activity, title: "Market Brief", body: "AI-authored ecosystem summary. Sentiment, movers, narrative rotation — refreshed every 2 minutes." },
-            { icon: Compass, title: "Opportunities", body: "Grounded theses with confidence, catalyst, and risk. No 'to the moon' — only reasoning you can audit." },
-            { icon: Radar, title: "Whale Radar", body: "Cluster wallet activity into human-readable stories. Not a wall of hashes." },
-            { icon: MessageSquare, title: "Ask Aegis", body: "Chat with a Monad-native analyst. Every answer grounded in the live market state." },
+            { icon: Activity, title: "Market Brief", body: "AI authored ecosystem summary. Sentiment, movers and narrative rotation, refreshed every two minutes on live Monad state." },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across five signals with confidence, catalyst and invalidation price. Reasoning you can audit line by line." },
+            { icon: Radar, title: "Whale Radar", body: "Clusters Monad wallet flow into human readable stories. Not a wall of hashes, an actual narrative of who is moving what." },
+            { icon: MessageSquare, title: "Ask Aegis", body: "A Monad native analyst grounded in the live event stream. Every answer cites the exact evidence tag it is reasoning from." },
           ].map((f) => (
             <div
               key={f.title}
@@ -428,6 +429,52 @@ function Landing() {
         </div>
       </section>
 
+      {/* What Aegis Ships — glorify the built platform */}
+      <section id="ships" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
+        <div className="mb-10 max-w-3xl">
+          <div style={{ fontFamily: MONO, fontSize: "0.66rem", textTransform: "uppercase", letterSpacing: "0.16em", color: "rgba(245,247,250,0.55)" }}>
+            // WHAT AEGIS SHIPS
+          </div>
+          <h2 className="mt-2" style={{ fontFamily: SERIF, fontSize: "clamp(1.75rem,3.5vw,2.75rem)", color: "#f5f7fa", letterSpacing: "-0.02em", lineHeight: 1.08 }}>
+            An <em style={{ color: "#22d3ee" }}>evidence first</em> intelligence stack, native to Monad.
+          </h2>
+          <p className="mt-4" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.7)" }}>
+            Six flagship surfaces stitched into one product. Every claim is grounded in a real Monad block, transaction or
+            wallet cluster. Every AI answer cites the exact evidence tag it is reasoning from. Nothing is generated in the dark.
+          </p>
+        </div>
+        <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
+          {[
+            { icon: Rewind, title: "Replay the Chain", body: "Scrub the last 24 hours of Monad activity like a DVR. Every event opens an inspector that explains why it mattered, with the block, wallets and evidence attached." },
+            { icon: Timer, title: "Intelligence Timeline", body: "A newsroom style ranked feed of what actually happened on Monad in the last six hours. Deep link any moment straight into Ask Aegis for a grounded explanation." },
+            { icon: Fingerprint, title: "Wallet DNA", body: "Paste any Monad address and see its behavioral fingerprint. Regime, cohort, risk posture and an AI strategist read of how this wallet actually operates." },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across momentum, whale flow, narrative strength, price action and turnover. Every setup ships with a thesis, catalysts, risks and an invalidation level." },
+            { icon: Sparkles, title: "Ask Aegis, cited", body: "A Monad native analyst wired directly to the live event stream. Every answer must cite an [E-id] evidence tag that deep links back to the Timeline. No hallucinated markets." },
+            { icon: Link2, title: "Live on chain layer", body: "Real Monad wallet connect on mainnet 143 and testnet 10143. Header status polls Monad RPC every eight seconds so you always see the true block height and gas price." },
+          ].map((f) => (
+            <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
+              <f.icon className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" style={{ color: "#22d3ee" }} strokeWidth={1.75} />
+              <div className="mt-5" style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
+              <div className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>{f.body}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 grid gap-3 md:grid-cols-4">
+          {[
+            { k: "10,000", v: "Monad TPS the engine reads live" },
+            { k: "<1s", v: "Chain finality Aegis writes against" },
+            { k: "6", v: "Flagship intelligence surfaces" },
+            { k: "100%", v: "Answers cited to on chain evidence" },
+          ].map((m) => (
+            <div key={m.v} className="rounded-[10px] p-5 hover-lift flex flex-col justify-between h-[128px]" style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.22)" }}>
+              <div className="tabular-nums" style={{ fontFamily: SERIF, fontSize: "2.1rem", color: "#22d3ee", lineHeight: 1, letterSpacing: "-0.02em" }}>{m.k}</div>
+              <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)", lineHeight: 1.35 }}>{m.v}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Ecosystem Pulse — live data strip */}
       <section id="pulse" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
         <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
@@ -456,12 +503,14 @@ function Landing() {
           ].map((s) => (
             <div
               key={s.label}
-              className="rounded-[10px] p-4 hover-lift"
+              className="rounded-[10px] p-4 hover-lift flex flex-col justify-between h-[128px]"
               style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.14)" }}
             >
-              <div style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.label}</div>
-              <div className="mt-2 text-2xl font-bold tabular-nums" style={{ color: s.tone, fontFamily: SANS, letterSpacing: "-0.01em" }}>{s.value}</div>
-              <div className="mt-3 h-0.5 rounded-full" style={{ background: `linear-gradient(90deg, ${s.tone}, transparent)` }} />
+              <div className="min-h-[1.9em] leading-[1.15]" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.label}</div>
+              <div>
+                <div className="text-2xl font-bold tabular-nums truncate" style={{ color: s.tone, fontFamily: SANS, letterSpacing: "-0.01em", lineHeight: 1 }}>{s.value}</div>
+                <div className="mt-3 h-0.5 rounded-full" style={{ background: `linear-gradient(90deg, ${s.tone}, transparent)` }} />
+              </div>
             </div>
           ))}
         </div>
@@ -530,17 +579,17 @@ function Landing() {
           </h2>
           <p className="mt-3 max-w-2xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.6, color: "rgba(245,247,250,0.7)" }}>
             10,000 TPS. Sub-second finality. Fees under a hundredth of a cent. Monad is the first chain quick enough for coffee,
-            groceries, salaries and rent — not just trading. Aegis is the daily co-pilot that makes it usable by humans.
+            groceries, salaries and rent, not just trading. Aegis is the daily co pilot that makes it usable by humans.
           </p>
         </div>
         <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
           {[
-            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap-to-pay on Monad clears faster than Visa — Aegis previews the fee, the merchant, and a plain-English safety check before you sign." },
-            { icon: ShoppingCart, title: "Grocery run, on-chain", body: "Weekly spend tracked automatically. Aegis writes a Sunday summary: where your MON went, what saved you money, what to watch." },
-            { icon: Send, title: "Send money anywhere, instantly", body: "Global transfers in one block. Aegis translates addresses to human names, flags scam contracts, and simulates the exact amount received." },
-            { icon: Wallet, title: "Salary streaming", body: "Get paid by the second. Aegis auto-splits your paycheck into savings, bills and spending — no bank, no waiting three days." },
-            { icon: Bell, title: "Real-time alerts", body: "Rug pull on a token you hold? Whale dumping your bag? Aegis pings you before the price moves, in language your mom understands." },
-            { icon: Zap, title: "One-tap DeFi", body: "\"Aegis, park my paycheck at the best safe yield.\" It routes through vetted Monad protocols, shows the risk score, and executes." },
+            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap to pay on Monad clears faster than Visa. Aegis previews the fee, the merchant and a plain English safety check before you sign." },
+            { icon: ShoppingCart, title: "Grocery run, on chain", body: "Weekly spend tracked automatically. Aegis writes a Sunday summary of where your MON went, what saved you money and what to watch." },
+            { icon: Send, title: "Send money anywhere instantly", body: "Global transfers in one Monad block. Aegis translates addresses to human names, flags scam contracts and simulates the exact amount received." },
+            { icon: Wallet, title: "Salary streaming", body: "Get paid by the second on Monad. Aegis auto splits your paycheck into savings, bills and spending. No bank, no three day wait." },
+            { icon: Bell, title: "Real time alerts", body: "Rug pull on a token you hold. Whale dumping your bag. Aegis pings you before the price moves, in language anyone understands." },
+            { icon: Zap, title: "One tap DeFi", body: "Ask Aegis to park your paycheck at the best safe yield. It routes through vetted Monad protocols, shows the risk score and executes." },
           ].map((f) => (
             <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
               <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
@@ -580,18 +629,20 @@ function Landing() {
           </h2>
         </div>
         <p className="pt-2" style={{ fontFamily: SANS, fontSize: "1.05rem", lineHeight: 1.65, color: "rgba(245,247,250,0.72)" }}>
-          Ethereum priced you out. Solana broke. Monad is what came next — EVM-compatible, 10,000 TPS, sub-second finality,
-          gas cheaper than a SMS. It's the first blockchain that can carry the entire global economy: payments, payroll,
-          savings, markets — all in one place. Aegis is the AI layer that makes it feel like an app your grandmother could use.
+          Ethereum priced people out. Solana keeps breaking. Monad is what came next. Fully EVM compatible so every Solidity
+          contract runs unchanged, but built on a parallel execution engine that pushes 10,000 transactions per second with
+          sub second finality and fees measured in fractions of a cent. This is the first chain fast enough to carry the
+          real global economy. Payments, payroll, savings, markets and everyday commerce all on one settlement layer.
+          Aegis is the intelligence layer that turns that raw throughput into something a human can actually use.
         </p>
       </section>
 
       <footer
-        className="mx-auto max-w-[1560px] px-6 md:px-10 py-8 border-t border-[rgba(34,211,238,0.12)] flex justify-between"
+        className="mx-auto max-w-[1560px] px-6 md:px-10 py-8 border-t border-[rgba(34,211,238,0.12)] flex justify-between flex-wrap gap-3"
         style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}
       >
-        <span>Aegis · Monad Intelligence · Hackathon build</span>
-        <span>Not financial advice.</span>
+        <span>Aegis · Monad Intelligence Layer</span>
+        <span>Read only · Non custodial · Not financial advice</span>
       </footer>
       <FloatingChat />
     </div>
