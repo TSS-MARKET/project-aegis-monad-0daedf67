@@ -2,7 +2,7 @@
 
 One-shot deploy via **Remix** (fastest for hackathon):
 
-1. Open https://remix.ethereum.org, create `AegisRegistry.sol`, paste the source from this folder.
+1. Open https://remix.ethereum.org, create `AegisRegistry.sol`, paste the source from this folder..
 2. Compiler: Solidity `0.8.24`, EVM version `paris` (default), optimizer ON, 200 runs.
 3. In MetaMask, add the network:
    - **Monad Mainnet** — Chain ID `143`, RPC `https://rpc.monad.xyz`, Symbol `MON`, Explorer `https://monadexplorer.com`
