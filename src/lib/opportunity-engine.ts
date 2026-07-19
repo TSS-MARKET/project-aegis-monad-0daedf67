@@ -2,7 +2,7 @@
 // Aegis · Opportunity Engine
 // ----------------------------------------------------------------------------
 // Deterministic scorer that ranks Monad opportunities from real signals:
-// momentum, turnover, whale flow, narrative rotation, and event pressure.
+// momentum, turnover, live on-chain activity, narrative rotation, and event pressure.
 // Every candidate is anchored to concrete evidence events from the timeline
 // so the UI (and Ask Aegis) can prove the setup, not just describe it.
 // ============================================================================
@@ -165,7 +165,7 @@ function scoreToken(
     { label: "24h change", value: change01, raw: pct(t.change24h), weight: 15 },
     { label: "Turnover", value: turnover01, raw: `${turnover.toFixed(2)}x`, weight: 15 },
     {
-      label: "Whale flow",
+      label: "On-chain flow",
       value: flow01,
       raw: `${netFlow >= 0 ? "+" : "−"}${usd(Math.abs(netFlow))}`,
       weight: 25,
@@ -198,7 +198,7 @@ function riskFor(t: MonadToken, s: EventSignals): number {
 function catalystsFor(t: MonadToken, s: EventSignals): string[] {
   const out: string[] = [];
   if (s.buyPressureUsd > 250_000)
-    out.push(`Sustained accumulation — ${usd(s.buyPressureUsd)} in whale buys (6h)`);
+    out.push(`Sustained accumulation — ${usd(s.buyPressureUsd)} in observed inflow (6h)`);
   if (s.liquidityAddUsd > 100_000)
     out.push(`${usd(s.liquidityAddUsd)} liquidity added across DEX pools`);
   if (s.newWalletCount > 0) out.push(`Fresh cohort — ${s.newWalletCount} new-wallet waves observed`);
@@ -227,10 +227,10 @@ function risksFor(t: MonadToken, s: EventSignals): string[] {
 function thesisFor(t: MonadToken, setup: OpportunitySetup, s: EventSignals): string {
   const flowLine =
     s.buyPressureUsd > s.sellPressureUsd
-      ? `Net ${usd(s.buyPressureUsd - s.sellPressureUsd)} whale inflow`
+      ? `Net ${usd(s.buyPressureUsd - s.sellPressureUsd)} observed inflow`
       : s.sellPressureUsd > s.buyPressureUsd
-      ? `Net ${usd(s.sellPressureUsd - s.buyPressureUsd)} distribution`
-      : "Balanced whale flow";
+      ? `Net ${usd(s.sellPressureUsd - s.buyPressureUsd)} observed distribution`
+      : "Balanced on-chain flow";
   const price = `$${t.priceUsd < 1 ? t.priceUsd.toFixed(4) : t.priceUsd.toFixed(2)}`;
   switch (setup) {
     case "breakout":
