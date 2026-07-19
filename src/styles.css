@@ -690,7 +690,22 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gl-proof-row, .gl-stat-pod, .gl-ch06__row, .gl-ch06__row *, .gl-ch06__sub, .gl-manifesto-shine {
+  .gl-proof-row, .gl-stat-pod, .gl-ch06__row, .gl-ch06__row *, .gl-ch06__sub, .gl-manifesto-shine, .hover-lift, .gl-tile-hover {
     animation: none !important; transition: none !important; transform: none !important;
   }
+}
+
+/* Universal tile hover — subtle lift + cyan border glow.
+   Add className="gl-tile-hover" to any card/panel to opt in. */
+.gl-tile-hover {
+  transition: transform 320ms cubic-bezier(.22,.98,.24,1),
+              border-color 320ms ease,
+              box-shadow 320ms ease,
+              background-color 320ms ease;
+  will-change: transform;
+}
+.gl-tile-hover:hover {
+  transform: translateY(-3px);
+  border-color: rgba(34,211,238,0.55) !important;
+  box-shadow: 0 24px 60px -28px rgba(34,211,238,0.45), 0 0 0 1px rgba(34,211,238,0.18) inset;
 }
