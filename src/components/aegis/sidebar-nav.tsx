@@ -12,7 +12,7 @@ const items = [
   { to: "/app/opportunities", label: "Opportunities", icon: LineChart },
   { to: "/app/tokens", label: "Token Explorer", icon: LineChart },
   { to: "/app/whales", label: "Whale Intelligence", icon: Waves },
-  { to: "/app/wallet", label: "Wallet Intelligence", icon: Wallet },
+  { to: "/app/wallet", label: "Wallet DNA", icon: Wallet },
   { to: "/app/onchain", label: "On-Chain Layer", icon: Cpu },
   { to: "/app/chat", label: "Ask Aegis", icon: MessageSquare },
 ];
