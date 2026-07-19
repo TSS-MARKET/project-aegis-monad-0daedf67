@@ -579,7 +579,7 @@ function Landing() {
           </h2>
           <p className="mt-3 max-w-2xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.6, color: "rgba(245,247,250,0.7)" }}>
             10,000 TPS. Sub-second finality. Fees under a hundredth of a cent. Monad is the first chain quick enough for coffee,
-            groceries, salaries and rent — not just trading. Aegis is the daily co-pilot that makes it usable by humans.
+            groceries, salaries and rent, not just trading. Aegis is the daily co pilot that makes it usable by humans.
           </p>
         </div>
         <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
