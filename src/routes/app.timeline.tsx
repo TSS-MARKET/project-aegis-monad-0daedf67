@@ -23,7 +23,16 @@ import {
 } from "lucide-react";
 import type { MonadEvent, EventCategory } from "@/lib/monad-events";
 
-export const Route = createFileRoute("/app/timeline")({ component: TimelinePage });
+export const Route = createFileRoute("/app/timeline")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: ["timeline", 6],
+      queryFn: () => getEventFeed({ data: { windowHours: 6, limit: 150 } }),
+    });
+    return null;
+  },
+  component: TimelinePage,
+});
 
 const MONO = "var(--font-mono)";
 const SERIF = "var(--font-serif)";
