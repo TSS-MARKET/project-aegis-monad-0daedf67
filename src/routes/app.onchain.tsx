@@ -86,7 +86,7 @@ function OnChainPage() {
     await withTx("subscribe", () =>
       wc.writeContract({
         account: address as `0x${string}`,
-        chain: null,
+
         address: AEGIS_CONTRACT_ADDRESS,
         abi: AEGIS_ABI,
         functionName: "subscribe",
@@ -104,7 +104,7 @@ function OnChainPage() {
     await withTx("watchlist", () =>
       wc.writeContract({
         account: address as `0x${string}`,
-        chain: null,
+
         address: AEGIS_CONTRACT_ADDRESS,
         abi: AEGIS_ABI,
         functionName: "setWatchlist",
@@ -120,7 +120,7 @@ function OnChainPage() {
     await withTx("watchlist", () =>
       wc.writeContract({
         account: address as `0x${string}`,
-        chain: null,
+
         address: AEGIS_CONTRACT_ADDRESS,
         abi: AEGIS_ABI,
         functionName: "setWatchlist",
@@ -137,7 +137,7 @@ function OnChainPage() {
     await withTx("snapshot", () =>
       wc.writeContract({
         account: address as `0x${string}`,
-        chain: null,
+
         address: AEGIS_CONTRACT_ADDRESS,
         abi: AEGIS_ABI,
         functionName: "snapshotPortfolio",
