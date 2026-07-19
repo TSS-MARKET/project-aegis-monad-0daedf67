@@ -122,6 +122,22 @@ function Landing() {
         <div aria-hidden className="gl-hero__orb" style={{ width: 520, height: 520, left: "-8%", top: "-10%", background: "radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%)" }} />
         <div aria-hidden className="gl-hero__orb" style={{ width: 460, height: 460, right: "-6%", top: "35%", background: "radial-gradient(circle, rgba(103,232,249,0.22), transparent 70%)", animationDelay: "-6s" }} />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent)" }} />
+        {/* Floating particles */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          {Array.from({ length: 14 }).map((_, i) => (
+            <span
+              key={i}
+              className="gl-particle"
+              style={{
+                left: `${(i * 7 + 4) % 100}%`,
+                bottom: `-${(i * 3) % 20}px`,
+                animationDelay: `${(i * 0.8) % 12}s`,
+                animationDuration: `${12 + (i % 5) * 2}s`,
+                opacity: 0.5 + ((i % 3) * 0.15),
+              }}
+            />
+          ))}
+        </div>
         {/* LEFT */}
         <div className="relative flex flex-col gap-8 min-w-0">
           <div
@@ -137,7 +153,7 @@ function Landing() {
           >
             <span className="inline-flex items-center gap-2 whitespace-nowrap">
               <span
-                className="block w-1.5 h-1.5 rounded-full shrink-0"
+                className="gl-pulse-dot block w-1.5 h-1.5 rounded-full shrink-0"
                 style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.18)" }}
               />
               <span style={{ color: "#f5f7fa" }}>AEGIS · MONAD INTELLIGENCE</span>
