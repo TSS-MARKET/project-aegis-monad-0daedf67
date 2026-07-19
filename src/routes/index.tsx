@@ -724,8 +724,9 @@ function Landing() {
               { chain: "Solana", phrase: "keeps breaking.", tone: "dim" },
               { chain: "Monad", phrase: "is what came next.", tone: "bright" },
             ].map((r) => (
-              <div key={r.chain} className="w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3">
+              <div key={r.chain} className={`gl-ch06__row ${r.tone === "bright" ? "is-bright" : "is-dim"} w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3`}>
                 <span
+                  className="gl-ch06__chain"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontWeight: 800,
@@ -741,7 +742,7 @@ function Landing() {
                   {r.chain}
                 </span>
                 <span
-                  className="hidden sm:block h-px"
+                  className="gl-ch06__rule hidden sm:block h-px"
                   style={{
                     width: r.tone === "bright" ? 96 : 72,
                     background: r.tone === "bright"
@@ -750,6 +751,7 @@ function Landing() {
                   }}
                 />
                 <span
+                  className="gl-ch06__phrase"
                   style={{
                     fontFamily: SERIF,
                     fontStyle: "italic",
