@@ -43,8 +43,8 @@ function uniqueNumbers(nums: number[]) {
 
 async function fetchBlocks(url: string, numbers: number[]) {
   const out: RawBlock[] = [];
-  for (let i = 0; i < numbers.length; i += 28) {
-    const batch = numbers.slice(i, i + 28);
+  for (let i = 0; i < numbers.length; i += 12) {
+    const batch = numbers.slice(i, i + 12);
     const blocks = await rpcBatch<RawBlock>(
       url,
       batch.map((n) => ({ method: "eth_getBlockByNumber", params: [`0x${n.toString(16)}`, false] })),
@@ -195,13 +195,13 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   const avgBlockMs = Math.max(250, Math.min(12_000, (headTs - oldTs) / Math.max(1, probeDistance)));
   const blocksBack = Math.ceil(windowMs / avgBlockMs);
   const startBlock = Math.max(0, head - blocksBack);
-  const sampleCount = Math.min(hours === 24 ? 96 : hours === 6 ? 64 : 44, Math.max(24, Math.ceil(targetCount / 3)));
+  const sampleCount = Math.min(hours === 24 ? 36 : hours === 6 ? 28 : 18, Math.max(14, Math.ceil(targetCount / 7)));
 
   const sampled = Array.from({ length: sampleCount }, (_, i) => {
     if (sampleCount === 1) return head;
     return Math.round(startBlock + ((head - startBlock) * i) / (sampleCount - 1));
   });
-  const latest = Array.from({ length: Math.min(18, head + 1) }, (_, i) => head - i);
+  const latest = Array.from({ length: Math.min(6, head + 1) }, (_, i) => head - i);
   const blocks = await fetchBlocks(url, uniqueNumbers([...sampled, ...latest]));
   if (!blocks.length) throw new Error(`${chainName} RPC returned no sampled blocks`);
   // Suppress raw block transaction ticks from the public feed —
@@ -256,7 +256,7 @@ export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 16
         startTs: now - hours * 60 * 60 * 1000,
         endTs: now,
         windowMs: hours * 60 * 60 * 1000,
-        events: getReplayWindow(hours, now).events.slice(0, minimumRecords(hours, limit)),
+        events: getReplayWindow(hours, now, minimumRecords(hours, limit)).events,
         dataType: "live",
         generatedAt: new Date(now).toISOString(),
         source: primary.chainName,
