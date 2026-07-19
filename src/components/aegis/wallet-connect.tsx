@@ -11,9 +11,52 @@ import {
   isMobile,
   type WalletProvider,
 } from "@/lib/monad-wallet";
-import { Wallet, LogOut, AlertTriangle, Loader2, X, ExternalLink, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Wallet, LogOut, AlertTriangle, Loader2, X, ExternalLink, Check, ChevronRight, Download } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+
+const CYAN = "#22d3ee";
+
+// Local (WalletConnect explorer / official) wallet brand marks copied into
+// public/wallet-logos/ from the Glavior asset set.
+const WALLET_LOGOS: Record<string, string> = {
+  MetaMask: "/wallet-logos/metamask.webp",
+  "Trust Wallet": "/wallet-logos/trust.webp",
+  Trust: "/wallet-logos/trust.webp",
+  Phantom: "/wallet-logos/phantom.webp",
+  "Coinbase Wallet": "/wallet-logos/coinbase.svg",
+  Coinbase: "/wallet-logos/coinbase.svg",
+  "OKX Wallet": "/wallet-logos/okx.webp",
+  OKX: "/wallet-logos/okx.webp",
+  "Bitget Wallet": "/wallet-logos/bitget.webp",
+  Bitget: "/wallet-logos/bitget.webp",
+  "Brave Wallet": "/wallet-logos/brave.webp",
+  Brave: "/wallet-logos/brave.webp",
+  Backpack: "/wallet-logos/backpack.webp",
+  Exodus: "/wallet-logos/exodus.webp",
+  Ledger: "/wallet-logos/ledger.svg",
+  Solflare: "/wallet-logos/solflare.webp",
+  Nightly: "/wallet-logos/nightly.webp",
+  Rabby: "/wallet-logos/metamask.webp", // fallback; overridden by adapter icon
+};
+
+const WALLET_INSTALL: Record<string, string> = {
+  MetaMask: "https://metamask.io/download/",
+  "Trust Wallet": "https://trustwallet.com/download",
+  Phantom: "https://phantom.app/download",
+  "Coinbase Wallet": "https://www.coinbase.com/wallet/downloads",
+  "OKX Wallet": "https://www.okx.com/web3",
+  "Bitget Wallet": "https://web3.bitget.com/en/wallet-download",
+  Rabby: "https://rabby.io/",
+  "Brave Wallet": "https://brave.com/wallet/",
+  Backpack: "https://backpack.app/downloads",
+  Exodus: "https://www.exodus.com/download/",
+};
+
+function logoFor(name: string, adapterIcon?: string) {
+  if (adapterIcon) return adapterIcon;
+  return WALLET_LOGOS[name] || null;
+}
 
 export function WalletConnectButton({ compact = false }: { compact?: boolean }) {
   const { address, onMonad, connecting, error, connect, disconnect } = useMonadWallet();
@@ -129,7 +172,7 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
           </div>
           {!onMonad && (
             <button
-            onClick={() => connect()}
+              onClick={() => connect()}
               className="w-full text-left px-2 py-1.5 rounded hover:bg-white/5 text-xs text-amber-300"
             >
               Switch to {ACTIVE_MONAD.chainName}
@@ -148,6 +191,52 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
   );
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// Wallet logo tile
+// ────────────────────────────────────────────────────────────────────────────
+
+function WalletLogo({ name, icon }: { name: string; icon?: string | null }) {
+  const [failed, setFailed] = useState(false);
+  const src = failed ? null : logoFor(name, icon || undefined);
+  const initial = name.charAt(0).toUpperCase();
+  if (!src) {
+    return (
+      <div
+        className="w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center text-white font-bold text-sm"
+        style={{ background: "linear-gradient(135deg,#333 0%,#000 100%)" }}
+      >
+        {initial}
+      </div>
+    );
+  }
+  return (
+    <div className="w-10 h-10 flex-shrink-0 rounded-xl overflow-hidden flex items-center justify-center bg-white/[0.04] ring-1 ring-white/[0.06] p-[3px]">
+      <img
+        src={src}
+        alt={`${name} logo`}
+        className="w-full h-full object-contain rounded-[10px]"
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        onError={() => setFailed(true)}
+      />
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Picker panel (Glavior visual replica, single chain = Monad)
+// ────────────────────────────────────────────────────────────────────────────
+
+type Row = {
+  key: string;
+  name: string;
+  icon?: string | null;
+  mode: "installed" | "deeplink" | "install";
+  detected: boolean;
+  onClick: () => void;
+};
+
 function WalletPicker({
   wallets,
   injected,
@@ -163,18 +252,7 @@ function WalletPicker({
   onClose: () => void;
   onPick: (p?: WalletProvider["provider"]) => void;
 }) {
-  const detected: { key: string; name: string; icon?: string; provider: WalletProvider["provider"] }[] = wallets.map((w) => ({
-    key: w.rdns,
-    name: w.name,
-    icon: w.icon,
-    provider: w.provider,
-  }));
-  if (!detected.length && injected) {
-    detected.push({ key: "injected", name: "Browser Wallet", provider: injected });
-  }
-  const [expanded, setExpanded] = useState(true);
-
-  // Lock body scroll while open
+  // Body scroll lock + esc
   useEffect(() => {
     const scrollY = window.scrollY;
     const body = document.body;
@@ -195,9 +273,68 @@ function WalletPicker({
     };
   }, [onClose]);
 
+  const rows: Row[] = useMemo(() => {
+    const out: Row[] = [];
+    const seen = new Set<string>();
+    // 1) Detected via EIP-6963
+    for (const w of wallets) {
+      seen.add(w.name.toLowerCase());
+      out.push({
+        key: w.rdns,
+        name: w.name,
+        icon: w.icon,
+        mode: "installed",
+        detected: true,
+        onClick: () => onPick(w.provider),
+      });
+    }
+    // 2) Fallback injected (window.ethereum) if nothing announced
+    if (!wallets.length && injected) {
+      seen.add("browser wallet");
+      out.push({
+        key: "injected",
+        name: "Browser Wallet",
+        mode: "installed",
+        detected: true,
+        onClick: () => onPick(injected),
+      });
+    }
+    // 3) Popular catalog
+    const catalog = ["MetaMask", "Trust Wallet", "Phantom", "Coinbase Wallet", "OKX Wallet", "Rabby", "Bitget Wallet", "Brave Wallet"];
+    for (const name of catalog) {
+      if (seen.has(name.toLowerCase())) continue;
+      if (mobile) {
+        const dl = deepLinks.find((d) => d.name === name);
+        if (dl) {
+          out.push({
+            key: `dl-${name}`,
+            name,
+            mode: "deeplink",
+            detected: false,
+            onClick: () => { window.location.href = dl.url; },
+          });
+          continue;
+        }
+      }
+      const install = WALLET_INSTALL[name];
+      if (install) {
+        out.push({
+          key: `in-${name}`,
+          name,
+          mode: "install",
+          detected: false,
+          onClick: () => window.open(install, "_blank", "noopener"),
+        });
+      }
+    }
+    // installed first, then deeplink, then install
+    const order = { installed: 0, deeplink: 1, install: 2 } as const;
+    out.sort((a, b) => order[a.mode] - order[b.mode]);
+    return out;
+  }, [wallets, injected, mobile, deepLinks, onPick]);
+
   if (typeof document === "undefined") return null;
 
-  const CYAN = "#22d3ee";
   const modal = (
     <div
       className="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-6 animate-in fade-in duration-150"
@@ -205,13 +342,11 @@ function WalletPicker({
       role="dialog"
       aria-modal="true"
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/80 backdrop-blur-md animate-in fade-in duration-150"
         onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
         aria-hidden
       />
-      {/* Panel */}
       <div
         className="relative w-full max-w-[380px] sm:max-w-[420px] flex flex-col max-h-[85dvh] animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200"
         onMouseDown={(e) => e.stopPropagation()}
@@ -231,25 +366,17 @@ function WalletPicker({
             <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full opacity-15" style={{ background: `radial-gradient(circle, ${CYAN} 0%, transparent 70%)` }} />
           </div>
 
-          {/* Header */}
+          {/* Header — Monad chain identity */}
           <div className="relative p-4 sm:p-5 border-b flex-shrink-0" style={{ borderColor: `${CYAN}1f` }}>
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className="p-2.5 sm:p-3 rounded-xl flex-shrink-0"
-                  style={{
-                    background: `linear-gradient(135deg, ${CYAN}33 0%, ${CYAN}14 100%)`,
-                    border: `1px solid ${CYAN}33`,
-                  }}
-                >
-                  <Wallet className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: CYAN }} />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white/[0.04] ring-1 ring-white/[0.06] p-[3px]">
+                  <img src="/wallet-logos/monad.png" alt="Monad" className="w-full h-full object-contain rounded-[10px]" draggable={false} />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2" style={{ color: "#f5f7fa" }}>
-                    Connect Wallet
-                  </h2>
+                  <h2 className="text-lg sm:text-xl font-bold" style={{ color: "#f5f7fa" }}>Connect Wallet</h2>
                   <p className="text-xs sm:text-sm truncate" style={{ color: "rgba(245,247,250,0.55)" }}>
-                    Choose your wallet
+                    {ACTIVE_MONAD.chainName} · Chain {ACTIVE_MONAD.chainIdDec}
                   </p>
                 </div>
               </div>
@@ -258,118 +385,68 @@ function WalletPicker({
                 onClick={onClose}
                 className="p-2 sm:p-2.5 rounded-xl border transition-all duration-150 flex-shrink-0 hover:scale-110 active:scale-95"
                 style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.08)" }}
+                aria-label="Close"
               >
                 <X className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "rgba(245,247,250,0.6)" }} />
               </button>
             </div>
           </div>
 
-          {/* Content */}
+          {/* Wallet rows */}
           <div
-            className="relative p-3 sm:p-4 overflow-y-auto flex-1 min-h-0"
+            className="relative p-3 sm:p-4 overflow-y-auto flex-1 min-h-0 space-y-2"
             style={{ overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
           >
-            <div className="space-y-2.5 sm:space-y-3">
-              <div className="px-1 pt-1 pb-0.5 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.5)" }}>
-                Connect by Chain
-              </div>
-
-              {/* Monad chain row (accordion) */}
-              <button
-                type="button"
-                onClick={() => setExpanded((v) => !v)}
-                aria-expanded={expanded}
-                className="w-full min-h-[56px] p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-3 sm:gap-4 transition-all duration-200 group text-left border"
-                style={{
-                  background: expanded ? `${CYAN}14` : "rgba(255,255,255,0.03)",
-                  borderColor: expanded ? `${CYAN}66` : "rgba(255,255,255,0.08)",
-                }}
-              >
-                <div className="w-10 h-10 flex-shrink-0 rounded-xl overflow-hidden flex items-center justify-center p-[3px]" style={{ background: "rgba(255,255,255,0.04)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)" }}>
-                  <div className="w-full h-full rounded-[10px] flex items-center justify-center font-bold text-[11px]" style={{ background: `linear-gradient(135deg, ${CYAN} 0%, #0e2530 100%)`, color: "#020617" }}>
-                    MON
-                  </div>
-                </div>
-                <div className="flex-1 text-left min-w-0 pointer-events-none">
-                  <span className="font-semibold text-sm sm:text-base flex items-center gap-1.5" style={{ color: "#f5f7fa" }}>
-                    {ACTIVE_MONAD.chainName}
-                  </span>
-                  <span className="text-xs sm:text-sm block truncate" style={{ color: "rgba(245,247,250,0.55)" }}>
-                    MetaMask · Rabby · Trust · Coinbase · Phantom
-                  </span>
-                </div>
-                <div className="flex-shrink-0 pointer-events-none">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center border" style={{ background: expanded ? `${CYAN}33` : "rgba(255,255,255,0.05)", borderColor: expanded ? `${CYAN}66` : "rgba(255,255,255,0.08)" }}>
-                    <ChevronDown className="w-4 h-4 transition-transform duration-200" style={{ transform: expanded ? "rotate(180deg)" : "none", color: expanded ? CYAN : "rgba(245,247,250,0.6)" }} />
-                  </div>
-                </div>
-              </button>
-
-              {expanded && (
-                <div className="space-y-1.5 pl-1">
-                  {detected.length > 0 && (
-                    <>
-                      <div className="px-2 pt-2 pb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.45)" }}>
-                        Detected
+            {rows.map((r) => {
+              const isPremium = r.mode === "installed" || (r.mode === "deeplink" && r.detected);
+              const container = isPremium
+                ? "bg-gradient-to-r from-[#22d3ee]/10 to-[#22d3ee]/5 hover:from-[#22d3ee]/15 hover:to-[#22d3ee]/10 border border-[#22d3ee]/30 hover:border-[#22d3ee]/50"
+                : "bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20";
+              let status: string;
+              let statusCls: string;
+              if (r.mode === "installed") { status = "✓ Ready to connect"; statusCls = "text-emerald-400 font-medium"; }
+              else if (r.mode === "deeplink") { status = "Open in app"; statusCls = "text-cyan-400 font-medium"; }
+              else { status = `Get ${r.name}`; statusCls = "text-white/50"; }
+              return (
+                <button
+                  key={r.key}
+                  type="button"
+                  onClick={r.onClick}
+                  className={`w-full min-h-[64px] p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-3 sm:gap-4 transition-colors duration-150 group text-left ${container}`}
+                >
+                  <div className="relative flex-shrink-0 transform group-hover:scale-105 transition-transform duration-200 pointer-events-none">
+                    <WalletLogo name={r.name} icon={r.icon} />
+                    {r.detected && (
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500 border-2 border-black flex items-center justify-center shadow-lg">
+                        <Check className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
                       </div>
-                      {detected.map((w) => (
-                        <button
-                          key={w.key}
-                          onClick={() => onPick(w.provider)}
-                          className="w-full min-h-[56px] flex items-center gap-3 p-2.5 sm:p-3 rounded-xl border transition-all group hover:scale-[1.01] active:scale-[0.99]"
-                          style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.06)" }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = `${CYAN}0d`; e.currentTarget.style.borderColor = `${CYAN}55`; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
-                        >
-                          <div className="w-10 h-10 flex-shrink-0 rounded-xl overflow-hidden flex items-center justify-center p-[3px]" style={{ background: "rgba(255,255,255,0.04)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)" }}>
-                            {w.icon ? (
-                              <img src={w.icon} alt="" className="w-full h-full object-contain rounded-[10px]" draggable={false} />
-                            ) : (
-                              <div className="w-full h-full rounded-[10px] flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${CYAN}33 0%, ${CYAN}0d 100%)` }}>
-                                <Wallet className="w-4 h-4" style={{ color: CYAN }} />
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0 text-left">
-                            <div className="text-sm font-semibold truncate" style={{ color: "#f5f7fa" }}>{w.name}</div>
-                            <div className="text-[11px]" style={{ color: `${CYAN}` }}>Installed</div>
-                          </div>
-                          <span className="text-[10px] uppercase tracking-[0.14em] opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: CYAN }}>Connect</span>
-                        </button>
-                      ))}
-                    </>
-                  )}
-
-                  <div className="px-2 pt-3 pb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.45)" }}>
-                    {mobile ? "Open in wallet app" : "Or connect via mobile wallet"}
+                    )}
                   </div>
-                  {deepLinks.map((d) => (
-                    <a
-                      key={d.name}
-                      href={d.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full min-h-[56px] flex items-center gap-3 p-2.5 sm:p-3 rounded-xl border transition-all group"
-                      style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(255,255,255,0.06)" }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = `${CYAN}0d`; e.currentTarget.style.borderColor = `${CYAN}55`; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
-                    >
-                      <div className="w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center text-lg" style={{ background: "rgba(255,255,255,0.04)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)" }}>
-                        <span>{d.icon}</span>
-                      </div>
-                      <div className="flex-1 min-w-0 text-left">
-                        <div className="text-sm font-semibold truncate" style={{ color: "#f5f7fa" }}>{d.name}</div>
-                        <div className="text-[11px]" style={{ color: "rgba(245,247,250,0.5)" }}>Deep link</div>
-                      </div>
-                      <ExternalLink className="w-3.5 h-3.5" style={{ color: "rgba(245,247,250,0.4)" }} />
-                    </a>
-                  ))}
-
-                  <div className="mt-3 px-1 text-[10px] leading-relaxed" style={{ color: "rgba(245,247,250,0.4)", fontFamily: "var(--font-mono)" }}>
-                    Aegis will request access, then switch your wallet to <span style={{ color: CYAN }}>{ACTIVE_MONAD.chainName}</span> ({ACTIVE_MONAD.chainIdDec}). No signature or funds required.
+                  <div className="flex-1 text-left min-w-0 pointer-events-none">
+                    <span className="font-semibold text-sm sm:text-base block truncate" style={{ color: "#f5f7fa" }}>{r.name}</span>
+                    <span className={`text-xs sm:text-sm block truncate ${statusCls}`}>{status}</span>
                   </div>
-                </div>
-              )}
+                  <div className="flex-shrink-0 pointer-events-none">
+                    {isPremium ? (
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#22d3ee]/15 border border-[#22d3ee]/30 flex items-center justify-center shadow-[0_0_12px_-2px_rgba(34,211,238,0.35)] group-hover:bg-[#22d3ee]/25 group-hover:border-[#22d3ee]/50 group-hover:shadow-[0_0_18px_-2px_rgba(34,211,238,0.55)] transition-all duration-300">
+                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#22d3ee] group-hover:translate-x-0.5 transition-transform duration-300" />
+                      </div>
+                    ) : r.mode === "deeplink" ? (
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center group-hover:bg-white/[0.08] transition-colors">
+                        <ExternalLink className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" />
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center group-hover:bg-white/[0.08] transition-colors">
+                        <Download className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" />
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+
+            <div className="mt-3 px-1 text-[10px] leading-relaxed" style={{ color: "rgba(245,247,250,0.4)", fontFamily: "var(--font-mono)" }}>
+              Aegis will request access, then switch your wallet to <span style={{ color: CYAN }}>{ACTIVE_MONAD.chainName}</span> ({ACTIVE_MONAD.chainIdDec}). No signature or funds required.
             </div>
           </div>
         </div>
