@@ -919,8 +919,8 @@ function Landing() {
         style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}
       >
         <span>Aegis · Monad Intelligence Layer</span>
-        <span>Built for BuildAnything · Spark · Monad Mainnet · Chain 143</span>
-        <span>Read only · Non custodial · Not financial advice</span>
+        <span>{"\n"}</span>
+        <span>READ ONLY · NON CUSTODIAL · NOT FINANCIAL ADVICE{"\n"}</span>
       </footer>
       <FloatingChat />
     </div>
