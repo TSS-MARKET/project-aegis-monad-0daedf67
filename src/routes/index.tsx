@@ -592,6 +592,7 @@ function Landing() {
         <span>Aegis · Monad Intelligence · Hackathon build</span>
         <span>Not financial advice.</span>
       </footer>
+      <FloatingChat />
     </div>
   );
 }
