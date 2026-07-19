@@ -418,11 +418,12 @@
   font-size: clamp(4rem, 12vw, 9rem);
   line-height: 0.9;
   letter-spacing: -0.04em;
-  -webkit-text-stroke: 1px rgba(34,211,238,0.35);
+  -webkit-text-stroke: 1.5px rgba(34,211,238,0.75);
   color: transparent;
-  background: linear-gradient(180deg, rgba(34,211,238,0.06), transparent 70%);
+  background: linear-gradient(180deg, rgba(34,211,238,0.22), rgba(34,211,238,0.06) 60%, transparent 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  text-shadow: 0 0 24px rgba(34,211,238,0.18);
 }
 
 /* Slow drifting horizon line */
