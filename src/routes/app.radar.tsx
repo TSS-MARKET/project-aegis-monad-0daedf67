@@ -221,7 +221,7 @@ function RadarPage() {
             return (
               <div
                 key={k}
-                className="rounded-[8px] p-3"
+                className="hover-lift rounded-[8px] p-3 transition-all"
                 style={{ background: `${cfg.color}0f`, border: `1px solid ${cfg.color}40` }}
               >
                 <Icon className="w-4 h-4" style={{ color: cfg.color }} />
@@ -248,7 +248,7 @@ function RadarPage() {
               {o.data.data.opportunities.map((op, i) => (
                 <div
                   key={i}
-                  className="rounded-[8px] p-3 flex items-start gap-3"
+                  className="hover-lift rounded-[8px] p-3 flex items-start gap-3 transition-all"
                   style={{ background: "rgba(34,211,238,0.04)", border: "1px solid rgba(34,211,238,0.14)" }}
                 >
                   <div

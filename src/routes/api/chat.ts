@@ -247,11 +247,11 @@ ${JSON.stringify(context)}`;
                       id: `live-block-${blockNum}`,
                       block: blockNum,
                       category: "protocol_activity",
-                      headline: `Block ${blockNum.toLocaleString()} settled ${txCount} transaction${txCount === 1 ? "" : "s"}`,
+                      headline: `On-chain anchor ${blockNum.toLocaleString()} · ${txCount} transaction${txCount === 1 ? "" : "s"}`,
                       matters: txCount > 0
-                        ? `Real Monad block. ${txCount} tx settled at ${(util * 100).toFixed(1)}% gas utilization — direct evidence of live throughput on ${ACTIVE_MONAD.chainName}.`
-                        : `Empty block on ${ACTIVE_MONAD.chainName}. Useful as a low-activity baseline for the current window.`,
-                      watchNext: "Compare surrounding blocks for sustained throughput or a quiet period.",
+                        ? `Real Monad anchor with ${txCount} transactions and ${(util * 100).toFixed(1)}% gas utilization — useful as direct throughput evidence on ${ACTIVE_MONAD.chainName}.`
+                        : `Quiet on-chain anchor on ${ACTIVE_MONAD.chainName}; use it as the baseline around nearby higher-intensity intelligence records.`,
+                      watchNext: "Compare surrounding intelligence records for sustained flow or a quiet period.",
                       importance: Math.max(20, Math.min(90, Math.round(30 + txCount * 3 + util * 55))),
                       confidence: 96,
                       minutesAgo: Math.max(0, Math.round((Date.now() - ts) / 60_000)),

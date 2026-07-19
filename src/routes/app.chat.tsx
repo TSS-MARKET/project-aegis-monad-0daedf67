@@ -27,7 +27,7 @@ const SERIF = "var(--font-serif)";
 const suggestions = [
   { icon: Sparkles, label: "Ecosystem read", prompt: "Give me a full read on the Monad ecosystem right now — sentiment, dominant narrative, key movers." },
   { icon: TrendingUp, label: "Strongest movers", prompt: "Which Monad-related tokens look strongest right now based on live price and volume data?" },
-  { icon: Fish, label: "Block activity", prompt: "Walk me through the most important Monad block activity in the last hour and what it implies." },
+  { icon: Fish, label: "Whale tape", prompt: "Walk me through the most important Monad whale, liquidity, and narrative signals in the last hour." },
   { icon: ShieldAlert, label: "Biggest risks", prompt: "What are the biggest risks in the Monad market right now?" },
 ];
 
@@ -119,8 +119,7 @@ function ChatPage() {
                   What are we reading <em style={{ color: "#22d3ee" }}>on Monad</em> today?
                 </h2>
                 <p className="mt-3 text-sm" style={{ color: "rgba(245,247,250,0.65)" }}>
-                  Every answer is grounded in live Monad blocks and public market APIs — token prices, narrative rotation, and evidence.
-                  No advice, no invented numbers.
+                  Every answer is grounded in the active Monad intelligence rail: token prices, narrative rotation, whales, liquidity, and citations.
                 </p>
               </div>
 
@@ -134,7 +133,7 @@ function ChatPage() {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(34,211,238,0.8)" }}>
-                      Evidence rail · grounded on {feed.events.length} live events
+                      Evidence rail · {feed.events.length} intelligence records
                     </span>
                     <LinkIcon className="h-3 w-3" style={{ color: "rgba(34,211,238,0.6)" }} />
                   </div>
