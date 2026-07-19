@@ -94,6 +94,21 @@ function Landing() {
   const eco = state.ecosystem;
   const monadTokens = state.tokens.filter((t) => t.chain === "Monad");
   const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
+  const livePrices = useBinancePrices();
+  // Ensure a fetch is kicked off on mount (safe if already running)
+  useQuery({ queryKey: ["binance-prices"], queryFn: () => fetchBinancePrices(true), refetchInterval: 20_000, staleTime: 15_000 });
+  const fmtLive = (sym: string, fallback: number, fallbackChange: number) => {
+    const q = livePrices[sym];
+    const price = q?.price ?? fallback;
+    const change = q?.change24h ?? fallbackChange;
+    const priceStr = price >= 1000
+      ? `$${price.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+      : price >= 1
+        ? `$${price.toFixed(2)}`
+        : `$${price.toFixed(price < 0.0001 ? 8 : 4)}`;
+    const changeStr = `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`;
+    return [priceStr, changeStr] as [string, string];
+  };
   return (
     <div className="min-h-screen relative overflow-x-clip" style={{ background: "#000" }}>
       {/* Ambient — pure obsidian, no grid overlay (matches Glavior reference) */}
