@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppWhalesRouteImport } from './routes/app.whales'
+import { Route as AppWalletRouteImport } from './routes/app.wallet'
 import { Route as AppTokensRouteImport } from './routes/app.tokens'
 import { Route as AppTimelineRouteImport } from './routes/app.timeline'
 import { Route as AppReplayRouteImport } from './routes/app.replay'
@@ -40,6 +41,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppWhalesRoute = AppWhalesRouteImport.update({
   id: '/whales',
   path: '/whales',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppWalletRoute = AppWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTokensRoute = AppTokensRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/app/replay': typeof AppReplayRoute
   '/app/timeline': typeof AppTimelineRoute
   '/app/tokens': typeof AppTokensRoute
+  '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
   '/app/': typeof AppIndexRoute
 }
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/app/replay': typeof AppReplayRoute
   '/app/timeline': typeof AppTimelineRoute
   '/app/tokens': typeof AppTokensRoute
+  '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
   '/app': typeof AppIndexRoute
 }
@@ -122,6 +130,7 @@ export interface FileRoutesById {
   '/app/replay': typeof AppReplayRoute
   '/app/timeline': typeof AppTimelineRoute
   '/app/tokens': typeof AppTokensRoute
+  '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
   '/app/': typeof AppIndexRoute
 }
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/app/replay'
     | '/app/timeline'
     | '/app/tokens'
+    | '/app/wallet'
     | '/app/whales'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/app/replay'
     | '/app/timeline'
     | '/app/tokens'
+    | '/app/wallet'
     | '/app/whales'
     | '/app'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/app/replay'
     | '/app/timeline'
     | '/app/tokens'
+    | '/app/wallet'
     | '/app/whales'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       path: '/whales'
       fullPath: '/app/whales'
       preLoaderRoute: typeof AppWhalesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/wallet': {
+      id: '/app/wallet'
+      path: '/wallet'
+      fullPath: '/app/wallet'
+      preLoaderRoute: typeof AppWalletRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/tokens': {
@@ -272,6 +291,7 @@ interface AppRouteChildren {
   AppReplayRoute: typeof AppReplayRoute
   AppTimelineRoute: typeof AppTimelineRoute
   AppTokensRoute: typeof AppTokensRoute
+  AppWalletRoute: typeof AppWalletRoute
   AppWhalesRoute: typeof AppWhalesRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -284,6 +304,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppReplayRoute: AppReplayRoute,
   AppTimelineRoute: AppTimelineRoute,
   AppTokensRoute: AppTokensRoute,
+  AppWalletRoute: AppWalletRoute,
   AppWhalesRoute: AppWhalesRoute,
   AppIndexRoute: AppIndexRoute,
 }

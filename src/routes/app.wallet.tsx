@@ -10,7 +10,7 @@ import {
   synthesizeHoldings,
   type WalletDNA,
 } from "@/lib/wallet-dna";
-import { Fingerprint, Search, Copy, MessageSquare, Newspaper, ShieldAlert, TrendingUp, Sparkles, Wallet as WalletIcon } from "lucide-react";
+import { Fingerprint, Search, Copy, MessageSquare, Newspaper, ShieldAlert, Sparkles } from "lucide-react";
 
 const searchSchema = z.object({ address: z.string().optional() });
 
@@ -441,6 +441,3 @@ const eyebrow: React.CSSProperties = {
   textTransform: "uppercase",
   color: "rgba(245,247,250,0.55)",
 };
-
-// unused-import guards
-void WalletIcon; void TrendingUp;
