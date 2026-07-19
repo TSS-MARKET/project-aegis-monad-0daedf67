@@ -24,6 +24,17 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
+  loader: async ({ context }) => {
+    // Populate SSR cache so the shell renders with real values (not zeros).
+    await Promise.all([
+      context.queryClient.ensureQueryData({ queryKey: ["snap"], queryFn: () => getMarketSnapshot() }),
+      context.queryClient.ensureQueryData({ queryKey: ["headline"], queryFn: () => getHeadline() }),
+      context.queryClient.ensureQueryData({ queryKey: ["feed-6h"], queryFn: () => getEventFeed({ data: { windowHours: 6, limit: 8 } }) }),
+    ]);
+    // Brief is expensive — prefetch in the background but don't block first paint.
+    context.queryClient.prefetchQuery({ queryKey: ["brief"], queryFn: () => getMarketBrief() });
+    return null;
+  },
   component: DashboardPage,
 });
 

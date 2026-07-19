@@ -7,7 +7,16 @@ import { formatUsd } from "@/lib/monad-data";
 import { ArrowDownRight, ArrowUpRight, Repeat, Waves, TrendingUp, Wallet, Activity, BarChart3, Clock } from "lucide-react";
 import { useMemo } from "react";
 
-export const Route = createFileRoute("/app/whales")({ component: WhalesPage });
+export const Route = createFileRoute("/app/whales")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: ["whale-live-blocks"],
+      queryFn: () => getEventFeed({ data: { windowHours: 1, limit: 60 } }),
+    });
+    return null;
+  },
+  component: WhalesPage,
+});
 
 const MONO = "var(--font-mono)";
 const SERIF = "var(--font-serif)";

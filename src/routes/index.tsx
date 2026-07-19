@@ -35,7 +35,16 @@ function useBinancePrices(): Record<string, BinanceQuote> {
   );
 }
 
-export const Route = createFileRoute("/")({ component: Landing });
+export const Route = createFileRoute("/")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: ["landing-market"],
+      queryFn: () => getMarketSnapshot(),
+    });
+    return null;
+  },
+  component: Landing,
+});
 
 const MONO = 'var(--font-mono)';
 const SERIF = 'var(--font-serif)';
@@ -373,7 +382,7 @@ function Landing() {
               {[...Array(2)].map((_, dup) => (
                 <div key={dup} className="flex items-center gap-12 shrink-0" style={{ fontFamily: MONO, fontSize: "0.72rem", letterSpacing: "0.06em", color: "rgba(245,247,250,0.85)" }}>
                   {[
-                    ["MON", ...fmtLive("MON", 4.82, 6.4)] as [string, string, string],
+                    ["MON", ...fmtLive("MON", 0.0212, -1.4)] as [string, string, string],
                     ["BTC", ...fmtLive("BTC", 118240, 0.6)] as [string, string, string],
                     ["ETH", ...fmtLive("ETH", 4120, 1.8)] as [string, string, string],
                     ["SOL", ...fmtLive("SOL", 284, 3.1)] as [string, string, string],
