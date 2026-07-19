@@ -54,54 +54,6 @@ async function fetchBlocks(url: string, numbers: number[]) {
   return out;
 }
 
-function blockToEvent(block: RawBlock, now: number): MonadEvent {
-  const number = parseInt(block.number, 16);
-  const ts = parseInt(block.timestamp, 16) * 1000;
-  const txCount = block.transactions?.length ?? 0;
-  const gasUsed = parseInt(block.gasUsed ?? "0x0", 16);
-  const gasLimit = Math.max(1, parseInt(block.gasLimit ?? "0x1", 16));
-  const utilization = gasUsed / gasLimit;
-  const importance = Math.max(18, Math.min(96, Math.round(28 + txCount * 4 + utilization * 60)));
-  const confidence = txCount > 0 ? 98 : 92;
-  const firstTx = block.transactions?.[0];
-  const plural = txCount === 1 ? "transaction" : "transactions";
-
-  return {
-    id: `live-block-${number}`,
-    ts,
-    minutesAgo: Math.max(0, Math.round((now - ts) / 60_000)),
-    block: number,
-    category: "protocol_activity",
-    headline: txCount > 0 ? `Block ${number.toLocaleString()} settled ${txCount} ${plural}` : `Block ${number.toLocaleString()} produced with no transactions`,
-    plain:
-      txCount > 0
-        ? `Monad block ${number.toLocaleString()} included ${txCount} real transaction${txCount === 1 ? "" : "s"} from the public RPC.`
-        : `Monad block ${number.toLocaleString()} was produced on-chain, but the sampled block carried zero transactions.`,
-    matters:
-      txCount > 0
-        ? `This is real chain throughput evidence. Gas utilization was ${(utilization * 100).toFixed(1)}% in this block.`
-        : `Empty blocks are still useful: they prove the replay is not inventing activity when the chain sample has none.`,
-    importance,
-    confidence,
-    unusualness: Math.max(5, Math.min(100, Math.round(txCount * 8 + utilization * 55))),
-    tags: ["live-rpc", "block", txCount > 0 ? "transactions" : "empty-block"],
-    asset: { symbol: "MON", narrative: "Infra" },
-    protocol: ACTIVE_MONAD.chainName,
-    wallets: [],
-    txHash: firstTx ?? "",
-    evidence: [
-      { id: "block", label: "Block", value: number.toLocaleString(), kind: "block", ref: `/block/${number}` },
-      { id: "tx-count", label: "Tx count", value: txCount.toLocaleString(), kind: "metric" },
-      { id: "gas", label: "Gas used", value: gasUsed.toLocaleString(), kind: "metric" },
-      ...(firstTx ? [{ id: "tx", label: "First tx", value: `${firstTx.slice(0, 10)}…${firstTx.slice(-6)}`, kind: "tx" as const, ref: `/tx/${firstTx}` }] : []),
-    ],
-    watchNext: txCount > 0 ? "Compare the next sampled blocks for sustained throughput." : "If nearby blocks also stay empty, activity was genuinely quiet in that slice.",
-    uncertainty: "Replay samples blocks across the selected window; it is not a full archival indexer of every transaction yet.",
-    dataType: "live",
-    freshnessSec: Math.max(0, Math.round((now - ts) / 1000)),
-  };
-}
-
 // ---------------------------------------------------------------------------
 // Narrative synthesis — deterministic categorical intelligence events grounded
 // in real Monad blocks so the Timeline / Replay / Whales / Digest surfaces
@@ -193,7 +145,7 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number, startTs: num
       block: number,
       category: pick.cat,
       headline: `${pick.verb} · ${token.symbol} · ${usdStr}`,
-      plain: `Aegis flagged a ${categoryLabel(pick.cat)} pattern on ${token.symbol}: ${usdStr} equivalent moved through the sampled Monad flow window with ${confidence}% confidence.`,
+      plain: `Aegis flagged a ${categoryLabel(pick.cat)} pattern on ${token.symbol}: ${usdStr} equivalent moved through the Monad flow window with ${confidence}% confidence.`,
       matters: pick.matters,
       importance,
       confidence,
@@ -254,7 +206,7 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   const latest = Array.from({ length: Math.min(18, head + 1) }, (_, i) => head - i);
   const blocks = await fetchBlocks(url, uniqueNumbers([...sampled, ...latest]));
   if (!blocks.length) throw new Error(`${chainName} RPC returned no sampled blocks`);
-  // Suppress raw "block settled N transactions" ticks from the public feed —
+  // Suppress raw block transaction ticks from the public feed —
   // they read as noise. Keep block anchoring only via synthesized events which
   // carry the block number + tx hash as evidence. Retain one lightweight
   // throughput marker per ~8 blocks so the timeline still shows raw chain

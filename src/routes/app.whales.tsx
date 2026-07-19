@@ -61,12 +61,6 @@ function WhalesPage() {
       minutesAgo: e.minutesAgo,
       block: e.block,
     }));
-  const txCounts = events.map((e) => Number(e.evidence.find((x) => x.id === "tx-count")?.value.replace(/,/g, "") ?? 0));
-  const totalTx = txCounts.reduce((s, n) => s + n, 0);
-  const activeBlocks = txCounts.filter((n) => n > 0).length;
-  const maxTx = Math.max(1, ...txCounts);
-  const hasWhaleIndex = whales.length > 0;
-
   const stats = useMemo(() => {
     const buys = whales.filter((w) => w.action === "accumulate");
     const sells = whales.filter((w) => w.action === "distribute");
