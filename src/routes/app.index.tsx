@@ -53,11 +53,13 @@ function DashboardPage() {
   const snapFn = useServerFn(getMarketSnapshot);
   const headlineFn = useServerFn(getHeadline);
   const feedFn = useServerFn(getEventFeed);
+  const chainFn = useServerFn(getLiveChainEvents);
 
   // Cheap/deterministic queries first — populate instantly.
   const snap = useQuery({ queryKey: ["snap"], queryFn: () => snapFn(), staleTime: 60_000, refetchInterval: 60_000 });
   const headline = useQuery({ queryKey: ["headline"], queryFn: () => headlineFn(), staleTime: 45_000, refetchInterval: 60_000 });
   const feed = useQuery({ queryKey: ["feed-6h"], queryFn: () => feedFn({ data: { windowHours: 6, limit: 8 } }), staleTime: 60_000 });
+  const chain = useQuery({ queryKey: ["chain-events"], queryFn: () => chainFn(), staleTime: 8_000, refetchInterval: 10_000 });
 
   // Expensive AI brief loads lazily and never blocks the shell.
   const brief = useQuery({ queryKey: ["brief"], queryFn: () => briefFn(), staleTime: 120_000, refetchInterval: 180_000 });
