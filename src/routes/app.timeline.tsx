@@ -100,7 +100,7 @@ function TimelinePage() {
 
   // Rank: recency × importance × evidence quality (evidence count) × confidence × unusualness bonus
   const ranked = useMemo(() => {
-    return events
+    const scored = events
       .map((e) => {
         const evidenceQ = Math.min(1, e.evidence.length / 5);
         const recency = 1 / (Math.log(e.minutesAgo + 2) + 1);
@@ -111,8 +111,17 @@ function TimelinePage() {
           evidenceQ * 100 * 0.15 +
           recency * 100 * 0.10;
         return { e, score };
-      })
-      .sort((a, b) => b.score - a.score);
+      });
+    // Real (on-chain verifiable) events always rank above synthetic ones.
+    // Within each bucket, sort by score. This guarantees the top of the
+    // timeline is 100% real, verifiable events; synthetic pattern signals
+    // sit below purely to increase density.
+    return scored.sort((a, b) => {
+      const ar = a.e.isReal ? 1 : 0;
+      const br = b.e.isReal ? 1 : 0;
+      if (ar !== br) return br - ar;
+      return b.score - a.score;
+    });
   }, [events]);
 
   const filtered = useMemo(() => {
