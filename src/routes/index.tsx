@@ -109,7 +109,6 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
-          <div className="hidden md:block"><DemoModeButton variant="premium" /></div>
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
@@ -721,29 +720,52 @@ function Landing() {
         <div className="flex flex-col items-center text-center mb-14 gl-rise">
           <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
           <div className="mt-3" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
-          <h2
-            className="mt-8 max-w-[1100px]"
-            style={{
-              fontFamily: SERIF,
-              fontWeight: 400,
-              fontSize: "clamp(1.6rem, 3.6vw, 2.85rem)",
-              lineHeight: 1.15,
-              letterSpacing: "-0.022em",
-              color: "#f5f7fa",
-            }}
-          >
-            <span className="block">
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.14em", fontSize: "0.72em", textTransform: "uppercase", color: "#f5f7fa", marginRight: "0.5em" }}>Ethereum</span>
-              <em style={{ fontStyle: "italic", color: "rgba(245,247,250,0.55)" }}>priced people out.</em>
-            </span>
-            <span className="block mt-3">
-              <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.14em", fontSize: "0.72em", textTransform: "uppercase", color: "#f5f7fa", marginRight: "0.5em" }}>Solana</span>
-              <em style={{ fontStyle: "italic", color: "rgba(245,247,250,0.55)" }}>keeps breaking.</em>
-            </span>
-            <span className="block mt-5" style={{ fontSize: "1.15em" }}>
-              <span className="gl-hero__shimmer" style={{ fontFamily: "var(--font-display)", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "0.78em", marginRight: "0.45em" }}>Monad</span>
-              <em style={{ fontStyle: "italic", color: "#f5f7fa" }}>is what came next.</em>
-            </span>
+          <h2 className="mt-10 w-full max-w-[960px] flex flex-col items-center gap-6">
+            {[
+              { chain: "Ethereum", phrase: "priced people out.", tone: "dim" },
+              { chain: "Solana", phrase: "keeps breaking.", tone: "dim" },
+              { chain: "Monad", phrase: "is what came next.", tone: "bright" },
+            ].map((r) => (
+              <div key={r.chain} className="flex flex-col sm:flex-row items-center gap-x-6 gap-y-1">
+                <span
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 800,
+                    letterSpacing: "0.34em",
+                    textTransform: "uppercase",
+                    fontSize: "0.78rem",
+                    color: r.tone === "bright" ? "#22d3ee" : "rgba(245,247,250,0.45)",
+                    textShadow: r.tone === "bright" ? "0 0 24px rgba(34,211,238,0.55)" : "none",
+                    minWidth: "6.5rem",
+                    textAlign: "right",
+                  }}
+                >
+                  {r.chain}
+                </span>
+                <span
+                  className="hidden sm:block h-px"
+                  style={{
+                    width: 44,
+                    background: r.tone === "bright"
+                      ? "linear-gradient(90deg, rgba(34,211,238,0.9), rgba(34,211,238,0.15))"
+                      : "linear-gradient(90deg, rgba(245,247,250,0.25), transparent)",
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: SERIF,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    fontSize: r.tone === "bright" ? "clamp(1.85rem, 4vw, 2.9rem)" : "clamp(1.5rem, 3.2vw, 2.35rem)",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                    color: r.tone === "bright" ? "#f5f7fa" : "rgba(245,247,250,0.7)",
+                  }}
+                >
+                  {r.phrase}
+                </span>
+              </div>
+            ))}
           </h2>
           <div className="mt-6 h-px w-40" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.6), transparent)" }} />
         </div>

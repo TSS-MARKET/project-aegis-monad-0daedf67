@@ -32,7 +32,7 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
         >
           <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)" }} />
           <Wallet className="w-3.5 h-3.5" />
-          <span className="relative">Connect Wallet</span>
+          <span className="relative">Connect</span>
         </a>
       );
     }
@@ -53,7 +53,7 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
           }}
         >
           <Wallet className="w-3.5 h-3.5" />
-          <span className="relative">Install Wallet</span>
+          <span className="relative">Install</span>
         </a>
       );
     }
