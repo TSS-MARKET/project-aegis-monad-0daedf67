@@ -438,15 +438,22 @@ export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 16
 
 export async function getLiveMonadEvents(windowHours: 1 | 6 | 24 = 6, limit = 150) {
   const replay = await getLiveMonadReplayWindow(windowHours, limit);
+  // Preserve real-first ordering: real events (isReal) at top, newest first;
+  // synthetic padding below, newest first. This is what feeds the Timeline
+  // and Digest — the user's rule is "top of the list = only real, verifiable".
+  const real = replay.events.filter((e) => e.isReal).sort((a, b) => b.ts - a.ts || b.block - a.block);
+  const synth = replay.events.filter((e) => !e.isReal).sort((a, b) => b.ts - a.ts || b.block - a.block);
   return {
     ...replay,
-    events: replay.events.slice().sort((a, b) => b.ts - a.ts || b.block - a.block).slice(0, limit),
+    events: [...real, ...synth].slice(0, limit),
   };
 }
 
 export async function getLiveHeadlineEvent() {
   const feed = await getLiveMonadEvents(1, 120);
-  const event = feed.events
+  // Prefer real events for the headline — verifiable > synthetic.
+  const pool = feed.events.filter((e) => e.isReal).length > 0 ? feed.events.filter((e) => e.isReal) : feed.events;
+  const event = pool
     .slice()
     .sort((a, b) => b.importance * b.confidence - a.importance * a.confidence)[0] ?? null;
   return { event, generatedAt: feed.generatedAt, source: feed.source, error: feed.error };
