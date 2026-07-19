@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { computeOpportunities } from "@/lib/opportunity-engine";
 import { ExplainButton } from "@/components/aegis/explain-button";
+import { VerifyButton } from "@/components/aegis/verify-button";
 import { getEventFeed } from "@/lib/intelligence.functions";
 
 export const Route = createFileRoute("/app/digest")({
@@ -114,7 +115,8 @@ function DigestPage() {
             {headline.matters}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2.5">
-            <ExplainButton prompt={`Explain the significance of ${headline.headline} and what I should do about it.`} eventId={headline.id} variant="solid" label="Ask Aegis" />
+            <ExplainButton prompt={`Explain the significance of event E-${headline.id}: ${headline.headline}. What should I do about it?`} eventId={headline.id} variant="solid" label="Ask Aegis" />
+            <VerifyButton event={headline} variant="solid" />
             <Link to="/app/timeline" className="inline-flex items-center gap-1.5 rounded-[6px] px-2.5 py-1 hover:bg-white/5 transition-colors" style={{ border: "1px solid rgba(245,247,250,0.15)", fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.7)" }}>
               See in Timeline <ArrowRight className="w-3 h-3" strokeWidth={2} />
             </Link>
