@@ -815,6 +815,7 @@ function Landing() {
         <span>Read only · Non custodial · Not financial advice</span>
       </footer>
       <FloatingChat />
+      <DemoModeButton />
     </div>
   );
 }
