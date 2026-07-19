@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireGateway } from "./ai-gateway.server";
 import { getMarketState } from "./monad-data";
 import { getMonadEvents, getReplayWindow, getHeadlineEvent } from "./monad-events";
+import { computeOpportunities } from "./opportunity-engine";
 
 const MODEL = "openai/gpt-5.5";
 
@@ -216,3 +217,16 @@ export const getReplayFeed = createServerFn({ method: "GET" })
 export const getHeadline = createServerFn({ method: "GET" }).handler(async () => {
   return { event: getHeadlineEvent(), generatedAt: new Date().toISOString() };
 });
+
+// -------- Opportunity Engine ----------------------------------------------
+// Deterministic, evidence-backed opportunity ranking. Cheap; can be layered
+// with an AI thesis on top for the top-ranked setup.
+
+export const getOpportunityBoard = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) =>
+    z.object({ limit: z.number().min(1).max(12).optional() }).parse(data ?? {}),
+  )
+  .handler(async ({ data }) => ({
+    opportunities: computeOpportunities(Date.now(), data.limit ?? 6),
+    generatedAt: new Date().toISOString(),
+  }));
