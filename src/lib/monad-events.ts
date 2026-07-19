@@ -221,10 +221,15 @@ function synthesizeEvent(
   const minutesAgo = Math.max(0, Math.round((now - ts) / 60_000));
   const block = 8_200_000 + minuteBucket * 60 + i;
   const txHash = fakeTx(rand);
-  const amountUsd = Math.round(20_000 + rand() * 2_400_000);
-  const importance = Math.min(100, Math.round(30 + Math.log10(amountUsd) * 8 + rand() * 20));
-  const confidence = Math.round(60 + rand() * 35);
-  const unusualness = Math.round(20 + rand() * 70);
+  // Synthetic notionals are intentionally capped to plausible small-ticket
+  // ranges ($1.5k–$70k). We do NOT fabricate six/seven-figure flows — those
+  // would look like verifiable claims we can't back with a real explorer link.
+  const amountUsd = Math.round(1_500 + rand() * 68_500);
+  // Confidence/unusualness are curated heuristics, not measurements. Keep the
+  // ranges honest so the UI doesn't imply certainty we don't have.
+  const importance = Math.min(72, Math.round(24 + Math.log10(amountUsd) * 5 + rand() * 12));
+  const confidence = Math.round(38 + rand() * 22); // 38–60
+  const unusualness = Math.round(18 + rand() * 30); // 18–48
 
   const wA = fakeWallet(rand, WALLET_LABELS[Math.floor(rand() * WALLET_LABELS.length)]);
   const wB = fakeWallet(rand, WALLET_LABELS[Math.floor(rand() * WALLET_LABELS.length)]);
@@ -245,12 +250,14 @@ function synthesizeEvent(
     protocol: cat === "protocol_activity" || cat === "liquidity_add" || cat === "liquidity_remove" ? protocol : undefined,
     txHash,
     amountUsd,
+    // Evidence is intentionally non-linkable: these are curated pattern
+    // signals, not indexed transactions. Anything with a real explorer URL
+    // lives in the Live On-Chain panel, which streams straight from RPC.
     evidence: [
-      { id: "tx", label: "Transaction", value: `${txHash.slice(0, 10)}…${txHash.slice(-6)}`, kind: "tx", ref: `/tx/${txHash}` },
-      { id: "block", label: "Block", value: block.toLocaleString(), kind: "block", ref: `/block/${block}` },
-      { id: "wallet", label: "Actor", value: `${wA.address.slice(0, 8)}…${wA.address.slice(-4)}`, kind: "wallet", ref: `/address/${wA.address}` },
-      { id: "amount", label: "Notional", value: usd(amountUsd), kind: "metric" },
-      { id: "asset", label: "Asset", value: token.symbol, kind: "contract", ref: `/token/${token.address}` },
+      { id: "amount", label: "Notional (est.)", value: usd(amountUsd), kind: "metric" },
+      { id: "asset", label: "Asset", value: token.symbol, kind: "contract" },
+      { id: "window", label: "Window", value: `${Math.max(1, minutesAgo)}m`, kind: "metric" },
+      { id: "confidence", label: "Confidence", value: `${confidence}%`, kind: "metric" },
     ],
     dataType: "curated",
     freshnessSec: Math.max(1, Math.round((now - ts) / 1000)),
