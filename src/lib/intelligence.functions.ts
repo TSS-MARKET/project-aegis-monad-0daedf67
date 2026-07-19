@@ -19,13 +19,20 @@ const BriefSchema = z.object({
 
 async function briefPrompt() {
   const state = await getLiveMarketState();
+  const events = (await getLiveMonadEvents(24, 220)).events;
   const topMovers = [...state.tokens].sort((a, b) => b.change24h - a.change24h);
+  const topEvents = events
+    .slice()
+    .sort((a, b) => b.importance * b.confidence - a.importance * a.confidence)
+    .slice(0, 8)
+    .map((e) => ({ id: e.id, cat: e.category, head: e.headline, asset: e.asset?.symbol, usd: e.amountUsd, imp: e.importance, conf: e.confidence, why: e.matters }));
   const compact = {
     ecosystem: state.ecosystem,
     narratives: state.narratives,
     gainers: topMovers.slice(0, 3).map((t) => ({ s: t.symbol, c: t.change24h, v: t.volume24hUsd, n: t.narrative })),
     losers: topMovers.slice(-3).map((t) => ({ s: t.symbol, c: t.change24h, v: t.volume24hUsd, n: t.narrative })),
     whales: state.whales.slice(0, 4),
+    intelligenceEvents: topEvents,
   };
   return `You are Aegis, an on-chain intelligence analyst for the Monad ecosystem. Write a concise, institutional-grade market brief for the last 24h based ONLY on this state:
 
@@ -33,9 +40,34 @@ ${JSON.stringify(compact)}
 
 Rules:
 - Cite specific numbers and tokens; no vague statements.
+- Focus on whales, liquidity, narratives, opportunities and risk. Do not lead with block numbers or raw block settlement.
 - 3-5 bullets max, each punchy (<= 22 words).
 - 2-3 risks, 2-3 watch items.
 - No financial advice.`;
+}
+
+async function fallbackBrief() {
+  const state = await getLiveMarketState();
+  const events = (await getLiveMonadEvents(24, 220)).events;
+  const ranked = events.slice().sort((a, b) => b.importance * b.confidence - a.importance * a.confidence);
+  const lead = ranked[0];
+  const whale = ranked.find((e) => e.category.startsWith("whale") || e.category === "large_transfer") ?? lead;
+  const liquidity = ranked.find((e) => e.category.includes("liquidity") || e.category === "stable_flow") ?? ranked[1] ?? lead;
+  const rotation = ranked.find((e) => e.category === "capital_rotation" || e.category === "dex_volume_spike") ?? ranked[2] ?? lead;
+  const topNarrative = [...state.narratives].sort((a, b) => b.strength - a.strength)[0];
+  const sentiment = topNarrative && topNarrative.change > 2 ? "Bullish" : topNarrative && topNarrative.change < -2 ? "Bearish" : "Neutral";
+  return BriefSchema.parse({
+    sentiment,
+    headline: lead ? `${lead.asset?.symbol ?? "MON"} leads Monad tape with ${lead.confidence}% confidence` : "Monad tape is active but mixed",
+    bullets: [lead, whale, liquidity, rotation]
+      .filter(Boolean)
+      .map((e) => ({ title: e!.headline, detail: `${e!.matters} Confidence ${e!.confidence}%.` })),
+    risks: ranked
+      .filter((e) => e.category === "whale_distribution" || e.category === "liquidity_remove" || e.category === "unusual_behavior")
+      .slice(0, 3)
+      .map((e) => `${e.asset?.symbol ?? "MON"}: ${e.watchNext}`),
+    watch: ranked.slice(0, 3).map((e) => `${e.asset?.symbol ?? "MON"}: ${e.watchNext}`),
+  });
 }
 
 export const getMarketBrief = createServerFn({ method: "GET" }).handler(async () => {
@@ -56,7 +88,7 @@ export const getMarketBrief = createServerFn({ method: "GET" }).handler(async ()
       }
     }
     console.error(error);
-    return { ok: false as const, error: (error as Error).message };
+    return { ok: true as const, data: await fallbackBrief() };
   }
 });
 
