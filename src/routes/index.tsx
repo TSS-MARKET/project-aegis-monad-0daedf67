@@ -95,7 +95,7 @@ function Landing() {
         style={{ background: "radial-gradient(circle, rgba(103,232,249,0.10), transparent 70%)" }}
       />
 
-      <header className="relative mx-auto flex max-w-[1560px] items-center justify-between px-6 md:px-10 py-6">
+      <header className="relative mx-auto flex max-w-[1560px] items-center justify-between px-6 md:px-10 py-3 md:py-4">
         <AegisLogo />
         <nav
           className="hidden md:flex items-center gap-8 text-[0.72rem] uppercase tracking-[0.14em] text-muted-foreground"
@@ -121,31 +121,32 @@ function Landing() {
 
       {/* HERO */}
       <section
-        className="relative mx-auto max-w-[1560px] px-6 md:px-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start pt-10 pb-24"
+        className="relative mx-auto max-w-[1560px] px-6 md:px-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start pt-2 md:pt-6 pb-24"
         style={{ minHeight: "82vh" }}
       >
         {/* LEFT */}
         <div className="flex flex-col gap-8 min-w-0">
-          <div className="gl-hero__reveal flex items-center gap-2.5 min-w-0 flex-wrap" style={{ animationDelay: "60ms" }}>
-            <span
-              className="block w-1.5 h-1.5 rounded-full shrink-0"
-              style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.18)" }}
-            />
-            <span
-              className="flex items-center gap-x-2 flex-wrap md:whitespace-nowrap"
-              style={{
-                fontFamily: MONO,
-                fontSize: "0.66rem",
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-              }}
-            >
+          <div
+            className="gl-hero__reveal flex items-center gap-x-2 gap-y-1 min-w-0 flex-wrap"
+            style={{
+              animationDelay: "60ms",
+              fontFamily: MONO,
+              fontSize: "0.66rem",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              letterSpacing: "0.14em",
+            }}
+          >
+            <span className="inline-flex items-center gap-2 whitespace-nowrap">
+              <span
+                className="block w-1.5 h-1.5 rounded-full shrink-0"
+                style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.18)" }}
+              />
               <span style={{ color: "#f5f7fa" }}>AEGIS · MONAD INTELLIGENCE</span>
-              <span style={{ color: "rgba(34,211,238,0.5)" }}>//</span>
-              <span style={{ color: "rgba(245,247,250,0.55)" }}>
-                READ-ONLY: <span style={{ color: "#f5f7fa" }}>NEVER TOUCHES YOUR KEYS</span>
-              </span>
+            </span>
+            <span style={{ color: "rgba(34,211,238,0.5)" }}>//</span>
+            <span style={{ color: "rgba(245,247,250,0.55)" }}>
+              READ-ONLY: <span style={{ color: "#f5f7fa" }}>NEVER TOUCHES YOUR KEYS</span>
             </span>
           </div>
 
