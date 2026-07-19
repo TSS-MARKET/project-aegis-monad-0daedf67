@@ -124,7 +124,7 @@ function ChatPage() {
                 </p>
               </div>
 
-              {feed && feed.length > 0 && (
+              {feed && feed.events.length > 0 && (
                 <div
                   className="p-4 rounded-[8px]"
                   style={{
@@ -134,12 +134,12 @@ function ChatPage() {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(34,211,238,0.8)" }}>
-                      Evidence rail · grounded on {feed.length} live events
+                      Evidence rail · grounded on {feed.events.length} live events
                     </span>
                     <LinkIcon className="h-3 w-3" style={{ color: "rgba(34,211,238,0.6)" }} />
                   </div>
                   <div className="space-y-2">
-                    {feed.map((e) => (
+                    {feed.events.map((e) => (
                       <button
                         key={e.id}
                         onClick={() => submit(`Explain event ${e.id}: ${e.headline}. Why does it matter and what should I watch next?`)}
