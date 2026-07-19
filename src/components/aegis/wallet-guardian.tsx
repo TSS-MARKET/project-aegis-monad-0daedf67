@@ -41,7 +41,7 @@ export function WalletGuardian() {
 
   return (
     <div
-      className="rounded-[10px] p-5 md:p-6"
+      className="rounded-[10px] p-5 md:p-6 hover-lift transition-all duration-300"
       style={{
         background: "linear-gradient(180deg, rgba(10,18,28,0.72), rgba(4,10,16,0.72))",
         border: "1px solid rgba(34,211,238,0.18)",
@@ -125,7 +125,7 @@ export function WalletGuardian() {
 
           <div className="space-y-1.5">
             {report.signals.map((s) => (
-              <div key={s.key} className="flex items-center justify-between gap-3 px-3 py-2 rounded-md" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(34,211,238,0.08)" }}>
+              <div key={s.key} className="flex items-center justify-between gap-3 px-3 py-2 rounded-md transition-all duration-200 hover:-translate-y-0.5 hover:border-[rgba(34,211,238,0.35)]" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(34,211,238,0.08)" }}>
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: STATUS_COLOR[s.status], boxShadow: `0 0 8px ${STATUS_COLOR[s.status]}` }} />
                   <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
