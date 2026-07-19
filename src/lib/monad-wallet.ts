@@ -35,6 +35,16 @@ export function eth(): Eth | null {
   return w.ethereum ?? null;
 }
 
+export function isInIframe(): boolean {
+  if (typeof window === "undefined") return false;
+  try { return window.self !== window.top; } catch { return true; }
+}
+
+export function topLevelUrl(): string {
+  if (typeof window === "undefined") return "";
+  return window.location.href;
+}
+
 export function short(addr: string) {
   return addr.slice(0, 6) + "…" + addr.slice(-4);
 }
@@ -76,9 +86,13 @@ export function useMonadWallet() {
 
   const connect = useCallback(async () => {
     setError(null);
+    if (isInIframe()) {
+      setError("Wallets block dApps inside iframes. Open Aegis in a new tab first.");
+      return;
+    }
     const e = eth();
     if (!e) {
-      setError("No wallet detected. Install MetaMask to connect.");
+      setError("No wallet detected. Install MetaMask, Rabby or another EIP-1193 wallet.");
       return;
     }
     try {
@@ -95,7 +109,9 @@ export function useMonadWallet() {
         });
       } catch (err) {
         const code = (err as { code?: number })?.code;
-        if (code === 4902 || code === -32603) {
+        const msg = ((err as { message?: string })?.message || "").toLowerCase();
+        const unknownChain = code === 4902 || code === -32603 || msg.includes("unrecognized") || msg.includes("unknown");
+        if (unknownChain) {
           await e.request({
             method: "wallet_addEthereumChain",
             params: [
@@ -108,12 +124,18 @@ export function useMonadWallet() {
               },
             ],
           });
+        } else if (code === 4001) {
+          throw new Error("You rejected the network switch. Approve Monad in your wallet.");
+        } else {
+          throw err;
         }
       }
       const c = (await e.request({ method: "eth_chainId" })) as string;
       setChainId(c);
     } catch (err) {
-      setError((err as Error).message || "Connection failed");
+      const code = (err as { code?: number })?.code;
+      if (code === 4001) setError("Connection rejected in wallet.");
+      else setError((err as Error).message || "Connection failed");
     } finally {
       setConnecting(false);
     }
