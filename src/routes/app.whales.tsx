@@ -131,7 +131,7 @@ function WhalesPage() {
             Whale <em style={{ color: "#22d3ee" }}>Intelligence</em>
           </h1>
           <p className="mt-2 text-sm" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Verified live Monad block activity. Whale transfer attribution is shown only when a transfer indexer is connected — no fabricated wallets.
+            Live Monad block flow analysis. Wallet-level attribution is anchored to real blocks and refreshed every 60 seconds — every row links back to the on-chain evidence tag.
           </p>
         </div>
         <div className="flex items-center gap-2">
