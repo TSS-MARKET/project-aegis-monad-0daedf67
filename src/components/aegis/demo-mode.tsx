@@ -2,14 +2,13 @@
 // flagship surfaces (Firehose → Timeline → Replay → Opportunities → Wallet
 // DNA → Ask Aegis) with captions. Built for hackathon judging in under a
 // minute. Pure client-side; no data needs to be pre-loaded.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
-import { Play, X, ChevronRight } from "lucide-react";
+import { X, ChevronRight, ChevronLeft } from "lucide-react";
 
 type Step = {
   to: string;
-  ms: number;
   eyebrow: string;
   title: string;
   body: string;
@@ -18,56 +17,47 @@ type Step = {
 const STEPS: Step[] = [
   {
     to: "/",
-    ms: 4200,
     eyebrow: "01 · The daily problem",
     title: "Traders lose an hour every morning reading Monad by hand.",
     body: "Aegis replaces the morning research routine with one grounded briefing — built on live Monad RPC, not a chatbot guessing.",
   },
   {
     to: "/app",
-    ms: 4200,
     eyebrow: "02 · Live Monad state",
     title: "Every panel is anchored to real chain events.",
     body: "Rolling block activity, gas load, volume flow, narrative rotation — one glance, one truth. No dashboards to configure.",
   },
   {
     to: "/app/timeline",
-    ms: 4200,
     eyebrow: "03 · Intelligence Timeline",
     title: "Every event has an id you can cite.",
     body: "Ask Aegis footnotes its answers with [E-<id>] tags that link straight back into this timeline. Evidence, not vibes.",
   },
   {
     to: "/app/replay",
-    ms: 4200,
     eyebrow: "04 · Replay the Chain",
     title: "Rewind Monad the moment something moves.",
     body: "Scrub any window in the last hour and watch whales, liquidity, and price rebuild block-by-block on Monad's sub-second finality.",
   },
   {
     to: "/app/opportunities",
-    ms: 4200,
     eyebrow: "05 · Opportunity Engine",
     title: "Every setup shows its receipts.",
     body: "Deterministic scoring across momentum, turnover, live RPC activity, and narrative — each opportunity anchored to evidence.",
   },
   {
     to: "/app/wallet",
-    ms: 4200,
     eyebrow: "06 · Wallet DNA · Guardian",
     title: "Paste any Monad address, get an on-chain scorecard.",
     body: "Balance, tx count, contract check, gas runway, A–F grade. A daily-life safety net for anyone touching Monad.",
   },
   {
     to: "/app/chat",
-    ms: 4600,
     eyebrow: "07 · Ask Aegis",
     title: "A tool-calling agent with live Monad tools.",
     body: "inspectMonadWallet · getMonadFirehose · rankOpportunities · lookupEvent. It reads Monad, it doesn't hallucinate about it.",
   },
 ];
-
-const TOTAL_MS = STEPS.reduce((a, s) => a + s.ms, 0);
 
 const DEMO_EVENT = "aegis:start-demo";
 
@@ -158,36 +148,28 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
 function DemoOverlay({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const [idx, setIdx] = useState(0);
-  const [elapsed, setElapsed] = useState(0);
-  const startAt = useRef(Date.now());
-  const stopped = useRef(false);
 
+  // Navigate whenever the current step changes (including initial mount).
   useEffect(() => {
-    stopped.current = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    let acc = 0;
-    STEPS.forEach((step, i) => {
-      timers.push(
-        setTimeout(() => {
-          if (stopped.current) return;
-          setIdx(i);
-          navigate({ to: step.to });
-        }, acc),
-      );
-      acc += step.ms;
-    });
-    timers.push(setTimeout(() => { if (!stopped.current) onClose(); }, acc + 400));
-    const tick = setInterval(() => setElapsed(Date.now() - startAt.current), 100);
-    return () => {
-      stopped.current = true;
-      timers.forEach(clearTimeout);
-      clearInterval(tick);
-    };
+    navigate({ to: STEPS[idx].to });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [idx]);
+
+  // Keyboard: ←/→ to step, Esc to close.
+  useEffect(() => {
+    const on = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      else if (e.key === "ArrowRight") setIdx((i) => Math.min(STEPS.length - 1, i + 1));
+      else if (e.key === "ArrowLeft") setIdx((i) => Math.max(0, i - 1));
+    };
+    window.addEventListener("keydown", on);
+    return () => window.removeEventListener("keydown", on);
+  }, [onClose]);
 
   const step = STEPS[idx];
-  const progress = Math.min(1, elapsed / TOTAL_MS);
+  const progress = (idx + 1) / STEPS.length;
+  const isFirst = idx === 0;
+  const isLast = idx === STEPS.length - 1;
 
   return (
     <div
@@ -209,7 +191,7 @@ function DemoOverlay({ onClose }: { onClose: () => void }) {
         style={{ background: "rgba(34,211,238,0.08)" }}
       >
         <div
-          className="h-full transition-[width] duration-100 ease-linear"
+          className="h-full transition-[width] duration-300 ease-out"
           style={{
             width: `${progress * 100}%`,
             background: "linear-gradient(90deg, #22d3ee 0%, #7dd3fc 100%)",
@@ -219,15 +201,19 @@ function DemoOverlay({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Step dots */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 pointer-events-none">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 pointer-events-auto">
         {STEPS.map((_, i) => (
-          <span
+          <button
             key={i}
-            className="h-1 rounded-full transition-all"
+            onClick={() => setIdx(i)}
+            aria-label={`Go to step ${i + 1}`}
+            className="h-1.5 rounded-full transition-all hover:opacity-100"
             style={{
-              width: i === idx ? 22 : 8,
+              width: i === idx ? 24 : 10,
               background: i <= idx ? "#22d3ee" : "rgba(255,255,255,0.15)",
               boxShadow: i === idx ? "0 0 8px rgba(34,211,238,0.7)" : "none",
+              opacity: i === idx ? 1 : 0.7,
+              cursor: "pointer",
             }}
           />
         ))}
@@ -293,30 +279,67 @@ function DemoOverlay({ onClose }: { onClose: () => void }) {
             {step.body}
           </p>
           <div className="mt-4 flex items-center justify-between">
-            <span
-              className="inline-flex items-center gap-2 text-[0.6rem]"
-              style={{
-                fontFamily: "var(--font-mono)",
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "rgba(245,247,250,0.5)",
-              }}
-            >
-              <Play className="h-3 w-3" style={{ color: "#22d3ee" }} />
-              Auto · {Math.max(0, Math.round((TOTAL_MS - elapsed) / 1000))}s left
-            </span>
             <button
-              onClick={onClose}
-              className="text-[0.65rem]"
+              onClick={() => setIdx((i) => Math.max(0, i - 1))}
+              disabled={isFirst}
+              className="inline-flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[0.62rem] transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:-translate-y-px"
+              style={{
+                fontFamily: "var(--font-mono)",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "rgba(245,247,250,0.7)",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <ChevronLeft className="h-3 w-3" /> Back
+            </button>
+            <span
+              className="text-[0.6rem]"
               style={{
                 fontFamily: "var(--font-mono)",
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "rgba(245,247,250,0.5)",
+                color: "rgba(245,247,250,0.45)",
               }}
             >
-              Skip →
-            </button>
+              Use ← → keys · Esc to exit
+            </span>
+            {isLast ? (
+              <button
+                onClick={onClose}
+                className="inline-flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[0.62rem] transition-all hover:-translate-y-px"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "#020617",
+                  background: "linear-gradient(180deg, #22d3ee, #0ea5b7)",
+                  border: "1px solid rgba(34,211,238,0.6)",
+                  boxShadow: "0 6px 20px -6px rgba(34,211,238,0.6)",
+                  fontWeight: 800,
+                }}
+              >
+                Finish
+              </button>
+            ) : (
+              <button
+                onClick={() => setIdx((i) => Math.min(STEPS.length - 1, i + 1))}
+                className="inline-flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[0.62rem] transition-all hover:-translate-y-px"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "#020617",
+                  background: "linear-gradient(180deg, #22d3ee, #0ea5b7)",
+                  border: "1px solid rgba(34,211,238,0.6)",
+                  boxShadow: "0 6px 20px -6px rgba(34,211,238,0.6)",
+                  fontWeight: 800,
+                }}
+              >
+                Next <ChevronRight className="h-3 w-3" />
+              </button>
+            )}
           </div>
         </div>
       </div>
