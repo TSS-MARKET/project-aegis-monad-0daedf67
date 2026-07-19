@@ -34,12 +34,12 @@ const SANS = 'var(--font-sans)';
 function ProofRow({ Icon, label, value, accent }: { Icon: LucideIcon; label: string; value: string; accent?: boolean }) {
   return (
     <div
-      className="flex items-center justify-between gap-3 py-3 px-2 -mx-2"
+      className="gl-proof-row group flex items-center justify-between gap-3 py-3 px-3 -mx-2 rounded-md"
       style={{ borderBottom: "1px solid rgba(34,211,238,0.08)" }}
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <span
-          className="inline-flex items-center justify-center rounded-md shrink-0"
+          className="inline-flex items-center justify-center rounded-md shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
           style={{
             width: 24,
             height: 24,
@@ -62,6 +62,7 @@ function ProofRow({ Icon, label, value, accent }: { Icon: LucideIcon; label: str
         </span>
       </div>
       <span
+        className="transition-colors duration-300 group-hover:text-[color:#67e8f9]"
         style={{
           fontFamily: SANS,
           fontSize: "0.86rem",
