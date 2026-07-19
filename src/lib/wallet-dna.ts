@@ -101,15 +101,15 @@ const CATEGORY_WEIGHTS: Record<ArchetypeKey, Partial<Record<CategoryKey, number>
 
 // Preferred narratives per archetype — bias the exposure ring.
 const NARRATIVE_BIAS: Record<ArchetypeKey, string[]> = {
-  whale:        ["Layer-1", "Liquid Staking", "Perps"],
-  market_maker: ["Perps", "DEX", "Stables"],
-  lp_rotator:   ["DEX", "Liquid Staking", "Stables"],
-  yield_farmer: ["Liquid Staking", "Lending", "Stables"],
-  diamond_hands:["Layer-1", "Liquid Staking"],
-  meme_hunter:  ["Meme", "DEX"],
-  bridger:      ["Stables", "Layer-1"],
-  insider:      ["Meme", "AI", "Perps"],
-  fresh:        ["Layer-1"],
+  whale:        ["Infra", "LST", "DeFi"],
+  market_maker: ["DeFi", "Infra", "Stable"],
+  lp_rotator:   ["DeFi", "LST", "Stable"],
+  yield_farmer: ["LST", "DeFi", "Stable"],
+  diamond_hands:["Infra", "LST"],
+  meme_hunter:  ["Meme", "DeFi"],
+  bridger:      ["Stable", "Infra"],
+  insider:      ["Meme", "AI", "DeFi"],
+  fresh:        ["Infra"],
 };
 
 function activityCurve(rand: () => number, arch: ArchetypeKey): number[] {
@@ -160,14 +160,15 @@ export type WalletDNA = {
 };
 
 const NARRATIVE_COLOR: Record<string, string> = {
-  "Layer-1": "#22d3ee",
-  "Liquid Staking": "#34d399",
-  "DEX": "#a78bfa",
-  "Lending": "#fbbf24",
-  "Perps": "#f472b6",
-  "Meme": "#fb7185",
-  "AI": "#60a5fa",
-  "Stables": "#e5e7eb",
+  Infra: "#22d3ee",
+  LST: "#34d399",
+  DeFi: "#a78bfa",
+  Meme: "#fb7185",
+  AI: "#60a5fa",
+  Stable: "#e5e7eb",
+  Major: "#fbbf24",
+  L1: "#94a3b8",
+  L2: "#f472b6",
 };
 
 export function isMonadAddress(addr: string): boolean {
