@@ -244,8 +244,14 @@ function ChatPage() {
   );
 }
 
+function transformCitations(text: string) {
+  // Convert [E-<id>] evidence tags into stylized markdown links → timeline.
+  return text.replace(/\[E-([A-Za-z0-9_-]+)\]/g, (_m, id) => `[\`E-${id}\`](/app/timeline?event=${id})`);
+}
+
 function MessageRow({ m }: { m: UIMessage }) {
-  const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+  const raw = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+  const text = transformCitations(raw);
   if (m.role === "user") {
     return (
       <div className="flex justify-end">
@@ -258,7 +264,7 @@ function MessageRow({ m }: { m: UIMessage }) {
             color: "#f5f7fa",
           }}
         >
-          {text}
+          {raw}
         </div>
       </div>
     );
