@@ -94,8 +94,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Aegis - Monad Intelligence" },
       { name: "twitter:description", content: "Autonomous AI market analyst for the Monad ecosystem. Real-time briefings, opportunities, and wallet strategy  grounded in on-chain evidence." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c9c4560b-aed5-40fd-ab4c-d588489d50bc/id-preview-18cf5315--1a161b8d-e760-46fd-85aa-bab5ce0cacdc.lovable.app-1784420560880.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c9c4560b-aed5-40fd-ab4c-d588489d50bc/id-preview-18cf5315--1a161b8d-e760-46fd-85aa-bab5ce0cacdc.lovable.app-1784420560880.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/eJ441z70iNYtciiqIYvSHGLdEJc2/social-images/social-1784425208090-ChatGPT_Image_Jul_19,_2026,_07_08_40_AM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/eJ441z70iNYtciiqIYvSHGLdEJc2/social-images/social-1784425208090-ChatGPT_Image_Jul_19,_2026,_07_08_40_AM.webp" },
     ],
     links: [
       {
@@ -108,7 +108,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@600;700;800&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,
