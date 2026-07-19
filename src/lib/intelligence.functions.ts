@@ -36,7 +36,7 @@ Rules:
 }
 
 export const getMarketBrief = createServerFn({ method: "GET" }).handler(async () => {
-  const gateway = requireGateway();
+  const gateway = requireGateway({ structuredOutputs: true });
   try {
     const { experimental_output } = await generateText({
       model: gateway(MODEL),
@@ -72,7 +72,7 @@ const OpportunitySchema = z.object({
 });
 
 export const getOpportunities = createServerFn({ method: "GET" }).handler(async () => {
-  const gateway = requireGateway();
+  const gateway = requireGateway({ structuredOutputs: true });
   const state = getMarketState();
   const candidates = state.tokens
     .filter((t) => t.narrative !== "Stable")
@@ -124,7 +124,7 @@ export const analyzeWallet = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ data }) => {
-    const gateway = requireGateway();
+    const gateway = requireGateway({ structuredOutputs: true });
     const state = getMarketState();
     const enriched = data.holdings.map((h) => {
       const t = state.tokens.find((x) => x.symbol === h.symbol);
