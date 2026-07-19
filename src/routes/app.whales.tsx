@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMarketSnapshot } from "@/lib/intelligence.functions";
 import { formatUsd } from "@/lib/monad-data";
-import { ArrowDownRight, ArrowUpRight, Repeat, Waves, TrendingUp, Wallet, Activity } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Repeat, Waves, TrendingUp, Wallet, Activity, BarChart3, Clock } from "lucide-react";
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/app/whales")({ component: WhalesPage });
@@ -57,6 +57,33 @@ function WhalesPage() {
     whales.forEach((w) => symbolMap.set(w.token, (symbolMap.get(w.token) ?? 0) + w.amountUsd));
     const topSymbols = Array.from(symbolMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3);
     return { buyVol, sellVol, buyShare, regime, topSymbols, net: buyVol - sellVol };
+  }, [whales]);
+
+  // Per-symbol buy/sell breakdown
+  const assetFlows = useMemo(() => {
+    const map = new Map<string, { buy: number; sell: number; count: number }>();
+    whales.forEach((w) => {
+      const e = map.get(w.token) ?? { buy: 0, sell: 0, count: 0 };
+      if (w.action === "accumulate") e.buy += w.amountUsd;
+      else if (w.action === "distribute") e.sell += w.amountUsd;
+      e.count += 1;
+      map.set(w.token, e);
+    });
+    return Array.from(map.entries())
+      .map(([symbol, v]) => ({ symbol, ...v, total: v.buy + v.sell }))
+      .sort((a, b) => b.total - a.total);
+  }, [whales]);
+
+  // Hourly pattern (last 60m bucketed by 10m windows)
+  const hourly = useMemo(() => {
+    const buckets = Array.from({ length: 6 }, (_, i) => ({ label: `${(i + 1) * 10}m`, buy: 0, sell: 0 }));
+    whales.forEach((w) => {
+      const idx = Math.min(5, Math.floor(w.minutesAgo / 10));
+      if (w.action === "accumulate") buckets[idx].buy += w.amountUsd;
+      else if (w.action === "distribute") buckets[idx].sell += w.amountUsd;
+    });
+    const max = Math.max(1, ...buckets.map((b) => Math.max(b.buy, b.sell)));
+    return { buckets, max };
   }, [whales]);
 
   // Fake 7d sparkline off deterministic totals
@@ -166,6 +193,84 @@ function WhalesPage() {
       {/* Activity Feed */}
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div>
+          {/* Analytics — asset flows + hourly pattern */}
+          <div className="grid gap-4 md:grid-cols-2 mb-6">
+            <div
+              className="rounded-[10px] p-5"
+              style={{
+                background: "linear-gradient(180deg, rgba(10,18,28,0.65), rgba(4,10,16,0.65))",
+                border: "1px solid rgba(34,211,238,0.14)",
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
+                <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
+                  Per-Asset Flow · 24h
+                </span>
+              </div>
+              <div className="mt-4 space-y-2.5">
+                {assetFlows.length === 0 ? (
+                  <span className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "rgba(245,247,250,0.4)" }}>
+                    insufficient_data
+                  </span>
+                ) : assetFlows.map((f) => {
+                  const buyPct = f.total > 0 ? (f.buy / f.total) * 100 : 0;
+                  return (
+                    <div key={f.symbol}>
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontFamily: MONO, color: "#22d3ee" }}>{f.symbol}</span>
+                          <span style={{ color: "rgba(245,247,250,0.5)" }}>{f.count}x</span>
+                        </div>
+                        <span style={{ color: "rgba(245,247,250,0.75)", fontFamily: MONO }}>{formatUsd(f.total)}</span>
+                      </div>
+                      <div className="mt-1 flex h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                        <div style={{ width: `${buyPct}%`, background: "#34d399" }} />
+                        <div style={{ width: `${100 - buyPct}%`, background: "#fb7185" }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div
+              className="rounded-[10px] p-5"
+              style={{
+                background: "linear-gradient(180deg, rgba(10,18,28,0.65), rgba(4,10,16,0.65))",
+                border: "1px solid rgba(34,211,238,0.14)",
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Clock className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
+                <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
+                  Hourly Pattern · 10m buckets
+                </span>
+              </div>
+              <div className="mt-4 flex items-end justify-between gap-2 h-32">
+                {hourly.buckets.map((b, i) => {
+                  const bh = (b.buy / hourly.max) * 100;
+                  const sh = (b.sell / hourly.max) * 100;
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <div className="w-full flex items-end justify-center gap-0.5 h-24">
+                        <div className="w-2 rounded-t" style={{ height: `${bh}%`, background: "#34d399", boxShadow: "0 0 6px rgba(52,211,153,0.5)" }} />
+                        <div className="w-2 rounded-t" style={{ height: `${sh}%`, background: "#fb7185", boxShadow: "0 0 6px rgba(251,113,133,0.5)" }} />
+                      </div>
+                      <span className="text-[9px] uppercase" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.45)" }}>
+                        {b.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-3 flex items-center gap-4 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.55)" }}>
+                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "#34d399" }} /> BUY</span>
+                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "#fb7185" }} /> SELL</span>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2 mb-3">
             <Activity className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
             <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
