@@ -48,10 +48,10 @@ const CAT_META: Record<EventCategory, { label: string; icon: typeof Waves; color
 type FilterKey = "all" | "whales" | "liquidity" | "flow" | "protocols" | "opportunities" | "risks";
 const FILTERS: { k: FilterKey; label: string }[] = [
   { k: "all", label: "All" },
-  { k: "whales", label: "Whales" },
+  { k: "whales", label: "Transfers" },
   { k: "liquidity", label: "Liquidity" },
-  { k: "flow", label: "Capital Flow" },
-  { k: "protocols", label: "Protocols" },
+  { k: "flow", label: "Flow" },
+  { k: "protocols", label: "Blocks" },
   { k: "opportunities", label: "Opportunities" },
   { k: "risks", label: "Risks" },
 ];
@@ -215,7 +215,7 @@ function TimelinePage() {
         <div className="rounded-[10px] p-6 sticky top-4 self-start" style={{ background: PANEL_BG, border: BORDER }}>
           {selected ? <Inspector e={selected} /> : (
             <div className="text-sm" style={{ color: "rgba(245,247,250,0.55)" }}>
-              Select an event to see evidence, wallets, and why it matters.
+              Select an event to see block evidence and why it matters.
             </div>
           )}
         </div>
