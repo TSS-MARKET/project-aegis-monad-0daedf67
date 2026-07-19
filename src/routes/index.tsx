@@ -410,6 +410,11 @@ function Landing() {
         </div>
       </section>
 
+      {/* Live Monad firehose — real RPC blocks */}
+      <section aria-label="Monad live firehose" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pt-8">
+        <LiveFirehose />
+      </section>
+
       {/* Capabilities */}
       <section id="capabilities" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-24">
         {/* ── CHAPTER 01 · THE DAILY PROBLEM ─────────────────────── */}
