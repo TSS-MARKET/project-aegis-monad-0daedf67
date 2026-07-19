@@ -385,7 +385,7 @@ function Inspector({ e }: { e: MonadEvent }) {
       <div className="flex flex-wrap gap-2 pt-1">
         <Link
           to="/app/chat"
-          search={{ q: `Explain event: ${e.headline}. Evidence: ${e.evidence.map((x) => `${x.label}=${x.value}`).join(", ")}. Why does it matter and what should we watch next?` } as never}
+          search={{ q: `Explain this event and what to watch next.`, eventId: e.id } as never}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs shine-sweep"
           style={{ background: "rgba(34,211,238,0.12)", border: "1px solid rgba(34,211,238,0.4)", color: "#22d3ee" }}
         >
