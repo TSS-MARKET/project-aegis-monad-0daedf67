@@ -1,7 +1,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Loader2, MessageSquare, Radar, X } from "lucide-react";
+import { ArrowUp, Bot, Loader2, Radar, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -121,21 +121,17 @@ export function FloatingChat() {
 
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed z-50 bottom-5 right-4 sm:right-6 group inline-flex items-center gap-2 pl-4 pr-5 py-3 rounded-full transition-all hover:-translate-y-0.5"
+        className="fixed z-50 bottom-5 right-5 sm:right-6 group inline-flex items-center justify-center h-12 w-12 rounded-full transition-all hover:-translate-y-0.5 hover:scale-105"
         style={{
-          background: "linear-gradient(135deg, #22d3ee, #0891b2)",
-          color: "#031018",
-          boxShadow: "0 20px 40px -12px rgba(34,211,238,0.6), 0 0 0 1px rgba(34,211,238,0.4)",
-          fontFamily: "var(--font-display)",
-          fontSize: "0.72rem",
-          fontWeight: 800,
-          letterSpacing: "0.18em",
-          textTransform: "uppercase",
+          background: "radial-gradient(circle at 30% 30%, rgba(34,211,238,0.18), rgba(6,12,20,0.95) 70%)",
+          border: "1px solid rgba(34,211,238,0.45)",
+          color: "#67e8f9",
+          boxShadow: "0 12px 32px -8px rgba(34,211,238,0.55), inset 0 0 20px rgba(34,211,238,0.12)",
+          backdropFilter: "blur(12px)",
         }}
         aria-label={open ? "Close Aegis" : "Ask Aegis"}
       >
-        {open ? <X className="h-4 w-4" strokeWidth={2.5} /> : <MessageSquare className="h-4 w-4" strokeWidth={2.5} />}
-        <span>{open ? "Close" : "Ask Aegis"}</span>
+        {open ? <X className="h-5 w-5" strokeWidth={2} /> : <Bot className="h-5 w-5" strokeWidth={1.8} />}
       </button>
     </>
   );
