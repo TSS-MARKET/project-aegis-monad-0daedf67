@@ -51,7 +51,7 @@ export function WalletGuardian() {
       <div className="flex items-center gap-2 mb-4">
         <ShieldCheck className="w-4 h-4" style={{ color: "#22d3ee" }} />
         <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-          Wallet Guardian · Monad Address Scorecard
+          Address Inspector · Live Monad Scorecard
         </span>
       </div>
       <form
