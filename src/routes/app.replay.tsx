@@ -63,7 +63,7 @@ type Speed = (typeof SPEEDS)[number];
 
 function fmtClock(ts: number) {
   const d = new Date(ts);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
+  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}:${String(d.getUTCSeconds()).padStart(2, "0")}`;
 }
 
 function fmtAgo(mins: number) {
@@ -163,10 +163,23 @@ function ReplayPage() {
     };
     return events.filter((e) => map[filter]?.includes(e.category));
   }, [events, filter]);
+  const streamEvents = useMemo(() => filtered.filter((e) => e.ts <= cursorTs), [filtered, cursorTs]);
+
+  // While playback is running, the inspector follows the newest revealed event
+  // so the page behaves like a real replay feed instead of a static archive.
+  useEffect(() => {
+    if (!streamEvents.length) {
+      if (playing) setSelectedId(null);
+      return;
+    }
+    const newest = streamEvents[streamEvents.length - 1];
+    const selectedStillVisible = selectedId ? streamEvents.some((e) => e.id === selectedId) : false;
+    if (playing || !selectedStillVisible) setSelectedId(newest.id);
+  }, [playing, selectedId, streamEvents]);
 
   const selected = useMemo(
-    () => events.find((e) => e.id === selectedId) ?? filtered[filtered.length - 1] ?? null,
-    [events, selectedId, filtered],
+    () => streamEvents.find((e) => e.id === selectedId) ?? streamEvents[streamEvents.length - 1] ?? null,
+    [selectedId, streamEvents],
   );
 
   return (
@@ -298,7 +311,7 @@ function ReplayPage() {
 
           <div className="ml-auto flex items-center gap-2">
             <span style={{ fontFamily: MONO, fontSize: "0.72rem", color: "rgba(245,247,250,0.55)" }}>
-              {fmtClock(cursorTs)}
+              {fmtClock(cursorTs)} UTC
             </span>
             <span style={{ fontFamily: MONO, fontSize: "0.66rem", color: "#22d3ee" }}>
               {activeEvents.length}/{events.length}
@@ -379,9 +392,9 @@ function ReplayPage() {
             />
           </div>
           <div className="flex justify-between mt-2 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.4)" }}>
-            <span>{fmtClock(startTs)}</span>
-            <span>{fmtClock(startTs + windowMs / 2)}</span>
-            <span>{fmtClock(endTs)}</span>
+            <span>{fmtClock(startTs)} UTC</span>
+            <span>{fmtClock(startTs + windowMs / 2)} UTC</span>
+            <span>{fmtClock(endTs)} UTC</span>
           </div>
         </div>
       </div>
@@ -413,17 +426,17 @@ function ReplayPage() {
             <div className="flex items-center gap-2">
               <Radio className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
               <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-                Event Stream · {filtered.length}
+                Event Stream · {streamEvents.length}/{filtered.length}
               </span>
             </div>
           </div>
           <div className="max-h-[560px] overflow-y-auto divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
-            {filtered.slice().reverse().map((e) => (
+            {streamEvents.slice().reverse().map((e) => (
               <EventRow key={e.id} e={e} selected={e.id === selectedId} onSelect={() => setSelectedId(e.id)} />
             ))}
-            {!filtered.length && (
+            {!streamEvents.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
-                No intelligence records match this filter yet.
+                Press play or scrub forward — this replay stream reveals records only when the UTC cursor reaches them.
               </div>
             )}
           </div>
@@ -433,7 +446,7 @@ function ReplayPage() {
         <div className="rounded-[10px] p-5" style={{ background: PANEL_BG, border: BORDER }}>
           {selected ? <Inspector e={selected} /> : (
             <div className="text-sm" style={{ color: "rgba(245,247,250,0.55)" }}>
-              Select an event to inspect block evidence and why it matters.
+              Press play or scrub the UTC timeline to inspect block evidence as each record appears.
             </div>
           )}
         </div>
@@ -465,7 +478,7 @@ function EventRow({ e, selected, onSelect }: { e: MonadEvent; selected: boolean;
           <span style={{ color: "#f5f7fa", fontSize: "0.86rem", fontWeight: 500 }}>{e.headline}</span>
         </div>
         <div className="mt-1 flex items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
-          <span>{fmtAgo(e.minutesAgo)}</span>
+          <span>{fmtClock(e.ts)} UTC</span>
           <span>· on-chain anchor</span>
           <span style={{ color: meta.color }}>· imp {e.importance}</span>
           <span>· conf {e.confidence}%</span>
@@ -496,7 +509,7 @@ function Inspector({ e }: { e: MonadEvent }) {
               {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.4)", fontFamily: MONO }}>
-               RPC anchored · {fmtAgo(e.minutesAgo)}
+               RPC anchored · {fmtClock(e.ts)} UTC
             </span>
           </div>
           <h2 className="mt-1.5" style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", lineHeight: 1.15 }}>
