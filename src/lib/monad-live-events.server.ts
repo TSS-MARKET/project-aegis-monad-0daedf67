@@ -62,13 +62,11 @@ async function fetchBlocks(url: string, numbers: number[]) {
 // ---------------------------------------------------------------------------
 
 const NARR_TOKENS = [
-  { symbol: "MON", narrative: "L1 Beta", price: 4.82 },
-  { symbol: "DAK", narrative: "Meme", price: 0.0641 },
-  { symbol: "CHOG", narrative: "Meme", price: 0.238 },
-  { symbol: "YAKI", narrative: "Meme", price: 0.0117 },
-  { symbol: "MOYAKI", narrative: "Culture", price: 0.008 },
-  { symbol: "sMON", narrative: "LST", price: 4.88 },
-  { symbol: "aprMON", narrative: "LST", price: 4.85 },
+  { symbol: "MON", narrative: "L1 Beta", price: 0.0212 },
+  { symbol: "wMON", narrative: "Infra", price: 0.0213 },
+  { symbol: "sMON", narrative: "LST", price: 0.0219 },
+  { symbol: "aprMON", narrative: "LST", price: 0.0221 },
+  { symbol: "SHMON", narrative: "DeFi", price: 0.019 },
   { symbol: "USDC", narrative: "Stable", price: 1 },
 ];
 

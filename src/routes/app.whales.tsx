@@ -66,9 +66,13 @@ function WhalesPage() {
     const sells = whales.filter((w) => w.action === "distribute");
     const buyVol = buys.reduce((s, w) => s + w.amountUsd, 0);
     const sellVol = sells.reduce((s, w) => s + w.amountUsd, 0);
-    const total = buyVol + sellVol || 1;
+    const rawTotal = buyVol + sellVol;
+    const total = rawTotal || 1;
     const buyShare = (buyVol / total) * 100;
-    const regime = buyShare >= 62 ? { label: "Accumulation", color: "#34d399" }
+    // Never claim accumulation/distribution when there's no flow to attribute.
+    const regime = rawTotal === 0
+      ? { label: "Insufficient Evidence", color: "#94a3b8" }
+      : buyShare >= 62 ? { label: "Accumulation", color: "#34d399" }
       : buyShare <= 38 ? { label: "Distribution", color: "#fb7185" }
       : { label: "Mixed Tape", color: "#fbbf24" };
     const symbolMap = new Map<string, number>();

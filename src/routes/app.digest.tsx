@@ -209,7 +209,9 @@ function DigestPage() {
       </div>
 
       <div className="mt-6 text-center" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.14em", color: "rgba(245,247,250,0.4)", textTransform: "uppercase" }}>
-        Digest built from {events.length} intelligence records · Monad · Refreshes every minute
+        {events.length > 0
+          ? `Digest built from ${events.length} intelligence records · Monad · Refreshes every minute`
+          : `Warming up · fetching Monad intelligence records · refreshes every minute`}
       </div>
     </div>
   );

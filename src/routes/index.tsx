@@ -313,7 +313,7 @@ function Landing() {
             </span>
           </div>
 
-          <ProofRow Icon={Cpu} label="Model" value="GPT-5.5 · reasoning" />
+          <ProofRow Icon={Cpu} label="Engine" value="Evidence graph · cited" />
           <ProofRow Icon={Radar} label="Coverage" value="Full ecosystem" accent />
           <ProofRow Icon={Layers} label="Data Layer" value="On-chain + DEX flow" />
           <ProofRow Icon={ShieldCheck} label="Trust Model" value="Read-only · non-custodial" />
