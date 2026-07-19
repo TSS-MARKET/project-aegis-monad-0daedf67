@@ -429,6 +429,52 @@ function Landing() {
         </div>
       </section>
 
+      {/* What Aegis Ships — glorify the built platform */}
+      <section id="ships" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
+        <div className="mb-10 max-w-3xl">
+          <div style={{ fontFamily: MONO, fontSize: "0.66rem", textTransform: "uppercase", letterSpacing: "0.16em", color: "rgba(245,247,250,0.55)" }}>
+            // WHAT AEGIS SHIPS
+          </div>
+          <h2 className="mt-2" style={{ fontFamily: SERIF, fontSize: "clamp(1.75rem,3.5vw,2.75rem)", color: "#f5f7fa", letterSpacing: "-0.02em", lineHeight: 1.08 }}>
+            An <em style={{ color: "#22d3ee" }}>evidence first</em> intelligence stack, native to Monad.
+          </h2>
+          <p className="mt-4" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.7)" }}>
+            Six flagship surfaces stitched into one product. Every claim is grounded in a real Monad block, transaction or
+            wallet cluster. Every AI answer cites the exact evidence tag it is reasoning from. Nothing is generated in the dark.
+          </p>
+        </div>
+        <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
+          {[
+            { icon: Rewind, title: "Replay the Chain", body: "Scrub the last 24 hours of Monad activity like a DVR. Every event opens an inspector that explains why it mattered, with the block, wallets and evidence attached." },
+            { icon: Timer, title: "Intelligence Timeline", body: "A newsroom style ranked feed of what actually happened on Monad in the last six hours. Deep link any moment straight into Ask Aegis for a grounded explanation." },
+            { icon: Fingerprint, title: "Wallet DNA", body: "Paste any Monad address and see its behavioral fingerprint. Regime, cohort, risk posture and an AI strategist read of how this wallet actually operates." },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across momentum, whale flow, narrative strength, price action and turnover. Every setup ships with a thesis, catalysts, risks and an invalidation level." },
+            { icon: Sparkles, title: "Ask Aegis, cited", body: "A Monad native analyst wired directly to the live event stream. Every answer must cite an [E-id] evidence tag that deep links back to the Timeline. No hallucinated markets." },
+            { icon: Link2, title: "Live on chain layer", body: "Real Monad wallet connect on mainnet 143 and testnet 10143. Header status polls Monad RPC every eight seconds so you always see the true block height and gas price." },
+          ].map((f) => (
+            <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
+              <f.icon className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" style={{ color: "#22d3ee" }} strokeWidth={1.75} />
+              <div className="mt-5" style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
+              <div className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>{f.body}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 grid gap-3 md:grid-cols-4">
+          {[
+            { k: "10,000", v: "Monad TPS the engine reads live" },
+            { k: "<1s", v: "Chain finality Aegis writes against" },
+            { k: "6", v: "Flagship intelligence surfaces" },
+            { k: "100%", v: "Answers cited to on chain evidence" },
+          ].map((m) => (
+            <div key={m.v} className="rounded-[10px] p-5 hover-lift flex flex-col justify-between h-[128px]" style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.22)" }}>
+              <div className="tabular-nums" style={{ fontFamily: SERIF, fontSize: "2.1rem", color: "#22d3ee", lineHeight: 1, letterSpacing: "-0.02em" }}>{m.k}</div>
+              <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)", lineHeight: 1.35 }}>{m.v}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Ecosystem Pulse — live data strip */}
       <section id="pulse" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
         <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
