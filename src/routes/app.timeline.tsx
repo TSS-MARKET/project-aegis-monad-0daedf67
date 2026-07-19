@@ -298,10 +298,15 @@ function EventCard({
           </div>
           <div className="mt-2.5 flex flex-wrap items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
             <span>{fmtAgo(e.minutesAgo)} ago</span>
-            <span>on-chain anchor</span>
+            <span style={{ color: e.isReal ? "#34d399" : "rgba(245,247,250,0.5)" }}>
+              {e.isReal ? "live RPC · verifiable" : "pattern signal"}
+            </span>
             <span style={{ color: meta.color }}>imp {e.importance}</span>
             <span>conf {e.confidence}%</span>
             {e.amountUsd ? <span>{usd(e.amountUsd)}</span> : null}
+            <span className="ml-auto" onClick={(ev) => ev.stopPropagation()}>
+              <VerifyButton event={e} />
+            </span>
           </div>
         </div>
       </div>
