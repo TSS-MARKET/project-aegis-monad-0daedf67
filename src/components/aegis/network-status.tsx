@@ -13,8 +13,11 @@ export function NetworkStatus({ compact = false }: { compact?: boolean }) {
     refetchInterval: 8_000,
     staleTime: 6_000,
   });
-  const d = q.data;
-  const live = d && "blockNumber" in d ? d : null;
+  const d = q.data as
+    | { ok: true; chainName: string; blockNumber: number; gasPriceGwei: number | null; latencyMs: number }
+    | { ok: false; error: string }
+    | undefined;
+  const live = d && d.ok ? d : null;
   const ok = !!live;
   const dot = ok ? "#22d3ee" : "#fb7185";
   const label = ok ? live!.chainName : d ? "RPC unreachable" : "Probing Monad RPC";
