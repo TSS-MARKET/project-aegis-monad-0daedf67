@@ -236,36 +236,6 @@ function Landing() {
               <span className="relative whitespace-nowrap">Launch Dashboard</span>
               <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
-
-            <button
-              type="button"
-              onClick={() => startAegisDemo()}
-              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.18em",
-                color: "#eafcff",
-                padding: "1rem 1.5rem",
-                background: "linear-gradient(180deg, rgba(10,22,32,0.9), rgba(4,12,18,0.9))",
-                border: "1px solid rgba(34,211,238,0.45)",
-                boxShadow: "0 10px 40px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
-              }}
-              aria-label="Play the 30 second judge tour"
-            >
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
-                style={{ background: "linear-gradient(90deg,transparent,rgba(34,211,238,0.35),transparent)" }}
-              />
-              <span className="relative inline-flex items-center gap-2.5">
-                <Sparkles className="w-4 h-4" strokeWidth={2} style={{ color: "#22d3ee" }} />
-                <span className="whitespace-nowrap">30-Second Tour</span>
-                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
-              </span>
-            </button>
           </div>
 
           {/* Manifesto */}
