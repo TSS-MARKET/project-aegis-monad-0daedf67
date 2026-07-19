@@ -217,7 +217,16 @@ function ReplayPage() {
       >
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={() => setPlaying((p) => !p)}
+            onClick={() => {
+              setPlaying((p) => {
+                const next = !p;
+                // Starting from the very end? rewind to first event.
+                if (next && playhead >= windowMs - 100) setPlayhead(firstEventOffset);
+                // Starting from before the first event's dead zone? skip it.
+                if (next && playhead < firstEventOffset) setPlayhead(firstEventOffset);
+                return next;
+              });
+            }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium transition-all shine-sweep hover-lift"
             style={{
               background: playing ? "rgba(251,113,133,0.12)" : "rgba(34,211,238,0.12)",
