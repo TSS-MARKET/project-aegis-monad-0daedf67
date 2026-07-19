@@ -359,16 +359,17 @@ function Landing() {
             </div>
           </div>
 
-          {/* Equalizer */}
-          <div className="mt-6 flex items-end gap-[3px] h-10">
-            {Array.from({ length: 32 }).map((_, i) => (
+          {/* Equalizer — continuously waving */}
+          <div className="mt-6 flex items-end gap-[3px] h-12">
+            {Array.from({ length: 40 }).map((_, i) => (
               <span
                 key={i}
-                className="flex-1 rounded-sm"
+                className="gl-bar flex-1 rounded-[2px]"
                 style={{
-                  height: `${20 + Math.abs(Math.sin(i * 0.7)) * 80}%`,
-                  background: "linear-gradient(180deg, #67e8f9, #22d3ee 60%, rgba(34,211,238,0.2))",
-                  animation: `pulse-glow ${1.6 + (i % 5) * 0.2}s ease-in-out ${i * 40}ms infinite`,
+                  height: "100%",
+                  background: "linear-gradient(180deg, #67e8f9, #22d3ee 60%, rgba(34,211,238,0.15))",
+                  animationDelay: `${(i * 80) % 2400}ms`,
+                  animationDuration: `${2 + (i % 5) * 0.25}s`,
                 }}
               />
             ))}
@@ -619,9 +620,19 @@ function Landing() {
               </div>
               <div>
                 <div className="gl-num truncate" style={{ color: s.tone, fontSize: "1.9rem", lineHeight: 1 }}>{s.value}</div>
-                <div className="mt-3 flex items-end gap-[2px] h-6">
-                  {Array.from({length: 22}).map((_,j)=>(
-                    <span key={j} className="flex-1 rounded-[1px]" style={{ height: `${25 + Math.abs(Math.sin(j*0.6 + i))*70}%`, background: s.tone, opacity: 0.35 + (j/22)*0.5 }} />
+                <div className="mt-3 flex items-end gap-[2px] h-7">
+                  {Array.from({length: 26}).map((_,j)=>(
+                    <span
+                      key={j}
+                      className="gl-bar flex-1 rounded-[1px]"
+                      style={{
+                        height: "100%",
+                        background: s.tone,
+                        opacity: 0.45 + (j/26)*0.45,
+                        animationDelay: `${(j*90 + i*220) % 2400}ms`,
+                        animationDuration: `${2.2 + ((j+i) % 4) * 0.2}s`,
+                      }}
+                    />
                   ))}
                 </div>
               </div>
@@ -703,9 +714,15 @@ function Landing() {
             { icon: Zap, title: "One tap DeFi routing", body: "Ask Aegis to park your paycheck at the best safe yield. It routes through vetted Monad protocols, shows the risk score and executes.", tone: "#c4b5fd", tag: "YIELD" },
             { icon: ShoppingCart, title: "Sunday spend report", body: "Weekly spending tracked automatically. Aegis writes a plain English summary of where your MON went and what to watch next.", tone: "#22d3ee", tag: "TRACKING" },
           ].map((f, i) => {
-            const flip = i % 2 === 1;
             return (
-              <div key={f.title} className={`group relative grid grid-cols-1 md:grid-cols-[80px_1fr] gap-6 items-center p-6 rounded-[10px] transition-all duration-500 hover:translate-x-1 ${flip ? "md:ml-16" : "md:mr-16"}`} style={{ border: "1px solid rgba(34,211,238,0.08)", background: flip ? "linear-gradient(90deg, rgba(4,10,16,0.4), rgba(10,18,28,0.7))" : "linear-gradient(270deg, rgba(4,10,16,0.4), rgba(10,18,28,0.7))" }}>
+              <div
+                key={f.title}
+                className="group relative grid grid-cols-1 md:grid-cols-[96px_1fr] gap-6 items-center p-6 rounded-[10px] transition-all duration-500 hover-lift"
+                style={{
+                  border: "1px solid rgba(34,211,238,0.10)",
+                  background: "linear-gradient(90deg, rgba(10,18,28,0.72), rgba(4,10,16,0.72))",
+                }}
+              >
                 <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-1">
                   <span className="gl-num" style={{ fontSize: "2rem", color: f.tone, lineHeight: 1 }}>{String(i+1).padStart(2,"0")}</span>
                   <span style={{ fontFamily: MONO, fontSize: "0.56rem", letterSpacing: "0.22em", color: f.tone, opacity: 0.75 }}>{f.tag}</span>

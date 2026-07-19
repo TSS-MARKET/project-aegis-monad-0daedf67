@@ -416,7 +416,20 @@
 .gl-accent-amber  { color: #fcd34d; }
 
 /* Ticker number roll (subtle) */
-.gl-num { font-variant-numeric: tabular-nums; font-family: var(--font-serif); letter-spacing: -0.02em; }
+.gl-num {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Premium body number (Inter Tight tabular) — for inline metric labels */
+.gl-num-body {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
 
 /* Diagonal split card */
 .gl-diagonal {
@@ -431,10 +444,38 @@
 
 /* Marquee ribbon (bigger + tilted) */
 .gl-ribbon {
-  overflow: hidden; transform: rotate(-1.2deg); border-top: 1px solid rgba(34,211,238,0.2); border-bottom: 1px solid rgba(34,211,238,0.2);
+  overflow: hidden;
+  border-top: 1px solid rgba(34,211,238,0.2);
+  border-bottom: 1px solid rgba(34,211,238,0.2);
   background: linear-gradient(90deg, rgba(34,211,238,0.04), rgba(103,232,249,0.06), rgba(34,211,238,0.04));
 }
 .gl-ribbon__track { display: flex; gap: 3rem; animation: gl-ticker 55s linear infinite; }
+
+/* Continuously animated equalizer bar (real height wave) */
+@keyframes gl-bar-wave {
+  0%,100% { transform: scaleY(0.35); }
+  50%     { transform: scaleY(1); }
+}
+.gl-bar {
+  transform-origin: bottom;
+  animation: gl-bar-wave 2.4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Slow drifting sparkline underlay */
+@keyframes gl-spark-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 200px 0; }
+}
+.gl-spark {
+  background-image: repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 8px);
+  opacity: 0.18;
+  animation: gl-spark-drift 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-bar, .gl-spark { animation: none !important; }
+}
 
 /* Big number counter card */
 .gl-bignum-card {
