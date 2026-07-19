@@ -19,7 +19,11 @@ const SYMBOL_MAP: Record<string, string> = {
   APT: "APTUSDT",
   PEPE: "PEPEUSDT",
   WIF: "WIFUSDT",
-  MON: "MONUSDT",
+};
+
+// MON isn't on Binance yet — pull from CoinGecko as a supplemental live source.
+const COINGECKO_MAP: Record<string, string> = {
+  MON: "monad",
 };
 
 export type BinanceQuote = { price: number; change24h: number; volume24h: number };
@@ -87,8 +91,39 @@ export async function fetchBinancePrices(force = false): Promise<Record<string, 
   return inflight;
 }
 
+async function fetchCoinGeckoSupplements(): Promise<void> {
+  const ids = Object.values(COINGECKO_MAP).join(",");
+  if (!ids) return;
+  try {
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`;
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) return;
+    const data = (await r.json()) as Record<string, { usd: number; usd_24h_change?: number; usd_24h_vol?: number }>;
+    const next = { ...cache };
+    let changed = false;
+    for (const [sym, id] of Object.entries(COINGECKO_MAP)) {
+      const row = data[id];
+      if (!row || !Number.isFinite(row.usd)) continue;
+      next[sym] = {
+        price: row.usd,
+        change24h: row.usd_24h_change ?? 0,
+        volume24h: row.usd_24h_vol ?? 0,
+      };
+      changed = true;
+    }
+    if (changed) {
+      cache = next;
+      listeners.forEach((l) => { try { l(); } catch {} });
+    }
+  } catch {
+    // ignore
+  }
+}
+
 // Auto-refresh in browser
 if (typeof window !== "undefined") {
   fetchBinancePrices(true);
+  fetchCoinGeckoSupplements();
   setInterval(() => { fetchBinancePrices(true); }, 20_000);
+  setInterval(() => { fetchCoinGeckoSupplements(); }, 45_000);
 }
