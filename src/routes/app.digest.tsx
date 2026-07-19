@@ -9,7 +9,16 @@ import { computeOpportunities } from "@/lib/opportunity-engine";
 import { ExplainButton } from "@/components/aegis/explain-button";
 import { getEventFeed } from "@/lib/intelligence.functions";
 
-export const Route = createFileRoute("/app/digest")({ component: DigestPage });
+export const Route = createFileRoute("/app/digest")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: ["digest-events-24h"],
+      queryFn: () => getEventFeed({ data: { windowHours: 24, limit: 180 } }),
+    });
+    return null;
+  },
+  component: DigestPage,
+});
 
 const MONO = "var(--font-mono)";
 const SERIF = "var(--font-serif)";
