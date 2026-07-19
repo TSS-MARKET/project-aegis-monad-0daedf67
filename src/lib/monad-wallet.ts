@@ -86,7 +86,7 @@ export function listWallets(): WalletProvider[] {
 export function subscribeWallets(cb: () => void) {
   listeners.add(cb);
   if (typeof window !== "undefined") window.dispatchEvent(new Event("eip6963:requestProvider"));
-  return () => listeners.delete(cb);
+  return () => { listeners.delete(cb); };
 }
 
 export function isMobile(): boolean {
