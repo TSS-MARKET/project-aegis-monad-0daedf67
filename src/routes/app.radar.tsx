@@ -19,13 +19,6 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/radar")({
-  loader: async ({ context }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData({ queryKey: ["snap"], queryFn: () => getMarketSnapshot() }),
-      context.queryClient.ensureQueryData({ queryKey: ["opps"], queryFn: () => getOpportunities() }),
-    ]);
-    return null;
-  },
   component: RadarPage,
 });
 
