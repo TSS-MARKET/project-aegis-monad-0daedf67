@@ -568,21 +568,13 @@ function Landing() {
               color: "#f5f7fa",
             }}
           >
-            10,000 TPS demands <em style={{ color: "#22d3ee" }}>a new analyst</em>.
+            10,000 TPS. <em style={{ color: "#22d3ee" }}>The new default chain</em>.
           </h2>
         </div>
-        <p
-          className="pt-2"
-          style={{
-            fontFamily: SANS,
-            fontSize: "1.05rem",
-            lineHeight: 1.65,
-            color: "rgba(245,247,250,0.72)",
-          }}
-        >
-          Ethereum was slow enough for humans to keep up. Monad isn't. Parallel execution turns the mempool into a firehose no
-          human eye can process. That's exactly the surface AI is best at compressing into insight — and it's the surface
-          Aegis was built for, from the first block.
+        <p className="pt-2" style={{ fontFamily: SANS, fontSize: "1.05rem", lineHeight: 1.65, color: "rgba(245,247,250,0.72)" }}>
+          Ethereum priced you out. Solana broke. Monad is what came next — EVM-compatible, 10,000 TPS, sub-second finality,
+          gas cheaper than a SMS. It's the first blockchain that can carry the entire global economy: payments, payroll,
+          savings, markets — all in one place. Aegis is the AI layer that makes it feel like an app your grandmother could use.
         </p>
       </section>
 
