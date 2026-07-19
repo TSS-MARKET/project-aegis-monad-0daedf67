@@ -11,6 +11,7 @@ import { formatUsd } from "@/lib/monad-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NetworkStatus } from "@/components/aegis/network-status";
 import { VerifyButton } from "@/components/aegis/verify-button";
+import { getLiveChainEvents } from "@/lib/monad-chain-events.functions";
 import {
   TrendingUp,
   TrendingDown,
@@ -22,6 +23,8 @@ import {
   ArrowRight,
   ShieldAlert,
   Sparkles,
+  Radio,
+  ExternalLink,
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
@@ -31,6 +34,7 @@ export const Route = createFileRoute("/app/")({
       context.queryClient.ensureQueryData({ queryKey: ["snap"], queryFn: () => getMarketSnapshot() }),
       context.queryClient.ensureQueryData({ queryKey: ["headline"], queryFn: () => getHeadline() }),
       context.queryClient.ensureQueryData({ queryKey: ["feed-6h"], queryFn: () => getEventFeed({ data: { windowHours: 6, limit: 8 } }) }),
+      context.queryClient.ensureQueryData({ queryKey: ["chain-events"], queryFn: () => getLiveChainEvents() }),
     ]);
     // Brief is expensive — prefetch in the background but don't block first paint.
     context.queryClient.prefetchQuery({ queryKey: ["brief"], queryFn: () => getMarketBrief() });
@@ -49,11 +53,13 @@ function DashboardPage() {
   const snapFn = useServerFn(getMarketSnapshot);
   const headlineFn = useServerFn(getHeadline);
   const feedFn = useServerFn(getEventFeed);
+  const chainFn = useServerFn(getLiveChainEvents);
 
   // Cheap/deterministic queries first — populate instantly.
   const snap = useQuery({ queryKey: ["snap"], queryFn: () => snapFn(), staleTime: 60_000, refetchInterval: 60_000 });
   const headline = useQuery({ queryKey: ["headline"], queryFn: () => headlineFn(), staleTime: 45_000, refetchInterval: 60_000 });
   const feed = useQuery({ queryKey: ["feed-6h"], queryFn: () => feedFn({ data: { windowHours: 6, limit: 8 } }), staleTime: 60_000 });
+  const chain = useQuery({ queryKey: ["chain-events"], queryFn: () => chainFn(), staleTime: 8_000, refetchInterval: 10_000 });
 
   // Expensive AI brief loads lazily and never blocks the shell.
   const brief = useQuery({ queryKey: ["brief"], queryFn: () => briefFn(), staleTime: 120_000, refetchInterval: 180_000 });
@@ -203,6 +209,9 @@ function DashboardPage() {
         events={feed.data?.events ?? []}
         loading={feed.isLoading}
       />
+
+      {/* Live on-chain events — real Monad RPC, real tx hashes, real explorer links */}
+      <LiveChainPanel data={chain.data} loading={chain.isLoading} />
 
       {/* Row: AI brief (wider) + narrative rotation */}
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
@@ -518,6 +527,114 @@ function TimelinePreview({
           )}
         </ul>
       )}
+    </div>
+  );
+}
+
+// ============================================================================
+// Live Chain Panel — real Monad RPC events (real tx hashes, real explorer links)
+// ============================================================================
+function LiveChainPanel({
+  data,
+  loading,
+}: {
+  data: Awaited<ReturnType<typeof getLiveChainEvents>> | undefined;
+  loading: boolean;
+}) {
+  const events = data?.events?.slice(0, 8) ?? [];
+  const explorer = "https://monadexplorer.com";
+  return (
+    <div className="rounded-[10px] p-5 md:p-6" style={{ background: PANEL_BG, border: BORDER }}>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <Eyebrow icon={Radio}>Live On-Chain · Monad Mainnet RPC</Eyebrow>
+        {data?.block ? (
+          <a
+            href={`${explorer}/block/${data.block}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[10px] tabular-nums hover:text-cyan-300 inline-flex items-center gap-1"
+            style={{ fontFamily: MONO, color: "rgba(245,247,250,0.6)", letterSpacing: "0.14em" }}
+          >
+            HEAD · #{data.block.toLocaleString()} <ExternalLink className="h-2.5 w-2.5" />
+          </a>
+        ) : null}
+      </div>
+      {loading && events.length === 0 ? (
+        <div className="mt-4 space-y-2">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-10 w-full" />
+          ))}
+        </div>
+      ) : events.length === 0 ? (
+        <p className="mt-4 text-xs" style={{ color: "rgba(245,247,250,0.55)", fontFamily: MONO }}>
+          {data?.error ? `RPC: ${data.error}` : "Awaiting the next Monad block…"}
+        </p>
+      ) : (
+        <div className="mt-4 divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+          {events.map((e) => {
+            const tone =
+              e.kind === "contract_create"
+                ? "#a78bfa"
+                : e.kind === "transfer"
+                  ? "#34d399"
+                  : "#22d3ee";
+            return (
+              <div
+                key={e.id}
+                className="py-3 flex items-start gap-3 flex-wrap md:flex-nowrap"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
+              >
+                <div
+                  className="mt-1 h-1.5 w-1.5 rounded-full shrink-0"
+                  style={{ background: tone, boxShadow: `0 0 8px ${tone}` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm truncate" style={{ color: "#f5f7fa", fontFamily: MONO }}>
+                    {e.headline}
+                  </div>
+                  <div
+                    className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] tabular-nums"
+                    style={{ color: "rgba(245,247,250,0.5)", fontFamily: MONO, letterSpacing: "0.06em" }}
+                  >
+                    <a
+                      href={e.explorerBlockUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-cyan-300"
+                    >
+                      block #{e.block.toLocaleString()}
+                    </a>
+                    <span>·</span>
+                    <a
+                      href={e.explorerTxUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-cyan-300"
+                    >
+                      {e.txHash.slice(0, 10)}…{e.txHash.slice(-6)}
+                    </a>
+                    <span>·</span>
+                    <span>{e.minutesAgo === 0 ? "just now" : `${e.minutesAgo}m ago`}</span>
+                    {e.gasGwei > 0 && (
+                      <>
+                        <span>·</span>
+                        <span>{e.gasGwei.toFixed(2)} gwei</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <VerifyButton event={e} size="sm" />
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <p
+        className="mt-4 text-[10px] leading-relaxed"
+        style={{ color: "rgba(245,247,250,0.45)", fontFamily: MONO, letterSpacing: "0.06em" }}
+      >
+        // Fetched directly from {`{ACTIVE_MONAD.rpcUrls[0]}`} every 10s · every hash resolves on monadexplorer.com
+      </p>
     </div>
   );
 }

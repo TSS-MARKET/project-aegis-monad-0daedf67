@@ -1,11 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ExternalLink, ShieldCheck } from "lucide-react";
+import { ACTIVE_MONAD } from "@/lib/monad-wallet";
 
 type VerifyEvent = {
   id: string;
   headline?: string;
   block?: number;
   txHash?: string;
+  /** Set true only when txHash/block are real Monad RPC values. */
+  isReal?: boolean;
+  explorerTxUrl?: string;
+  explorerBlockUrl?: string;
   importance?: number;
   confidence?: number;
   minutesAgo?: number;
@@ -21,6 +26,7 @@ type Props = {
 };
 
 const MONO = "var(--font-mono)";
+const EXPLORER = ACTIVE_MONAD.blockExplorerUrls[0];
 
 /**
  * Compact "Verify" pill that opens a lightweight evidence drawer:
@@ -37,8 +43,30 @@ export function VerifyButton({ event, size = "sm", variant = "ghost", className 
       ? { background: "rgba(52,211,153,0.14)", border: "1px solid rgba(52,211,153,0.4)", color: "#34d399" }
       : { background: "rgba(52,211,153,0.05)", border: "1px solid rgba(52,211,153,0.22)", color: "rgba(52,211,153,0.9)" };
 
-  // Always route to Ask Aegis — the AI cites the actual engine evidence.
-  // Fabricated tx/block placeholders are intentionally NOT linked.
+  // Real chain event? Jump to the actual explorer page.
+  if (event.isReal && (event.txHash || event.block != null)) {
+    const href =
+      event.explorerTxUrl ??
+      (event.txHash
+        ? `${EXPLORER}/tx/${event.txHash}`
+        : `${EXPLORER}/block/${event.block}`);
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className={`${base} ${pad} ${className}`}
+        style={{ ...style, fontFamily: MONO, fontSize, letterSpacing: "0.16em", textTransform: "uppercase" }}
+        aria-label="Verify on Monad explorer"
+      >
+        <ShieldCheck className={iconSize} strokeWidth={2} />
+        Verify on-chain
+        <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+      </a>
+    );
+  }
+  // Synthetic intelligence event → send to Ask Aegis to cite engine evidence.
   return (
     <Link
       to="/app/chat"
