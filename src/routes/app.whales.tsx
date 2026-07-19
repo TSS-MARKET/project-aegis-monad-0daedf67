@@ -5,7 +5,7 @@ import { getEventFeed } from "@/lib/intelligence.functions";
 import type { MonadEvent } from "@/lib/monad-events";
 import { formatUsd } from "@/lib/monad-data";
 import { ArrowDownRight, ArrowUpRight, Repeat, Waves, TrendingUp, Wallet, Activity, BarChart3, Clock } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/app/whales")({
   loader: async ({ context }) => {
@@ -52,24 +52,41 @@ function WhalesPage() {
   const fn = useServerFn(getEventFeed);
   const q = useQuery({ queryKey: ["whale-live-blocks"], queryFn: () => fn({ data: { windowHours: 1, limit: 60 } }), refetchInterval: 60_000 });
   const events: MonadEvent[] = q.data?.events ?? [];
-  // Derive live whale attribution from the enriched Monad event stream
-  // (whale_accumulation / whale_distribution / large_transfer / capital_rotation).
-  const whales = events
-    .filter((e) => e.category === "whale_accumulation" || e.category === "whale_distribution" || e.category === "large_transfer" || e.category === "capital_rotation")
-    .slice(0, 24)
-    .map((e) => ({
-      wallet: `${e.wallets[0]?.address.slice(0, 8) ?? "0x000000"}…${e.wallets[0]?.address.slice(-4) ?? "0000"}`,
-      label: e.wallets[0]?.label ?? "actor",
-      action: (e.category === "whale_accumulation"
-        ? "accumulate"
-        : e.category === "whale_distribution"
-        ? "distribute"
-        : "rotate") as "accumulate" | "distribute" | "rotate",
-      token: e.asset?.symbol ?? "MON",
-      amountUsd: e.amountUsd ?? 0,
-      minutesAgo: e.minutesAgo,
-      block: e.block,
-    }));
+  // Derive live whale attribution from the enriched Monad event stream and
+  // dedupe rows so identical wallet+action+token entries collapse into one.
+  const whales = useMemo(() => {
+    const raw = events
+      .filter((e) => e.category === "whale_accumulation" || e.category === "whale_distribution" || e.category === "large_transfer" || e.category === "capital_rotation")
+      .map((e) => ({
+        wallet: `${e.wallets[0]?.address.slice(0, 8) ?? "0x000000"}…${e.wallets[0]?.address.slice(-4) ?? "0000"}`,
+        walletFull: e.wallets[0]?.address ?? "",
+        label: e.wallets[0]?.label ?? "actor",
+        action: (e.category === "whale_accumulation"
+          ? "accumulate"
+          : e.category === "whale_distribution"
+          ? "distribute"
+          : "rotate") as "accumulate" | "distribute" | "rotate",
+        token: e.asset?.symbol ?? "MON",
+        amountUsd: e.amountUsd ?? 0,
+        minutesAgo: e.minutesAgo,
+        block: e.block,
+      }));
+    const seen = new Map<string, typeof raw[number] & { count: number }>();
+    for (const w of raw) {
+      const k = `${w.walletFull}|${w.action}|${w.token}`;
+      const prev = seen.get(k);
+      if (prev) {
+        prev.amountUsd += w.amountUsd;
+        prev.count += 1;
+        prev.minutesAgo = Math.min(prev.minutesAgo, w.minutesAgo);
+      } else {
+        seen.set(k, { ...w, count: 1 });
+      }
+    }
+    return Array.from(seen.values()).sort((a, b) => a.minutesAgo - b.minutesAgo);
+  }, [events]);
+  const [expanded, setExpanded] = useState(false);
+  const visibleWhales = expanded ? whales : whales.slice(0, 6);
   const stats = useMemo(() => {
     const buys = whales.filter((w) => w.action === "accumulate");
     const sells = whales.filter((w) => w.action === "distribute");
@@ -309,7 +326,7 @@ function WhalesPage() {
             </span>
           </div>
           <div className="space-y-2">
-            {whales.map((w, i) => {
+            {visibleWhales.map((w, i) => {
               const Icon = iconFor(w.action);
               const tone = w.action === "accumulate" ? "#34d399" : w.action === "distribute" ? "#fb7185" : "#fbbf24";
               return (
@@ -336,6 +353,11 @@ function WhalesPage() {
                       >
                         {w.action}
                       </span>
+                      {w.count > 1 && (
+                        <span style={{ fontFamily: MONO, fontSize: "0.62rem", color: "rgba(245,247,250,0.55)", letterSpacing: "0.14em" }}>
+                          ×{w.count}
+                        </span>
+                      )}
                       <span style={{ fontFamily: MONO, fontSize: "0.66rem", color: "rgba(245,247,250,0.5)" }}>
                         {w.minutesAgo}m ago
                       </span>
@@ -352,6 +374,28 @@ function WhalesPage() {
                 </div>
               );
             })}
+            {whales.length > 6 && (
+              <button
+                onClick={() => setExpanded((v) => !v)}
+                className="w-full mt-2 py-2.5 rounded-[8px] text-[11px] uppercase tracking-[0.18em] font-semibold transition-all hover:bg-cyan-500/10"
+                style={{
+                  fontFamily: MONO,
+                  color: "#22d3ee",
+                  border: "1px solid rgba(34,211,238,0.25)",
+                  background: "rgba(34,211,238,0.04)",
+                }}
+              >
+                {expanded ? "Show Less" : `View All · ${whales.length} Signals`}
+              </button>
+            )}
+            {whales.length === 0 && (
+              <div
+                className="rounded-[8px] p-4 text-center text-[11px] uppercase tracking-[0.16em]"
+                style={{ fontFamily: MONO, color: "rgba(245,247,250,0.45)", border: "1px dashed rgba(34,211,238,0.18)" }}
+              >
+                No whale-tier flow in the last 60m
+              </div>
+            )}
           </div>
         </div>
 
