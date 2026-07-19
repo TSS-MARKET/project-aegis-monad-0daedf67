@@ -355,7 +355,7 @@
 
 /* Continuous ticker scroll (marquee) */
 .gl-ticker { display: flex; overflow: hidden; mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent); }
-.gl-ticker__track { display: flex; gap: 3rem; flex-shrink: 0; animation: gl-ticker 42s linear infinite; will-change: transform; }
+.gl-ticker__track { display: flex; gap: 3rem; flex-shrink: 0; animation: gl-ticker 22s linear infinite; will-change: transform; }
 @keyframes gl-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* Floating particles */
@@ -482,7 +482,7 @@
   border-bottom: 1px solid rgba(34,211,238,0.2);
   background: linear-gradient(90deg, rgba(34,211,238,0.04), rgba(103,232,249,0.06), rgba(34,211,238,0.04));
 }
-.gl-ribbon__track { display: flex; gap: 3rem; animation: gl-ticker 55s linear infinite; }
+.gl-ribbon__track { display: flex; gap: 3rem; animation: gl-ticker 20s linear infinite; will-change: transform; }
 
 /* Continuously animated equalizer bar (real height wave) */
 @keyframes gl-bar-wave {
