@@ -511,6 +511,39 @@ function Landing() {
         </div>
       </section>
 
+      {/* Daily Life */}
+      <section id="daily" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
+        <div className="mb-10">
+          <div style={{ fontFamily: MONO, fontSize: "0.66rem", textTransform: "uppercase", letterSpacing: "0.16em", color: "rgba(245,247,250,0.55)" }}>
+            // AEGIS FOR EVERY DAY
+          </div>
+          <h2 className="mt-2" style={{ fontFamily: SERIF, fontSize: "clamp(1.75rem,3.5vw,2.75rem)", color: "#f5f7fa", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+            Monad is fast enough to <em style={{ color: "#22d3ee" }}>replace your bank</em>.
+          </h2>
+          <p className="mt-3 max-w-2xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.6, color: "rgba(245,247,250,0.7)" }}>
+            10,000 TPS. Sub-second finality. Fees under a hundredth of a cent. Monad is the first chain quick enough for coffee,
+            groceries, salaries and rent — not just trading. Aegis is the daily co-pilot that makes it usable by humans.
+          </p>
+        </div>
+        <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
+          {[
+            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap-to-pay on Monad clears faster than Visa — Aegis previews the fee, the merchant, and a plain-English safety check before you sign." },
+            { icon: ShoppingCart, title: "Grocery run, on-chain", body: "Weekly spend tracked automatically. Aegis writes a Sunday summary: where your MON went, what saved you money, what to watch." },
+            { icon: Send, title: "Send money anywhere, instantly", body: "Global transfers in one block. Aegis translates addresses to human names, flags scam contracts, and simulates the exact amount received." },
+            { icon: Wallet, title: "Salary streaming", body: "Get paid by the second. Aegis auto-splits your paycheck into savings, bills and spending — no bank, no waiting three days." },
+            { icon: Bell, title: "Real-time alerts", body: "Rug pull on a token you hold? Whale dumping your bag? Aegis pings you before the price moves, in language your mom understands." },
+            { icon: Zap, title: "One-tap DeFi", body: "\"Aegis, park my paycheck at the best safe yield.\" It routes through vetted Monad protocols, shows the risk score, and executes." },
+          ].map((f) => (
+            <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
+              <f.icon className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" style={{ color: "#22d3ee" }} strokeWidth={1.75} />
+              <div className="mt-5" style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
+              <div className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>{f.body}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Monad */}
       <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 grid md:grid-cols-2 gap-10">
         <div>
