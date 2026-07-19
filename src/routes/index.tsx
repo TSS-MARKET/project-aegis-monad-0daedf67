@@ -109,7 +109,6 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
-          <div className="hidden md:block"><DemoModeButton variant="premium" /></div>
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
