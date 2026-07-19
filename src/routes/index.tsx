@@ -551,7 +551,7 @@ function Landing() {
             { k: "100%", v: "answers cited to evidence", tone: "#fcd34d" },
           ].map((m, i) => (
             <div key={m.v} className="gl-bignum-card rounded-[10px] p-5 flex flex-col justify-between h-[140px] relative overflow-hidden">
-              <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{String(i+1).padStart(2,"0")}</span>
+              <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{"\n"}</span>
               <div className="gl-num" style={{ fontSize: "2.4rem", color: m.tone, lineHeight: 1 }}>{m.k}</div>
               <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{m.v}</div>
             </div>
