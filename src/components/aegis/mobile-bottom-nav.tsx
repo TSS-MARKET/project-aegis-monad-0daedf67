@@ -1,9 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Activity, Radar, PlayCircle, Newspaper, MessageSquare } from "lucide-react";
+import { Coffee, Radar, PlayCircle, Newspaper, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { to: "/app", label: "Brief", icon: Activity, exact: true },
+  { to: "/app/digest", label: "Digest", icon: Coffee },
   { to: "/app/replay", label: "Replay", icon: PlayCircle },
   { to: "/app/timeline", label: "Feed", icon: Newspaper },
   { to: "/app/radar", label: "Radar", icon: Radar },
@@ -19,7 +19,7 @@ export function MobileBottomNav() {
     >
       <ul className="grid grid-cols-5">
         {items.map((it) => {
-          const active = it.exact ? pathname === it.to : pathname.startsWith(it.to);
+          const active = pathname === it.to || pathname.startsWith(it.to + "/");
           return (
             <li key={it.to}>
               <Link

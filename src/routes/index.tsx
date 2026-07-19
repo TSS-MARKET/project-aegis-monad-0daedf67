@@ -410,6 +410,48 @@ function Landing() {
 
       {/* Capabilities */}
       <section id="capabilities" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-24">
+        {/* DAILY PROBLEM BAND -- hackathon theme */}
+        <div className="mb-24 relative overflow-hidden rounded-[12px] p-8 md:p-12 backdrop-blur-xl hover-lift" style={{ border: "1px solid rgba(34,211,238,0.24)", background: "linear-gradient(135deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))", boxShadow: "0 40px 120px -30px rgba(34,211,238,0.35)" }}>
+          <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 h-[360px] w-[360px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(34,211,238,0.22), transparent 70%)" }} />
+          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-10 items-center">
+            <div>
+              <div className="flex items-center gap-2 mb-4" style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#22d3ee" }}>
+                <Coffee className="w-3.5 h-3.5" strokeWidth={2} />
+                <span>The daily problem we solve</span>
+              </div>
+              <h2 style={{ fontFamily: SERIF, fontSize: "clamp(1.9rem,4vw,3rem)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "#f5f7fa", margin: 0 }}>
+                Every morning you lose <em style={{ color: "#22d3ee", fontStyle: "italic" }}>45 minutes</em> catching up on crypto.
+              </h2>
+              <p className="mt-4 max-w-xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.6, color: "rgba(245,247,250,0.72)" }}>
+                Twitter threads, six Telegram groups, three dashboards, a Discord you never asked to join. And you still miss the block that actually mattered. Aegis reads the entire Monad chain overnight and hands you a one minute brief. Movers, whales, narratives, risks. With sources.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <Link to="/app/digest" className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden" style={{ fontFamily: "var(--font-display)", fontSize: "0.82rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", padding: "1rem 1.6rem" }}>
+                  <span aria-hidden className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)" }} />
+                  <span className="relative">Read Today's Digest</span>
+                  <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
+                </Link>
+                <div className="inline-flex items-center gap-2" style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
+                  <span className="gl-pulse-dot h-1.5 w-1.5 rounded-full" style={{ background: "#22d3ee" }} /> Auto refreshed at wake up
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { k: "45 min", v: "Saved every morning" },
+                { k: "1 minute", v: "To read the whole chain" },
+                { k: "100%", v: "Backed by on chain evidence" },
+                { k: "24/7", v: "Aegis never sleeps" },
+              ].map((s) => (
+                <div key={s.k} className="rounded-[10px] p-5 hover-lift" style={{ border: "1px solid rgba(34,211,238,0.18)", background: "rgba(4,10,16,0.65)" }}>
+                  <div style={{ fontFamily: SERIF, fontSize: "1.9rem", color: "#22d3ee", letterSpacing: "-0.02em", lineHeight: 1 }}>{s.k}</div>
+                  <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{s.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-baseline justify-between mb-10">
           <div>
             <div
