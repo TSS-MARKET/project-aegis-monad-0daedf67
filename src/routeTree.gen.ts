@@ -17,6 +17,7 @@ import { Route as AppWalletRouteImport } from './routes/app.wallet'
 import { Route as AppTokensRouteImport } from './routes/app.tokens'
 import { Route as AppRadarRouteImport } from './routes/app.radar'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
+import { Route as AppOnchainRouteImport } from './routes/app.onchain'
 import { Route as AppChatRouteImport } from './routes/app.chat'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 
@@ -60,6 +61,11 @@ const AppOpportunitiesRoute = AppOpportunitiesRouteImport.update({
   path: '/opportunities',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOnchainRoute = AppOnchainRouteImport.update({
+  id: '/onchain',
+  path: '/onchain',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppChatRoute = AppChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AppChatRoute
+  '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
   '/app/tokens': typeof AppTokensRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AppChatRoute
+  '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
   '/app/tokens': typeof AppTokensRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/app/chat': typeof AppChatRoute
+  '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
   '/app/tokens': typeof AppTokensRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/api/chat'
     | '/app/chat'
+    | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
     | '/app/tokens'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/'
     | '/api/chat'
     | '/app/chat'
+    | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
     | '/app/tokens'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/api/chat'
     | '/app/chat'
+    | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
     | '/app/tokens'
@@ -209,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppOpportunitiesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/onchain': {
+      id: '/app/onchain'
+      path: '/onchain'
+      fullPath: '/app/onchain'
+      preLoaderRoute: typeof AppOnchainRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/chat': {
       id: '/app/chat'
       path: '/chat'
@@ -228,6 +247,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppChatRoute: typeof AppChatRoute
+  AppOnchainRoute: typeof AppOnchainRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppRadarRoute: typeof AppRadarRoute
   AppTokensRoute: typeof AppTokensRoute
@@ -238,6 +258,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppChatRoute: AppChatRoute,
+  AppOnchainRoute: AppOnchainRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppRadarRoute: AppRadarRoute,
   AppTokensRoute: AppTokensRoute,
