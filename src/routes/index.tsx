@@ -134,7 +134,7 @@ function Landing() {
       <section
         className="relative mx-auto w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start"
         style={{
-          minHeight: "88vh",
+          minHeight: "78vh",
           maxWidth: "min(1560px, 96vw)",
           paddingLeft: "clamp(0.75rem, 4vw, 3rem)",
           paddingRight: "clamp(0.75rem, 4vw, 3rem)",
