@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getReplayFeed } from "@/lib/intelligence.functions";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { VerifyButton } from "@/components/aegis/verify-button";
 import {
   Play,
   Pause,
@@ -579,6 +580,7 @@ function Inspector({ e }: { e: MonadEvent }) {
         >
           <Activity className="h-3.5 w-3.5" /> Explain with Aegis
         </a>
+        <VerifyButton event={e} />
       </div>
     </div>
   );
