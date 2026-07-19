@@ -77,20 +77,23 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
         className={
           variant === "floating"
             ? "fixed bottom-5 left-5 z-40 group inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs uppercase tracking-[0.14em] transition-all hover:-translate-y-0.5"
-            : "group inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs uppercase tracking-[0.14em] transition-all hover:-translate-y-0.5"
+            : "group inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-all hover:-translate-y-0.5"
         }
         style={{
           fontFamily: "var(--font-mono)",
+          fontSize: variant === "floating" ? undefined : "0.6rem",
+          letterSpacing: "0.16em",
+          textTransform: "uppercase",
           background: "linear-gradient(180deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))",
-          border: "1px solid rgba(34,211,238,0.35)",
+          border: "1px solid rgba(34,211,238,0.3)",
           color: "#22d3ee",
-          boxShadow: "0 8px 30px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.05)",
+          boxShadow: variant === "floating" ? "0 8px 30px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.05)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
         }}
         aria-label="Play 30-second judge tour"
       >
-        <Sparkles className="h-3.5 w-3.5" />
-        <span>Judges · 30s tour</span>
-        <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        <Sparkles className={variant === "floating" ? "h-3.5 w-3.5" : "h-3 w-3"} />
+        <span>30s Tour</span>
+        <ChevronRight className={variant === "floating" ? "h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" : "h-3 w-3 transition-transform group-hover:translate-x-0.5"} />
       </button>
       {open && <DemoOverlay onClose={() => setOpen(false)} />}
     </>

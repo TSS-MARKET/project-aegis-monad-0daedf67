@@ -19,7 +19,6 @@ import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
 import { DemoModeButton } from "@/components/aegis/demo-mode";
-import { LiveFirehose } from "@/components/aegis/live-firehose";
 import { WalletGuardian } from "@/components/aegis/wallet-guardian";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
@@ -111,6 +110,7 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
+          <DemoModeButton variant="inline" />
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
@@ -412,10 +412,9 @@ function Landing() {
         </div>
       </section>
 
-      {/* Live Monad firehose — real RPC blocks */}
-      <section aria-label="Monad live firehose" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <LiveFirehose />
+      {/* Monad Address Inspector — paste any address, get a live scorecard */}
+      <section aria-label="Monad address inspector" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pt-10">
+        <div className="mx-auto max-w-[720px]">
           <WalletGuardian />
         </div>
       </section>
@@ -815,7 +814,6 @@ function Landing() {
         <span>Read only · Non custodial · Not financial advice</span>
       </footer>
       <FloatingChat />
-      <DemoModeButton />
     </div>
   );
 }
