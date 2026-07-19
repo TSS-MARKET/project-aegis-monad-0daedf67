@@ -85,11 +85,20 @@ function ReplayPage() {
   const rafRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(0);
 
-  // Reset playhead when window changes
+  // First-event offset: skip the empty "dead zone" before the earliest event
+  // so pressing Play reveals events immediately instead of after a delay.
+  const firstEventOffset = useMemo(() => {
+    if (!events.length) return 0;
+    const first = events[0].ts - startTs;
+    // Land 500ms *before* the first event so it enters the stream on play.
+    return Math.max(0, first - 500);
+  }, [events, startTs]);
+
+  // Reset playhead when window changes — start at first event, not dead space.
   useEffect(() => {
-    setPlayhead(0);
+    setPlayhead(firstEventOffset);
     setSelectedId(null);
-  }, [hours, q.data?.generatedAt]);
+  }, [hours, q.data?.generatedAt, firstEventOffset]);
 
   // Auto-select the most-important visible event
   useEffect(() => {
@@ -208,7 +217,16 @@ function ReplayPage() {
       >
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={() => setPlaying((p) => !p)}
+            onClick={() => {
+              setPlaying((p) => {
+                const next = !p;
+                // Starting from the very end? rewind to first event.
+                if (next && playhead >= windowMs - 100) setPlayhead(firstEventOffset);
+                // Starting from before the first event's dead zone? skip it.
+                if (next && playhead < firstEventOffset) setPlayhead(firstEventOffset);
+                return next;
+              });
+            }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-[6px] text-sm font-medium transition-all shine-sweep hover-lift"
             style={{
               background: playing ? "rgba(251,113,133,0.12)" : "rgba(34,211,238,0.12)",
@@ -221,7 +239,7 @@ function ReplayPage() {
           </button>
           <button
             onClick={() => {
-              setPlayhead(0);
+              setPlayhead(firstEventOffset);
               setSelectedId(null);
             }}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs transition-colors hover:bg-white/[0.03]"

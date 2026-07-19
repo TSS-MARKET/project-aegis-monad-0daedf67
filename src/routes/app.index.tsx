@@ -68,7 +68,7 @@ function DashboardPage() {
     : 0;
 
   return (
-    <div className="mx-auto max-w-[1600px] px-4 md:px-10 pt-4 md:pt-6 pb-8 space-y-6">
+    <div className="mx-auto max-w-[1600px] px-4 md:px-8 pt-2 md:pt-3 pb-8 space-y-5">
       {/* Title */}
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div>
@@ -172,17 +172,17 @@ function DashboardPage() {
         )}
       </div>
 
+      {/* Intelligence timeline preview — evidence-first, higher priority than the AI brief */}
+      <TimelinePreview
+        events={feed.data?.events ?? []}
+        loading={feed.isLoading}
+      />
+
       {/* Row: AI brief (wider) + narrative rotation */}
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <BriefPanel state={brief} />
         <NarrativePanel narratives={narratives} loading={!snap.data} />
       </div>
-
-      {/* Intelligence timeline preview */}
-      <TimelinePreview
-        events={feed.data?.events ?? []}
-        loading={feed.isLoading}
-      />
     </div>
   );
 }
