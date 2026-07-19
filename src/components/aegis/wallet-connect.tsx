@@ -1,4 +1,4 @@
-import { useMonadWallet, short, isInIframe, topLevelUrl, eth } from "@/lib/monad-wallet";
+import { useMonadWallet, short, isInIframe, topLevelUrl, eth, ACTIVE_MONAD } from "@/lib/monad-wallet";
 import { Wallet, LogOut, AlertTriangle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -119,14 +119,14 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
             className="px-2 py-1.5"
             style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}
           >
-            {onMonad ? "Monad · Connected" : "Wrong network"}
+            {onMonad ? `${ACTIVE_MONAD.chainName} · Connected` : "Wrong network"}
           </div>
           {!onMonad && (
             <button
               onClick={connect}
               className="w-full text-left px-2 py-1.5 rounded hover:bg-white/5 text-xs text-amber-300"
             >
-              Switch to Monad
+              Switch to {ACTIVE_MONAD.chainName}
             </button>
           )}
           <button
