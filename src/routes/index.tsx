@@ -373,11 +373,17 @@ function Landing() {
               {[...Array(2)].map((_, dup) => (
                 <div key={dup} className="flex items-center gap-12 shrink-0" style={{ fontFamily: MONO, fontSize: "0.72rem", letterSpacing: "0.06em", color: "rgba(245,247,250,0.85)" }}>
                   {[
-                    ["MON", "$4.82", "+6.4%"],
-                    ["ETH", "$4,120", "+1.8%"],
-                    ["BTC", "$118,240", "+0.6%"],
-                    ["SOL", "$284", "+3.1%"],
-                    ...monadTokens.slice(0, 5).map((t) => [t.symbol, `$${t.priceUsd.toFixed(t.priceUsd < 1 ? 4 : 2)}`, `${t.change24h >= 0 ? "+" : ""}${t.change24h.toFixed(1)}%`] as [string, string, string]),
+                    ["MON", ...fmtLive("MON", 4.82, 6.4)] as [string, string, string],
+                    ["BTC", ...fmtLive("BTC", 118240, 0.6)] as [string, string, string],
+                    ["ETH", ...fmtLive("ETH", 4120, 1.8)] as [string, string, string],
+                    ["SOL", ...fmtLive("SOL", 284, 3.1)] as [string, string, string],
+                    ["BNB", ...fmtLive("BNB", 712, 0.4)] as [string, string, string],
+                    ["XRP", ...fmtLive("XRP", 2.28, 0.9)] as [string, string, string],
+                    ["DOGE", ...fmtLive("DOGE", 0.38, 1.1)] as [string, string, string],
+                    ["AVAX", ...fmtLive("AVAX", 42.1, 1.5)] as [string, string, string],
+                    ["LINK", ...fmtLive("LINK", 22.4, 0.8)] as [string, string, string],
+                    ["SUI", ...fmtLive("SUI", 4.28, 2.1)] as [string, string, string],
+                    ["PEPE", ...fmtLive("PEPE", 0.0000213, 3.2)] as [string, string, string],
                     ["MONAD TPS", "10,000", "SUB-SEC FINALITY"],
                   ].map((row, i) => (
                     <span key={`${dup}-${i}`} className="inline-flex items-center gap-2 whitespace-nowrap">
