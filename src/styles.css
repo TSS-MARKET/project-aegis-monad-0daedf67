@@ -355,9 +355,9 @@
 
 /* Continuous ticker scroll (marquee) */
 .gl-ticker { display: flex; overflow: hidden; mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent); }
-.gl-ticker__track { display: flex; gap: 3rem; flex-shrink: 0; animation: gl-ticker 40s linear infinite; will-change: transform; }
+.gl-ticker__track { display: flex; gap: 3rem; flex-shrink: 0; animation: gl-ticker 22s linear infinite; will-change: transform; }
 @media (max-width: 768px) {
-  .gl-ticker__track { animation-duration: 28s; gap: 2rem; }
+  .gl-ticker__track { animation-duration: 14s; gap: 2rem; }
 }
 @keyframes gl-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
@@ -485,9 +485,9 @@
   border-bottom: 1px solid rgba(34,211,238,0.2);
   background: linear-gradient(90deg, rgba(34,211,238,0.04), rgba(103,232,249,0.06), rgba(34,211,238,0.04));
 }
-.gl-ribbon__track { display: flex; gap: 3rem; animation: gl-ticker 38s linear infinite; will-change: transform; }
+.gl-ribbon__track { display: flex; gap: 3rem; animation: gl-ticker 20s linear infinite; will-change: transform; }
 @media (max-width: 768px) {
-  .gl-ribbon__track { animation-duration: 26s; gap: 2rem; }
+  .gl-ribbon__track { animation-duration: 12s; gap: 2rem; }
 }
 
 /* Continuously animated equalizer bar (real height wave) */
