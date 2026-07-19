@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { SidebarNav } from "@/components/aegis/sidebar-nav";
 import { MobileBottomNav } from "@/components/aegis/mobile-bottom-nav";
 import { AegisLogo } from "@/components/aegis/logo";
-import { DemoModeButton } from "@/components/aegis/demo-mode";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { Link } from "@tanstack/react-router";
 
@@ -44,12 +43,10 @@ function AppShell() {
         <header className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2.5 border-b border-[rgba(34,211,238,0.14)] bg-black/70 backdrop-blur-xl">
           <Link to="/"><AegisLogo /></Link>
           <div className="flex items-center gap-2">
-            <DemoModeButton variant="premium" />
             <WalletConnectButton compact />
           </div>
         </header>
         <div className="hidden md:flex items-center justify-end gap-3 px-6 pt-4">
-          <DemoModeButton variant="premium" />
           <WalletConnectButton compact />
         </div>
         <div key={pathname} className="animate-in fade-in duration-150">
