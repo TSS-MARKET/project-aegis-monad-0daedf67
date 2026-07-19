@@ -128,7 +128,7 @@ function Landing() {
                 letterSpacing: "0.14em",
               }}
             >
-              <span style={{ color: "#f5f7fa" }}>MONAD · MARKET INTELLIGENCE</span>
+              <span style={{ color: "#f5f7fa" }}>AEGIS · MONAD INTELLIGENCE</span>
               <span style={{ color: "rgba(34,211,238,0.5)" }}>//</span>
               <span style={{ color: "rgba(245,247,250,0.55)" }}>
                 READ-ONLY: <span style={{ color: "#f5f7fa" }}>NEVER TOUCHES YOUR KEYS</span>
@@ -230,7 +230,7 @@ function Landing() {
               className="inline-block w-1.5 h-1.5 rounded-full"
               style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }}
             />
-            <span>Inspect Live Proof</span>
+            <span>MARKET RADAR</span>
             <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
           </a>
 
