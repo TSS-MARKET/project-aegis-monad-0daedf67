@@ -155,7 +155,7 @@ function RadarPage() {
   const gainers = useMemo(() => [...tokens].sort((a, b) => b.change24h - a.change24h).slice(0, 5), [tokens]);
   const losers = useMemo(() => [...tokens].sort((a, b) => a.change24h - b.change24h).slice(0, 5), [tokens]);
   const hotVolume = useMemo(() => [...tokens].sort((a, b) => b.volume24hUsd - a.volume24hUsd).slice(0, 5), [tokens]);
-  const liquidity = useMemo(() => [...tokens].sort((a, b) => b.liquidityUsd - a.liquidityUsd).slice(0, 6), [tokens]);
+  const volumeLeaders = useMemo(() => [...tokens].sort((a, b) => b.volume24hUsd - a.volume24hUsd).slice(0, 6), [tokens]);
 
   const maxVol = Math.max(1, ...tokens.map((t) => t.volume24hUsd));
 
@@ -188,7 +188,7 @@ function RadarPage() {
             Market <em style={{ color: "#22d3ee" }}>Radar</em>
           </h1>
           <p className="mt-2 text-sm" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Monad ecosystem first, majors as reference. Regime, rotation, liquidity, and opportunity scan across{" "}
+            Monad ecosystem first, majors as reference. Regime, rotation, volume, and opportunity scan across{" "}
             <span style={{ color: "#22d3ee", fontFamily: MONO }}>{tokens.length} assets</span>.
           </p>
         </div>
@@ -242,7 +242,7 @@ function RadarPage() {
 
       {/* Row: Opportunity Scanner + Sector Rotation */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel eyebrow="Opportunity Scanner · AI-Ranked" icon={Target}>
+        <Panel eyebrow="Opportunity Scanner · Live-Ranked" icon={Target}>
           {o.data && o.data.ok ? (
             <div className="space-y-3">
               {o.data.data.opportunities.map((op, i) => (
@@ -323,13 +323,12 @@ function RadarPage() {
         </Panel>
       </div>
 
-      {/* Row: Liquidity Radar + Confidence Map */}
+      {/* Row: Volume Radar + Confidence Map */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Panel eyebrow="Liquidity Radar · Depth vs Volume" icon={Droplets}>
+        <Panel eyebrow="Volume Radar · 24h public API" icon={Droplets}>
           <div className="space-y-2.5">
-            {liquidity.map((t) => {
-              const ratio = t.volume24hUsd / Math.max(1, t.liquidityUsd);
-              const hot = ratio > 1.2;
+            {volumeLeaders.map((t) => {
+              const hot = t.change24h > 3;
               return (
                 <div key={t.symbol} className="grid grid-cols-[70px_1fr_auto] items-center gap-3 text-sm">
                   <span style={{ fontFamily: MONO, color: "#22d3ee" }}>{t.symbol}</span>
@@ -337,7 +336,7 @@ function RadarPage() {
                     <div
                       className="h-full"
                       style={{
-                        width: `${Math.min(100, (t.liquidityUsd / (liquidity[0]?.liquidityUsd || 1)) * 100)}%`,
+                        width: `${Math.min(100, (t.volume24hUsd / (volumeLeaders[0]?.volume24hUsd || 1)) * 100)}%`,
                         background: hot ? "linear-gradient(90deg,#f59e0b,#fb7185)" : "linear-gradient(90deg,#22d3ee,#0ea5b7)",
                       }}
                     />
@@ -346,18 +345,18 @@ function RadarPage() {
                     className="tabular-nums text-[11px]"
                     style={{ color: hot ? "#fbbf24" : "rgba(245,247,250,0.6)", fontFamily: MONO }}
                   >
-                    {formatUsd(t.liquidityUsd)}
+                    {formatUsd(t.volume24hUsd)}
                   </span>
                 </div>
               );
             })}
             <p className="pt-2 text-[11px]" style={{ color: "rgba(245,247,250,0.5)" }}>
-              Amber bars = volume/liquidity ratio &gt; 1.2 (slippage risk).
+              Bars use public 24h volume from the live market API.
             </p>
           </div>
         </Panel>
 
-        <Panel eyebrow="Confidence Map · Momentum × Whale Support" icon={ShieldAlert}>
+        <Panel eyebrow="Confidence Map · Momentum × Volume Support" icon={ShieldAlert}>
           <div className="relative h-56 rounded-[8px]" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(34,211,238,0.15)" }}>
             {/* axes */}
             <div
@@ -367,7 +366,7 @@ function RadarPage() {
             <div className="absolute left-1/2 top-0 h-full w-px" style={{ background: "rgba(34,211,238,0.15)" }} />
             {tokens.map((t) => {
               const x = 50 + t.momentum * 45; // -1..1
-              const y = 100 - t.whaleConcentration * 90 - 5;
+              const y = 95 - Math.min(90, (t.volume24hUsd / maxVol) * 90);
               const size = 6 + Math.log10(Math.max(10, t.volume24hUsd)) * 1.2;
               return (
                 <div
@@ -403,7 +402,7 @@ function RadarPage() {
               className="absolute top-1 right-2 text-[9px] uppercase tracking-[0.16em]"
               style={{ fontFamily: MONO, color: "rgba(245,247,250,0.4)" }}
             >
-              ↑ whale concentration
+              ↑ volume support
             </div>
           </div>
         </Panel>

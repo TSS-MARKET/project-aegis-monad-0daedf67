@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, streamText, stepCountIs, tool, type UIMessage } from "ai";
 import { z } from "zod";
 import { requireGateway } from "@/lib/ai-gateway.server";
-import { getMarketState } from "@/lib/monad-data";
-import { getMonadEvents } from "@/lib/monad-events";
-import { computeOpportunities } from "@/lib/opportunity-engine";
+import { getLiveMarketState } from "@/lib/monad-market.server";
+import { getLiveMonadEvents } from "@/lib/monad-live-events.server";
+import { computeOpportunitiesFrom } from "@/lib/opportunity-engine";
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -19,10 +19,10 @@ export const Route = createFileRoute("/api/chat")({
         if (!Array.isArray(messages)) return new Response("Messages required", { status: 400 });
 
         const gateway = requireGateway();
-        const state = getMarketState();
-        const events = getMonadEvents({ windowMs: 6 * 60 * 60 * 1000, limit: 40 });
+        const state = await getLiveMarketState();
+        const events = (await getLiveMonadEvents(6, 80)).events;
         const focused = eventId ? events.find((e) => e.id === eventId) : null;
-        const topOpps = computeOpportunities(Date.now(), 5).map((o) => ({
+        const topOpps = computeOpportunitiesFrom(state, events, Date.now(), 5).map((o) => ({
           rank: o.rank,
           sym: o.token.symbol,
           setup: o.setup,
@@ -105,7 +105,7 @@ FORMATTING RULES (STRICT — the UI renders markdown)
 - Use "###" headings for section titles when structuring a longer answer. Never use "**Heading**" style.
 - Keep answers under ~180 words unless the user asks for depth.
 
-LIVE MONAD MARKET STATE (2-minute bucket):
+        LIVE MONAD MARKET STATE (CoinGecko + Monad RPC):
 ${JSON.stringify(context)}`;
 
         const tools = {
@@ -151,7 +151,9 @@ ${JSON.stringify(context)}`;
               "Return the top ranked Monad opportunities with setup, horizon, score, confidence, risk, thesis, catalysts, risks, and grounding evidence event ids. Use when the user asks what to watch, top plays, opportunities, or setups.",
             inputSchema: z.object({ limit: z.number().describe("How many opportunities (1-8)") }),
             execute: async ({ limit }) => {
-              const opps = computeOpportunities(Date.now(), Math.max(1, Math.min(8, limit)));
+              const liveState = await getLiveMarketState();
+              const liveEvents = (await getLiveMonadEvents(6, 160)).events;
+              const opps = computeOpportunitiesFrom(liveState, liveEvents, Date.now(), Math.max(1, Math.min(8, limit)));
               return opps.map((o) => ({
                 rank: o.rank,
                 sym: o.token.symbol,
@@ -173,7 +175,7 @@ ${JSON.stringify(context)}`;
               "Return the full detail for a single Monad intelligence event by its id (e.g. E-abc123). Use when the user references an [E-*] tag or wants deeper context on an event.",
             inputSchema: z.object({ id: z.string() }),
             execute: async ({ id }) => {
-              const all = getMonadEvents({ windowMs: 24 * 60 * 60 * 1000, limit: 400 });
+              const all = (await getLiveMonadEvents(24, 400)).events;
               const e = all.find((x) => x.id === id);
               if (!e) return { ok: false, error: "Event not found" };
               return {

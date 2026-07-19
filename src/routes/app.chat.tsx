@@ -26,8 +26,8 @@ const SERIF = "var(--font-serif)";
 
 const suggestions = [
   { icon: Sparkles, label: "Ecosystem read", prompt: "Give me a full read on the Monad ecosystem right now — sentiment, dominant narrative, key movers." },
-  { icon: TrendingUp, label: "Strongest AI plays", prompt: "Which AI-narrative tokens on Monad look strongest right now, and why?" },
-  { icon: Fish, label: "Whale activity", prompt: "Walk me through the most important whale activity in the last hour and what it implies." },
+  { icon: TrendingUp, label: "Strongest movers", prompt: "Which Monad-related tokens look strongest right now based on live price and volume data?" },
+  { icon: Fish, label: "Block activity", prompt: "Walk me through the most important Monad block activity in the last hour and what it implies." },
   { icon: ShieldAlert, label: "Biggest risks", prompt: "What are the biggest risks in the Monad market right now?" },
 ];
 
@@ -119,7 +119,7 @@ function ChatPage() {
                   What are we reading <em style={{ color: "#22d3ee" }}>on Monad</em> today?
                 </h2>
                 <p className="mt-3 text-sm" style={{ color: "rgba(245,247,250,0.65)" }}>
-                  Every answer is grounded in the live Monad market state — token prices, narrative rotation, whale flows.
+                  Every answer is grounded in live Monad blocks and public market APIs — token prices, narrative rotation, and evidence.
                   No advice, no invented numbers.
                 </p>
               </div>

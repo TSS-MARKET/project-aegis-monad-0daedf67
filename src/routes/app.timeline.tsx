@@ -48,10 +48,10 @@ const CAT_META: Record<EventCategory, { label: string; icon: typeof Waves; color
 type FilterKey = "all" | "whales" | "liquidity" | "flow" | "protocols" | "opportunities" | "risks";
 const FILTERS: { k: FilterKey; label: string }[] = [
   { k: "all", label: "All" },
-  { k: "whales", label: "Whales" },
+  { k: "whales", label: "Transfers" },
   { k: "liquidity", label: "Liquidity" },
-  { k: "flow", label: "Capital Flow" },
-  { k: "protocols", label: "Protocols" },
+  { k: "flow", label: "Flow" },
+  { k: "protocols", label: "Blocks" },
   { k: "opportunities", label: "Opportunities" },
   { k: "risks", label: "Risks" },
 ];
@@ -136,7 +136,7 @@ function TimelinePage() {
             Intelligence <em style={{ color: "#22d3ee" }}>Timeline</em>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Ranked by impact, confidence, evidence, unusualness, and recency. Every event traces back to a transaction.
+            Ranked by impact, confidence, evidence, unusualness, and recency. Every item comes from live Monad RPC blocks.
           </p>
         </div>
 
@@ -215,7 +215,7 @@ function TimelinePage() {
         <div className="rounded-[10px] p-6 sticky top-4 self-start" style={{ background: PANEL_BG, border: BORDER }}>
           {selected ? <Inspector e={selected} /> : (
             <div className="text-sm" style={{ color: "rgba(245,247,250,0.55)" }}>
-              Select an event to see evidence, wallets, and why it matters.
+              Select an event to see block evidence and why it matters.
             </div>
           )}
         </div>
@@ -312,7 +312,7 @@ function Inspector({ e }: { e: MonadEvent }) {
               {meta.label}
             </span>
             <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "rgba(245,247,250,0.4)", fontFamily: MONO }}>
-              curated · {fmtAgo(e.minutesAgo)} ago
+              live RPC · {fmtAgo(e.minutesAgo)} ago
             </span>
           </div>
           <h2 className="mt-1.5" style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", lineHeight: 1.15 }}>

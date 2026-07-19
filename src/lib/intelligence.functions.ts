@@ -3,8 +3,9 @@ import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 import { requireGateway } from "./ai-gateway.server";
 import { getMarketState } from "./monad-data";
-import { getMonadEvents, getReplayWindow, getHeadlineEvent } from "./monad-events";
-import { computeOpportunities } from "./opportunity-engine";
+import { getLiveHeadlineEvent, getLiveMonadEvents, getLiveMonadReplayWindow } from "./monad-live-events.server";
+import { getLiveMarketState } from "./monad-market.server";
+import { computeOpportunities, computeOpportunitiesFrom } from "./opportunity-engine";
 
 const MODEL = "openai/gpt-5.5";
 
@@ -16,8 +17,8 @@ const BriefSchema = z.object({
   watch: z.array(z.string()),
 });
 
-function briefPrompt() {
-  const state = getMarketState();
+async function briefPrompt() {
+  const state = await getLiveMarketState();
   const topMovers = [...state.tokens].sort((a, b) => b.change24h - a.change24h);
   const compact = {
     ecosystem: state.ecosystem,
@@ -43,7 +44,7 @@ export const getMarketBrief = createServerFn({ method: "GET" }).handler(async ()
     const { experimental_output } = await generateText({
       model: gateway(MODEL),
       experimental_output: Output.object({ schema: BriefSchema }),
-      prompt: briefPrompt(),
+      prompt: await briefPrompt(),
     });
     return { ok: true as const, data: experimental_output };
   } catch (error) {
@@ -74,65 +75,18 @@ const OpportunitySchema = z.object({
 });
 
 export const getOpportunities = createServerFn({ method: "GET" }).handler(async () => {
-  const gateway = requireGateway({ structuredOutputs: true });
-  const state = getMarketState();
-  const candidates = state.tokens
-    .filter((t) => t.narrative !== "Stable")
-    .map((t) => ({
-      s: t.symbol,
-      n: t.narrative,
-      c: t.change24h,
-      v: t.volume24hUsd,
-      l: t.liquidityUsd,
-      m: t.momentum,
-      w: t.whaleConcentration,
-      h: t.holders,
-    }));
-  const prompt = `You are Aegis, generating opportunities on Monad. For 3 tokens from the candidates below, produce a thesis. Values: c=24h%, v=volume, l=liquidity, m=momentum(-1..1), w=whale concentration(0..1).
-
-Candidates: ${JSON.stringify(candidates)}
-Narratives: ${JSON.stringify(state.narratives)}
-
-Rules: confidence 0-100 (integer). riskScore 1-10. Reasoning cites specific metrics. 2-3 catalysts, 2-3 risks. Never say "buy" — describe the setup.`;
-
-  try {
-    const { experimental_output } = await generateText({
-      model: gateway(MODEL),
-      experimental_output: Output.object({ schema: OpportunitySchema }),
-      prompt,
-    });
-    const mon = state.tokens.find((t) => t.symbol === "MON");
-    const monMomentumPct = mon ? Math.round(50 + Math.max(-20, Math.min(30, mon.change24h * 2)) + (mon.momentum > 0 ? 12 : 0)) : 82;
-    const confidence = Math.max(78, Math.min(96, monMomentumPct));
-    const monOpp = {
-      token: "MON",
-      thesis: `Monad native asset — parallel-EVM L1 anchoring the ecosystem. ${mon ? (mon.change24h >= 0 ? "Strength continues" : "Base-building") + ` at $${mon.priceUsd.toFixed(2)} (${mon.change24h >= 0 ? "+" : ""}${mon.change24h.toFixed(2)}% 24h)` : "Reference asset for all Monad flows"}.`,
-      confidence,
-      reasoning: [
-        `Deepest liquidity in the ecosystem (${mon ? "$" + (mon.liquidityUsd / 1e6).toFixed(1) + "M" : "top pair"}).`,
-        `Whale concentration ${mon ? (mon.whaleConcentration * 100).toFixed(0) + "%" : "moderate"} — supply-side stable.`,
-        `Directly benefits from ecosystem inflow and TPS growth (10K TPS target).`,
-      ],
-      catalysts: ["Mainnet-adjacent activity ramp", "Ecosystem DEX volume expansion", "New LST/lending TVL"],
-      risks: ["Broad crypto beta drawdown", "Testnet-to-mainnet timing", "Rotation into meme leg"],
-      riskScore: 4,
-    };
-    const rest = (experimental_output.opportunities ?? []).filter((o) => o.token !== "MON");
-    return { ok: true as const, data: { opportunities: [monOpp, ...rest].slice(0, 4) } };
-  } catch (error) {
-    console.error(error);
-    const mon = state.tokens.find((t) => t.symbol === "MON");
-    const monOpp = {
-      token: "MON",
-      thesis: `Monad native asset — reference exposure to the parallel-EVM L1${mon ? ` trading at $${mon.priceUsd.toFixed(2)}` : ""}.`,
-      confidence: 88,
-      reasoning: ["Ecosystem anchor asset", "Deepest liquidity on-chain", "Direct beneficiary of TPS narrative"],
-      catalysts: ["Ecosystem TVL growth", "DEX volume expansion"],
-      risks: ["Broad market beta", "Rotation risk"],
-      riskScore: 4,
-    };
-    return { ok: true as const, data: { opportunities: [monOpp] } };
-  }
+  const state = await getLiveMarketState();
+  const events = (await getLiveMonadEvents(6, 180)).events;
+  const opportunities = computeOpportunitiesFrom(state, events, Date.now(), 4).map((o) => ({
+    token: o.token.symbol,
+    thesis: o.thesis,
+    confidence: o.confidence,
+    reasoning: o.reasoning,
+    catalysts: o.catalysts,
+    risks: o.risks,
+    riskScore: o.riskScore,
+  }));
+  return { ok: true as const, data: { opportunities } };
 });
 
 const WalletIntelSchema = z.object({
@@ -154,7 +108,7 @@ export const analyzeWallet = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const gateway = requireGateway({ structuredOutputs: true });
-    const state = getMarketState();
+    const state = await getLiveMarketState();
     const enriched = data.holdings.map((h) => {
       const t = state.tokens.find((x) => x.symbol === h.symbol);
       return { ...h, narrative: t?.narrative ?? "Unknown", change24h: t?.change24h ?? 0 };
@@ -182,7 +136,7 @@ Rules: narrativeExposure shares sum to ~1. Health = one word. Recommendations de
   });
 
 export const getMarketSnapshot = createServerFn({ method: "GET" }).handler(async () => {
-  return getMarketState();
+  return getLiveMarketState();
 });
 
 // -------- Event / Replay / Headline endpoints ------------------------------
@@ -199,23 +153,16 @@ export const getEventFeed = createServerFn({ method: "GET" })
       })
       .parse(data ?? {}),
   )
-  .handler(async ({ data }) => {
-    const windowMs = (data.windowHours ?? 6) * 60 * 60 * 1000;
-    return {
-      events: getMonadEvents({ windowMs, limit: data.limit ?? 80 }),
-      dataType: "curated" as const,
-      generatedAt: new Date().toISOString(),
-    };
-  });
+  .handler(async ({ data }) => getLiveMonadEvents((data.windowHours ?? 6) as 1 | 6 | 24, data.limit ?? 80));
 
 export const getReplayFeed = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
     z.object({ hours: z.union([z.literal(1), z.literal(6), z.literal(24)]).optional() }).parse(data ?? {}),
   )
-  .handler(async ({ data }) => getReplayWindow(data.hours ?? 6));
+  .handler(async ({ data }) => getLiveMonadReplayWindow(data.hours ?? 6));
 
 export const getHeadline = createServerFn({ method: "GET" }).handler(async () => {
-  return { event: getHeadlineEvent(), generatedAt: new Date().toISOString() };
+  return getLiveHeadlineEvent();
 });
 
 // -------- Opportunity Engine ----------------------------------------------
@@ -227,6 +174,6 @@ export const getOpportunityBoard = createServerFn({ method: "GET" })
     z.object({ limit: z.number().min(1).max(12).optional() }).parse(data ?? {}),
   )
   .handler(async ({ data }) => ({
-    opportunities: computeOpportunities(Date.now(), data.limit ?? 6),
+    opportunities: computeOpportunitiesFrom(await getLiveMarketState(), (await getLiveMonadEvents(6, 180)).events, Date.now(), data.limit ?? 6),
     generatedAt: new Date().toISOString(),
   }));

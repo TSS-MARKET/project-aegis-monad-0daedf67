@@ -74,8 +74,8 @@ function OpportunitiesPage() {
             Ranked setups on <em style={{ color: "#22d3ee" }}>Monad</em>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: "rgba(245,247,250,0.6)" }}>
-            Deterministic scoring across five signals — momentum, turnover, whale flow, narrative, and event pressure —
-            grounded in the last 6h of on-chain evidence. Not financial advice.
+            Deterministic scoring across five signals — momentum, turnover, live RPC activity, narrative, and event pressure —
+            grounded in public market data and recent Monad blocks. Not financial advice.
           </p>
         </div>
         <div

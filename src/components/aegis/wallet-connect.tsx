@@ -1,4 +1,4 @@
-import { useMonadWallet, short, isInIframe, topLevelUrl, eth } from "@/lib/monad-wallet";
+import { useMonadWallet, short, isInIframe, topLevelUrl, eth, ACTIVE_MONAD } from "@/lib/monad-wallet";
 import { Wallet, LogOut, AlertTriangle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -74,7 +74,7 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
         >
           <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)" }} />
           {connecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wallet className="w-3.5 h-3.5" />}
-          <span className="relative">{connecting ? "Connecting" : "Connect Wallet"}</span>
+          <span className="relative">{connecting ? "Connecting" : "Connect"}</span>
         </button>
         {error && <span className="text-[10px] text-amber-300 max-w-[220px] text-right leading-tight">{error}</span>}
       </div>
@@ -119,14 +119,14 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
             className="px-2 py-1.5"
             style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}
           >
-            {onMonad ? "Monad Testnet · Connected" : "Wrong network"}
+            {onMonad ? `${ACTIVE_MONAD.chainName} · Connected` : "Wrong network"}
           </div>
           {!onMonad && (
             <button
               onClick={connect}
               className="w-full text-left px-2 py-1.5 rounded hover:bg-white/5 text-xs text-amber-300"
             >
-              Switch to Monad Testnet
+              Switch to {ACTIVE_MONAD.chainName}
             </button>
           )}
           <button

@@ -49,9 +49,15 @@ async function batch(url: string, calls: { method: string; params?: unknown[] }[
 
 const ADDR = /^0x[0-9a-fA-F]{40}$/;
 
-// Rough MON price proxy for USD display. We keep it a constant since the
-// scorecard is qualitative; the number is transparent to the user.
-const MON_USD = 2.35;
+async function fetchMonUsd() {
+  const url = new URL("https://api.coingecko.com/api/v3/simple/price");
+  url.searchParams.set("ids", "monad");
+  url.searchParams.set("vs_currencies", "usd");
+  const res = await fetch(url, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(3500) });
+  if (!res.ok) return 0;
+  const json = (await res.json()) as { monad?: { usd?: number } };
+  return typeof json.monad?.usd === "number" ? json.monad.usd : 0;
+}
 
 function scoreOf(input: {
   balanceMon: number;
@@ -100,11 +106,14 @@ function scoreOf(input: {
 
 async function probe(url: string, chainName: string, chainIdDec: number, address: string): Promise<GuardianReport | null> {
   try {
-    const [balanceHex, txHex, codeHex, headHex] = await batch(url, [
-      { method: "eth_getBalance", params: [address, "latest"] },
-      { method: "eth_getTransactionCount", params: [address, "latest"] },
-      { method: "eth_getCode", params: [address, "latest"] },
-      { method: "eth_blockNumber" },
+    const [[balanceHex, txHex, codeHex, headHex], monUsd] = await Promise.all([
+      batch(url, [
+        { method: "eth_getBalance", params: [address, "latest"] },
+        { method: "eth_getTransactionCount", params: [address, "latest"] },
+        { method: "eth_getCode", params: [address, "latest"] },
+        { method: "eth_blockNumber" },
+      ]),
+      fetchMonUsd().catch(() => 0),
     ]);
     if (!balanceHex || !headHex) return null;
     const balanceWei = BigInt(balanceHex);
@@ -119,7 +128,7 @@ async function probe(url: string, chainName: string, chainIdDec: number, address
       chainName,
       chainIdDec,
       balanceMon,
-      balanceUsd: balanceMon * MON_USD,
+      balanceUsd: balanceMon * monUsd,
       txCount,
       isContract,
       ageBlocks: null,

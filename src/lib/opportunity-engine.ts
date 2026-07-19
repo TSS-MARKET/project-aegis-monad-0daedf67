@@ -2,12 +2,12 @@
 // Aegis · Opportunity Engine
 // ----------------------------------------------------------------------------
 // Deterministic scorer that ranks Monad opportunities from real signals:
-// momentum, turnover, whale flow, narrative rotation, and event pressure.
+// momentum, turnover, live on-chain activity, narrative rotation, and event pressure.
 // Every candidate is anchored to concrete evidence events from the timeline
 // so the UI (and Ask Aegis) can prove the setup, not just describe it.
 // ============================================================================
 
-import { getMarketState, type MonadToken } from "./monad-data";
+import { getMarketState, type MarketState, type MonadToken } from "./monad-data";
 import { getMonadEvents, type MonadEvent } from "./monad-events";
 
 export type OpportunitySetup =
@@ -42,7 +42,7 @@ export type Opportunity = {
   risks: string[];
   evidence: MonadEvent[]; // top 3 grounding events
   invalidatesIf: string;
-  dataType: "curated";
+  dataType: "live" | "fallback";
 };
 
 // ---------------------------------------------------------------------------
@@ -165,7 +165,7 @@ function scoreToken(
     { label: "24h change", value: change01, raw: pct(t.change24h), weight: 15 },
     { label: "Turnover", value: turnover01, raw: `${turnover.toFixed(2)}x`, weight: 15 },
     {
-      label: "Whale flow",
+      label: "On-chain flow",
       value: flow01,
       raw: `${netFlow >= 0 ? "+" : "−"}${usd(Math.abs(netFlow))}`,
       weight: 25,
@@ -184,11 +184,11 @@ function confidenceFor(components: ScoreComponent[], evidenceCount: number): num
 }
 
 function riskFor(t: MonadToken, s: EventSignals): number {
-  const whale = t.whaleConcentration * 5; // 0..5
+  const concentration = t.whaleConcentration * 5; // 0..5 for indexed/fallback data; live API rows default to 0.
   const liqRisk = t.liquidityUsd < 5_000_000 ? 2 : t.liquidityUsd < 15_000_000 ? 1 : 0;
   const vol = Math.min(3, Math.abs(t.change24h) / 6);
   const evtStress = clamp((s.coordinatedCount * 1 + s.unusualCount * 0.5), 0, 2);
-  return clamp(Math.round(whale + liqRisk + vol + evtStress) / 2, 1, 10);
+  return clamp(Math.round(concentration + liqRisk + vol + evtStress) / 2, 1, 10);
 }
 
 // ---------------------------------------------------------------------------
@@ -198,7 +198,7 @@ function riskFor(t: MonadToken, s: EventSignals): number {
 function catalystsFor(t: MonadToken, s: EventSignals): string[] {
   const out: string[] = [];
   if (s.buyPressureUsd > 250_000)
-    out.push(`Sustained accumulation — ${usd(s.buyPressureUsd)} in whale buys (6h)`);
+    out.push(`Sustained accumulation — ${usd(s.buyPressureUsd)} in observed inflow (6h)`);
   if (s.liquidityAddUsd > 100_000)
     out.push(`${usd(s.liquidityAddUsd)} liquidity added across DEX pools`);
   if (s.newWalletCount > 0) out.push(`Fresh cohort — ${s.newWalletCount} new-wallet waves observed`);
@@ -211,7 +211,7 @@ function catalystsFor(t: MonadToken, s: EventSignals): string[] {
 function risksFor(t: MonadToken, s: EventSignals): string[] {
   const out: string[] = [];
   if (t.whaleConcentration > 0.5)
-    out.push(`Whale concentration ${Math.round(t.whaleConcentration * 100)}% — supply overhang`);
+    out.push(`Holder concentration ${Math.round(t.whaleConcentration * 100)}% — supply overhang`);
   if (s.sellPressureUsd > 200_000)
     out.push(`${usd(s.sellPressureUsd)} distribution logged in the last 6h`);
   if (s.liquidityRemoveUsd > 150_000)
@@ -227,10 +227,10 @@ function risksFor(t: MonadToken, s: EventSignals): string[] {
 function thesisFor(t: MonadToken, setup: OpportunitySetup, s: EventSignals): string {
   const flowLine =
     s.buyPressureUsd > s.sellPressureUsd
-      ? `Net ${usd(s.buyPressureUsd - s.sellPressureUsd)} whale inflow`
+      ? `Net ${usd(s.buyPressureUsd - s.sellPressureUsd)} observed inflow`
       : s.sellPressureUsd > s.buyPressureUsd
-      ? `Net ${usd(s.sellPressureUsd - s.buyPressureUsd)} distribution`
-      : "Balanced whale flow";
+      ? `Net ${usd(s.sellPressureUsd - s.buyPressureUsd)} observed distribution`
+      : "Balanced on-chain flow";
   const price = `$${t.priceUsd < 1 ? t.priceUsd.toFixed(4) : t.priceUsd.toFixed(2)}`;
   switch (setup) {
     case "breakout":
@@ -252,7 +252,7 @@ function invalidationFor(t: MonadToken, setup: OpportunitySetup): string {
   const level = (t.priceUsd * (setup === "distribution" || setup === "fade" ? 1.04 : 0.94));
   const fmt = level < 1 ? level.toFixed(4) : level.toFixed(2);
   if (setup === "distribution" || setup === "fade")
-    return `Loss of thesis on reclaim of $${fmt} with rising whale buys.`;
+    return `Loss of thesis on reclaim of $${fmt} with rising observed inflow.`;
   return `Loss of thesis on close below $${fmt} or net distribution > $500K/hr.`;
 }
 
@@ -263,6 +263,10 @@ function invalidationFor(t: MonadToken, setup: OpportunitySetup): string {
 export function computeOpportunities(now = Date.now(), limit = 6): Opportunity[] {
   const state = getMarketState(now);
   const events = getMonadEvents({ now, windowMs: 6 * 60 * 60 * 1000, limit: 200 });
+  return computeOpportunitiesFrom(state, events, now, limit);
+}
+
+export function computeOpportunitiesFrom(state: MarketState, events: MonadEvent[], now = Date.now(), limit = 6): Opportunity[] {
   const narrativeByName = new Map(state.narratives.map((n) => [n.name, n.strength]));
 
   const candidates = state.tokens.filter(
@@ -291,7 +295,7 @@ export function computeOpportunities(now = Date.now(), limit = 6): Opportunity[]
       reasoning: components.map((c) => `${c.label}: ${c.raw} (+${Math.round(c.value * c.weight)} of ${c.weight})`),
       evidence: sig.evidence,
       invalidatesIf: invalidationFor(t, setup),
-      dataType: "curated" as const,
+      dataType: state.dataType === "live" ? ("live" as const) : ("fallback" as const),
     };
   });
 

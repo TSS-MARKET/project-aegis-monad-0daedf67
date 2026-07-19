@@ -1,6 +1,5 @@
-// Synthetic-but-realistic Monad testnet market state.
-// Deterministic per 2-minute bucket so the UI feels live but demo-stable.
-// Wire to a real indexer (Envio/Goldsky) post-hackathon by swapping getMarketState().
+// Local fallback market state. Production screens use src/lib/monad-market.server.ts
+// for live CoinGecko + Monad RPC data; keep this file only for offline rendering.
 
 export type MonadToken = {
   symbol: string;
@@ -30,6 +29,8 @@ export type WhaleEvent = {
 export type MarketState = {
   generatedAt: string;
   bucketMinute: number;
+  dataType?: "live" | "fallback";
+  source?: string;
   ecosystem: {
     totalTvlUsd: number;
     dexVolume24hUsd: number;
