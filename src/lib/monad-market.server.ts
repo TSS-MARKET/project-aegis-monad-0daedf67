@@ -75,7 +75,7 @@ function momentum(change: number, vol: number, cap: number) {
   return Number(Math.max(-1, Math.min(1, Math.tanh(change / 8) + volRatio)).toFixed(2));
 }
 
-function tokenFromRow(id: string, row: PriceRow): MonadToken | null {
+function tokenFromRow(id: string, row?: PriceRow): MonadToken | null {
   const meta = META[id];
   if (!meta || typeof row.usd !== "number") return null;
   const volume = Math.round(row.usd_24h_vol ?? 0);
@@ -133,6 +133,7 @@ export async function getLiveMarketState(): Promise<MarketState> {
     const prices = pricesResult.value;
     const stats = statsResult.status === "fulfilled" ? statsResult.value : { sampledTx: 0, tps: 0 };
     const tokens = COINGECKO_IDS.map((id) => tokenFromRow(id, prices[id])).filter((t): t is MonadToken => !!t);
+    if (!tokens.length) throw new Error("CoinGecko returned no tracked assets");
     const monad = tokens.filter((t) => t.chain === "Monad");
     const monadVolume = monad.reduce((s, t) => s + t.volume24hUsd, 0);
     const monadCap = monad.reduce((s, t) => s + t.marketCapUsd, 0);

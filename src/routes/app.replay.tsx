@@ -71,9 +71,9 @@ function ReplayPage() {
   });
 
   const events = q.data?.events ?? [];
-  const startTs = q.data?.startTs ?? Date.now() - hours * 3600_000;
-  const endTs = q.data?.endTs ?? Date.now();
-  const windowMs = endTs - startTs || 1;
+  const startTs = q.data?.startTs ?? 0;
+  const endTs = q.data?.endTs ?? hours * 3600_000;
+  const windowMs = q.data?.windowMs ?? hours * 3600_000;
 
   // Playhead in real-time ms since startTs
   const [playhead, setPlayhead] = useState(0);

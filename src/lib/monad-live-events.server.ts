@@ -119,13 +119,13 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   const avgBlockMs = Math.max(250, Math.min(12_000, (headTs - oldTs) / Math.max(1, probeDistance)));
   const blocksBack = Math.ceil(windowMs / avgBlockMs);
   const startBlock = Math.max(0, head - blocksBack);
-  const sampleCount = Math.min(limit, hours === 24 ? 180 : hours === 6 ? 120 : 80);
+  const sampleCount = Math.min(limit, hours === 24 ? 72 : hours === 6 ? 42 : 28);
 
   const sampled = Array.from({ length: sampleCount }, (_, i) => {
     if (sampleCount === 1) return head;
     return Math.round(startBlock + ((head - startBlock) * i) / (sampleCount - 1));
   });
-  const latest = Array.from({ length: Math.min(48, head + 1) }, (_, i) => head - i);
+  const latest = Array.from({ length: Math.min(18, head + 1) }, (_, i) => head - i);
   const blocks = await fetchBlocks(url, uniqueNumbers([...sampled, ...latest]));
   if (!blocks.length) throw new Error(`${chainName} RPC returned no sampled blocks`);
   const events = blocks.map((b) => blockToEvent(b, now)).sort((a, b) => a.ts - b.ts || a.block - b.block);
