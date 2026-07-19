@@ -18,7 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
-import { DemoModeButton, startAegisDemo } from "@/components/aegis/demo-mode";
+// demo tour buttons removed from landing per design
 import { WalletGuardian } from "@/components/aegis/wallet-guardian";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
@@ -85,17 +85,16 @@ function Landing() {
   const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
   return (
     <div className="min-h-screen relative overflow-x-clip" style={{ background: "#000" }}>
-      {/* Ambient */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-70" />
+      {/* Ambient — pure obsidian, no grid overlay (matches Glavior reference) */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.18), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(34,211,238,0.14), transparent 70%)" }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute top-1/3 -right-40 h-[520px] w-[520px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(103,232,249,0.10), transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(103,232,249,0.06), transparent 70%)" }}
       />
 
       <header className="relative mx-auto flex max-w-[1560px] items-center justify-between px-6 md:px-10 py-3 md:py-4">
@@ -110,7 +109,6 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
-          <DemoModeButton variant="inline" />
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
@@ -131,8 +129,6 @@ function Landing() {
         {/* Glavior ambient layers */}
         <div aria-hidden className="gl-hero__aurora pointer-events-none absolute inset-0" />
         <div aria-hidden className="gl-hero__scan pointer-events-none absolute inset-x-0 top-0 h-px" />
-        {/* Ambient hero motion */}
-        <div aria-hidden className="gl-hero__grid" />
         <div aria-hidden className="gl-hero__orb" style={{ width: 520, height: 520, left: "-8%", top: "-10%", background: "radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%)" }} />
         <div aria-hidden className="gl-hero__orb" style={{ width: 460, height: 460, right: "-6%", top: "35%", background: "radial-gradient(circle, rgba(103,232,249,0.22), transparent 70%)", animationDelay: "-6s" }} />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent)" }} />
@@ -240,36 +236,6 @@ function Landing() {
               <span className="relative whitespace-nowrap">Launch Dashboard</span>
               <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
-
-            <button
-              type="button"
-              onClick={() => startAegisDemo()}
-              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.18em",
-                color: "#eafcff",
-                padding: "1rem 1.5rem",
-                background: "linear-gradient(180deg, rgba(10,22,32,0.9), rgba(4,12,18,0.9))",
-                border: "1px solid rgba(34,211,238,0.45)",
-                boxShadow: "0 10px 40px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
-              }}
-              aria-label="Play the 30 second judge tour"
-            >
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
-                style={{ background: "linear-gradient(90deg,transparent,rgba(34,211,238,0.35),transparent)" }}
-              />
-              <span className="relative inline-flex items-center gap-2.5">
-                <Sparkles className="w-4 h-4" strokeWidth={2} style={{ color: "#22d3ee" }} />
-                <span className="whitespace-nowrap">30-Second Tour</span>
-                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
-              </span>
-            </button>
           </div>
 
           {/* Manifesto */}
@@ -750,18 +716,28 @@ function Landing() {
 
       {/* Why Monad — closing manifesto, editorial two column with big pull quote */}
       <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-8">
-        <div className="grid lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-10 mb-10">
-          <div className="gl-rise">
-            <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
-            <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
-          </div>
-          <div className="gl-rise" style={{ animationDelay: "100ms" }}>
-            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(2rem,5vw,3.8rem)", lineHeight: 1.0, letterSpacing: "-0.03em", color: "#f5f7fa" }}>
-              Ethereum priced people out.<br/>
-              Solana keeps breaking.<br/>
-              <em className="gl-hero__shimmer" style={{ fontStyle: "italic" }}>Monad is what came next.</em>
-            </h2>
-          </div>
+        <div className="flex flex-col items-center text-center mb-14 gl-rise">
+          <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
+          <div className="mt-3" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
+          <h2
+            className="mt-8 max-w-[1100px]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 800,
+              fontSize: "clamp(1.75rem, 4.6vw, 3.6rem)",
+              lineHeight: 1.08,
+              letterSpacing: "0.005em",
+              textTransform: "uppercase",
+              color: "#f5f7fa",
+            }}
+          >
+            <span className="block">Ethereum <span style={{ color: "rgba(245,247,250,0.55)" }}>priced people out.</span></span>
+            <span className="block mt-2">Solana <span style={{ color: "rgba(245,247,250,0.55)" }}>keeps breaking.</span></span>
+            <span className="block mt-3">
+              <em className="gl-hero__shimmer" style={{ fontStyle: "normal", fontFamily: "var(--font-display)", fontWeight: 900 }}>Monad is what came next.</em>
+            </span>
+          </h2>
+          <div className="mt-6 h-px w-40" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.6), transparent)" }} />
         </div>
 
         <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
