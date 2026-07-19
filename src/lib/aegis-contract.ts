@@ -32,7 +32,8 @@ export const AEGIS_ABI = parseAbi([
   "event BriefPublished(uint256 indexed index, bytes32 indexed briefHash, string uri)",
 ]);
 
-export const AEGIS_CONTRACT_ADDRESS = (import.meta.env.VITE_AEGIS_CONTRACT_ADDRESS ?? "") as Address;
+const DEFAULT_AEGIS_ADDRESS = "0x740CDB7Cb4e2d7bA3e6296E4CB48f0A820688782" as Address;
+export const AEGIS_CONTRACT_ADDRESS = ((import.meta.env.VITE_AEGIS_CONTRACT_ADDRESS as string | undefined) || DEFAULT_AEGIS_ADDRESS) as Address;
 export const IS_CONFIGURED = /^0x[0-9a-fA-F]{40}$/.test(AEGIS_CONTRACT_ADDRESS);
 
 const viemChain = {
