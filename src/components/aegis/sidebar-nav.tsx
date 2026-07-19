@@ -1,14 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Activity, Compass, MessageSquare, Radar, Wallet, LineChart } from "lucide-react";
+import { Activity, MessageSquare, Radar, Wallet, LineChart, Waves } from "lucide-react";
 import { AegisLogo } from "./logo";
 import { cn } from "@/lib/utils";
 import { WalletConnectButton } from "./wallet-connect";
 
 const items = [
   { to: "/app", label: "Market Brief", icon: Activity, exact: true },
-  { to: "/app/opportunities", label: "Opportunities", icon: Compass },
+  { to: "/app/radar", label: "Market Radar", icon: Radar },
+  { to: "/app/opportunities", label: "Opportunities", icon: LineChart },
   { to: "/app/tokens", label: "Token Explorer", icon: LineChart },
-  { to: "/app/whales", label: "Whale Radar", icon: Radar },
+  { to: "/app/whales", label: "Whale Intelligence", icon: Waves },
   { to: "/app/wallet", label: "Wallet Intelligence", icon: Wallet },
   { to: "/app/chat", label: "Ask Aegis", icon: MessageSquare },
 ];
