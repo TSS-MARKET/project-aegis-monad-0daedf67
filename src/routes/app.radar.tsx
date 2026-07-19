@@ -62,6 +62,55 @@ function Eyebrow({ icon: Icon, children }: { icon: typeof Activity; children: Re
   );
 }
 
+function HeatGrid({ tokens, maxVol, highlight }: { tokens: MonadToken[]; maxVol: number; highlight?: boolean }) {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+      {tokens.map((t) => {
+        const c = t.change24h;
+        const abs = Math.min(15, Math.abs(c));
+        const alpha = 0.12 + (abs / 15) * 0.55;
+        const bg = c >= 0 ? `rgba(52,211,153,${alpha})` : `rgba(251,113,133,${alpha})`;
+        return (
+          <div
+            key={t.symbol}
+            className="rounded-[8px] p-3 hover-lift"
+            style={{
+              background: bg,
+              border: highlight ? "1px solid rgba(34,211,238,0.35)" : "1px solid rgba(255,255,255,0.06)",
+              boxShadow: highlight ? "inset 0 0 0 1px rgba(34,211,238,0.08)" : undefined,
+            }}
+          >
+            <div className="flex items-center justify-between">
+              <span style={{ fontFamily: MONO, color: "#f5f7fa", fontSize: "0.86rem", fontWeight: 600 }}>{t.symbol}</span>
+              <span
+                className="text-[9px] uppercase tracking-[0.14em] px-1 py-0.5 rounded"
+                style={{ background: "rgba(0,0,0,0.25)", color: "rgba(245,247,250,0.75)" }}
+              >
+                {t.narrative}
+              </span>
+            </div>
+            <div className="mt-2 flex items-baseline justify-between">
+              <span style={{ color: "#f5f7fa", fontWeight: 700 }}>
+                {c >= 0 ? "+" : ""}
+                {c.toFixed(2)}%
+              </span>
+              <span className="text-[10px]" style={{ color: "rgba(245,247,250,0.75)", fontFamily: MONO }}>
+                {formatUsd(t.priceUsd)}
+              </span>
+            </div>
+            <div className="mt-2 h-0.5 rounded-full" style={{ background: "rgba(0,0,0,0.25)" }}>
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${(t.volume24hUsd / maxVol) * 100}%`, background: "rgba(255,255,255,0.5)" }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Panel({
   eyebrow,
   icon,
