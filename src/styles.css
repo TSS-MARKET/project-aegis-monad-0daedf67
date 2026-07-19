@@ -190,6 +190,11 @@
     border-color: rgba(34,211,238,0.35);
     box-shadow: 0 24px 60px -24px rgba(34,211,238,0.35);
   }
+  &:active {
+    transform: translateY(-2px);
+    border-color: rgba(34,211,238,0.35);
+    box-shadow: 0 24px 60px -24px rgba(34,211,238,0.35);
+  }
 }
 
 @keyframes shine-sweep {
@@ -223,6 +228,15 @@
   transition: transform .5s cubic-bezier(.22,.98,.24,1), box-shadow .5s ease, border-color .5s ease;
 }
 .gl-hero__card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(34,211,238,0.4) !important;
+  box-shadow:
+    0 55px 130px -30px rgba(34,211,238,0.5),
+    0 0 0 1px rgba(34,211,238,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 0 80px rgba(34,211,238,0.07) !important;
+}
+.gl-hero__card:active {
   transform: translateY(-4px);
   border-color: rgba(34,211,238,0.4) !important;
   box-shadow:
