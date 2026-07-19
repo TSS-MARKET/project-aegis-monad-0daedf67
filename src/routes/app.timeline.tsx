@@ -361,7 +361,6 @@ function Inspector({ e }: { e: MonadEvent }) {
       <div>
         <SectionTitle>Evidence</SectionTitle>
         <div className="mt-2 grid gap-1.5">
-          {e.evidence.map((ev) => (
           {e.evidence.map((ev) => {
             const href = e.isReal && ev.ref ? `${EXPLORER}${ev.ref}` : null;
             const inner = (
