@@ -1,5 +1,6 @@
 // Local fallback market state. Production screens use src/lib/monad-market.server.ts
 // for live CoinGecko + Monad RPC data; keep this file only for offline rendering.
+import { getBinanceCache } from "./binance-prices";
 
 export type MonadToken = {
   symbol: string;
