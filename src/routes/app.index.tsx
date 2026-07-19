@@ -531,6 +531,114 @@ function TimelinePreview({
   );
 }
 
+// ============================================================================
+// Live Chain Panel — real Monad RPC events (real tx hashes, real explorer links)
+// ============================================================================
+function LiveChainPanel({
+  data,
+  loading,
+}: {
+  data: Awaited<ReturnType<typeof getLiveChainEvents>> | undefined;
+  loading: boolean;
+}) {
+  const events = data?.events?.slice(0, 8) ?? [];
+  const explorer = "https://monadexplorer.com";
+  return (
+    <div className="rounded-[10px] p-5 md:p-6" style={{ background: PANEL_BG, border: BORDER }}>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <Eyebrow icon={Radio}>Live On-Chain · Monad Mainnet RPC</Eyebrow>
+        {data?.block ? (
+          <a
+            href={`${explorer}/block/${data.block}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[10px] tabular-nums hover:text-cyan-300 inline-flex items-center gap-1"
+            style={{ fontFamily: MONO, color: "rgba(245,247,250,0.6)", letterSpacing: "0.14em" }}
+          >
+            HEAD · #{data.block.toLocaleString()} <ExternalLink className="h-2.5 w-2.5" />
+          </a>
+        ) : null}
+      </div>
+      {loading && events.length === 0 ? (
+        <div className="mt-4 space-y-2">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-10 w-full" />
+          ))}
+        </div>
+      ) : events.length === 0 ? (
+        <p className="mt-4 text-xs" style={{ color: "rgba(245,247,250,0.55)", fontFamily: MONO }}>
+          {data?.error ? `RPC: ${data.error}` : "Awaiting the next Monad block…"}
+        </p>
+      ) : (
+        <div className="mt-4 divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+          {events.map((e) => {
+            const tone =
+              e.kind === "contract_create"
+                ? "#a78bfa"
+                : e.kind === "transfer"
+                  ? "#34d399"
+                  : "#22d3ee";
+            return (
+              <div
+                key={e.id}
+                className="py-3 flex items-start gap-3 flex-wrap md:flex-nowrap"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
+              >
+                <div
+                  className="mt-1 h-1.5 w-1.5 rounded-full shrink-0"
+                  style={{ background: tone, boxShadow: `0 0 8px ${tone}` }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm truncate" style={{ color: "#f5f7fa", fontFamily: MONO }}>
+                    {e.headline}
+                  </div>
+                  <div
+                    className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] tabular-nums"
+                    style={{ color: "rgba(245,247,250,0.5)", fontFamily: MONO, letterSpacing: "0.06em" }}
+                  >
+                    <a
+                      href={e.explorerBlockUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-cyan-300"
+                    >
+                      block #{e.block.toLocaleString()}
+                    </a>
+                    <span>·</span>
+                    <a
+                      href={e.explorerTxUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-cyan-300"
+                    >
+                      {e.txHash.slice(0, 10)}…{e.txHash.slice(-6)}
+                    </a>
+                    <span>·</span>
+                    <span>{e.minutesAgo === 0 ? "just now" : `${e.minutesAgo}m ago`}</span>
+                    {e.gasGwei > 0 && (
+                      <>
+                        <span>·</span>
+                        <span>{e.gasGwei.toFixed(2)} gwei</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <VerifyButton event={e} size="sm" />
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <p
+        className="mt-4 text-[10px] leading-relaxed"
+        style={{ color: "rgba(245,247,250,0.45)", fontFamily: MONO, letterSpacing: "0.06em" }}
+      >
+        // Fetched directly from {`{ACTIVE_MONAD.rpcUrls[0]}`} every 10s · every hash resolves on monadexplorer.com
+      </p>
+    </div>
+  );
+}
+
 // ── Small primitives ────────────────────────────────────────────────────────
 function Eyebrow({ icon: Icon, children }: { icon: typeof Activity; children: React.ReactNode }) {
   return (
