@@ -79,7 +79,10 @@ TOOLS (USE THEM PROACTIVELY)
 - inspectMonadWallet(address) — call whenever the user gives a 0x address; report balance, tx count, grade, signals.
 - getMonadFirehose() — call for anything about network TPS, gas, throughput, "is Monad busy right now".
 - rankOpportunities(limit) — call for "top plays / opportunities / what to watch"; use returned evidenceIds as [E-<id>] citations.
-- lookupEvent(id) — call when the user pastes or references an [E-<id>] tag.
+- lookupEvent(id) — call whenever the user pastes or references ANY event token:
+  \`[E-<id>]\`, \`live-block-<n>\`, \`nar-<cat>-<n>\`, or even just a bare block number like \`88812815\`.
+  Never say "event not found" without calling this tool first. The tool does
+  fuzzy matching and will fall back to fetching the block directly from Monad RPC.
 - After tool calls, weave the returned facts into a terse institutional answer and cite the evidence ids.
 ${focused ? `\nFOCUS EVENT (user is asking about this):\n${JSON.stringify({
   id: focused.id,
@@ -172,12 +175,70 @@ ${JSON.stringify(context)}`;
           }),
           lookupEvent: tool({
             description:
-              "Return the full detail for a single Monad intelligence event by its id (e.g. E-abc123). Use when the user references an [E-*] tag or wants deeper context on an event.",
+              "Return the full detail for any referenced Monad intelligence event or block. Accepts exact ids (E-*, live-block-*, nar-*), bare block numbers, or partial substrings. Falls back to fetching the block directly from Monad RPC when no synthesized event matches. Use whenever the user pastes an event tag, mentions a block, or asks 'what happened at ...'.",
             inputSchema: z.object({ id: z.string() }),
             execute: async ({ id }) => {
-              const all = (await getLiveMonadEvents(24, 400)).events;
-              const e = all.find((x) => x.id === id);
-              if (!e) return { ok: false, error: "Event not found" };
+              const raw = id.trim();
+              const all = (await getLiveMonadEvents(24, 800)).events;
+              // 1) exact id
+              let e = all.find((x) => x.id === raw);
+              // 2) case-insensitive contains
+              if (!e) {
+                const low = raw.toLowerCase();
+                e = all.find((x) => x.id.toLowerCase().includes(low));
+              }
+              // 3) block number match — extract digits and look up any event tagged to that block
+              const blockMatch = raw.match(/(\d{4,})/);
+              const blockNum = blockMatch ? parseInt(blockMatch[1]!, 10) : NaN;
+              if (!e && Number.isFinite(blockNum)) {
+                e = all.find((x) => x.block === blockNum);
+              }
+              // 4) still nothing — fetch that block directly from Monad RPC
+              if (!e && Number.isFinite(blockNum)) {
+                try {
+                  const { ACTIVE_MONAD } = await import("@/lib/monad-wallet");
+                  const res = await fetch(ACTIVE_MONAD.rpcUrls[0], {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({
+                      jsonrpc: "2.0",
+                      id: 1,
+                      method: "eth_getBlockByNumber",
+                      params: [`0x${blockNum.toString(16)}`, false],
+                    }),
+                    signal: AbortSignal.timeout(5000),
+                  });
+                  const j = (await res.json()) as { result?: { number: string; timestamp: string; transactions: string[]; gasUsed: string; gasLimit: string } };
+                  if (j.result) {
+                    const txCount = j.result.transactions?.length ?? 0;
+                    const gasUsed = parseInt(j.result.gasUsed ?? "0x0", 16);
+                    const gasLimit = Math.max(1, parseInt(j.result.gasLimit ?? "0x1", 16));
+                    const util = gasUsed / gasLimit;
+                    const ts = parseInt(j.result.timestamp, 16) * 1000;
+                    return {
+                      ok: true,
+                      source: "monad-rpc-direct",
+                      id: `live-block-${blockNum}`,
+                      block: blockNum,
+                      category: "protocol_activity",
+                      headline: `Block ${blockNum.toLocaleString()} settled ${txCount} transaction${txCount === 1 ? "" : "s"}`,
+                      matters: txCount > 0
+                        ? `Real Monad block. ${txCount} tx settled at ${(util * 100).toFixed(1)}% gas utilization — direct evidence of live throughput on ${ACTIVE_MONAD.chainName}.`
+                        : `Empty block on ${ACTIVE_MONAD.chainName}. Useful as a low-activity baseline for the current window.`,
+                      watchNext: "Compare surrounding blocks for sustained throughput or a quiet period.",
+                      importance: Math.max(20, Math.min(90, Math.round(30 + txCount * 3 + util * 55))),
+                      confidence: 96,
+                      minutesAgo: Math.max(0, Math.round((Date.now() - ts) / 60_000)),
+                      txCount,
+                      gasUtilPct: Math.round(util * 1000) / 10,
+                      firstTx: j.result.transactions?.[0] ?? null,
+                    };
+                  }
+                } catch {
+                  /* fall through */
+                }
+              }
+              if (!e) return { ok: false, error: `No matching event or block for "${raw}". Answer briefly with what the live state does show.` };
               return {
                 ok: true,
                 id: e.id,
