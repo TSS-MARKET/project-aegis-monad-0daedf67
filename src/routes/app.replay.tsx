@@ -85,11 +85,20 @@ function ReplayPage() {
   const rafRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(0);
 
-  // Reset playhead when window changes
+  // First-event offset: skip the empty "dead zone" before the earliest event
+  // so pressing Play reveals events immediately instead of after a delay.
+  const firstEventOffset = useMemo(() => {
+    if (!events.length) return 0;
+    const first = events[0].ts - startTs;
+    // Land 500ms *before* the first event so it enters the stream on play.
+    return Math.max(0, first - 500);
+  }, [events, startTs]);
+
+  // Reset playhead when window changes — start at first event, not dead space.
   useEffect(() => {
-    setPlayhead(0);
+    setPlayhead(firstEventOffset);
     setSelectedId(null);
-  }, [hours, q.data?.generatedAt]);
+  }, [hours, q.data?.generatedAt, firstEventOffset]);
 
   // Auto-select the most-important visible event
   useEffect(() => {
@@ -221,7 +230,7 @@ function ReplayPage() {
           </button>
           <button
             onClick={() => {
-              setPlayhead(0);
+              setPlayhead(firstEventOffset);
               setSelectedId(null);
             }}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs transition-colors hover:bg-white/[0.03]"
