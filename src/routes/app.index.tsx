@@ -9,6 +9,7 @@ import {
 } from "@/lib/intelligence.functions";
 import { formatUsd } from "@/lib/monad-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NetworkStatus } from "@/components/aegis/network-status";
 import {
   TrendingUp,
   TrendingDown,
@@ -99,6 +100,7 @@ function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <NetworkStatus />
           <Link
             to="/app/replay"
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[6px] text-xs font-medium shine-sweep hover-lift"
