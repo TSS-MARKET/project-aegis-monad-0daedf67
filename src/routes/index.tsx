@@ -24,6 +24,16 @@ import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { getMarketSnapshot } from "@/lib/intelligence.functions";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useSyncExternalStore } from "react";
+import { fetchBinancePrices, getBinanceCache, subscribeBinance, type BinanceQuote } from "@/lib/binance-prices";
+
+function useBinancePrices(): Record<string, BinanceQuote> {
+  return useSyncExternalStore(
+    (fn) => subscribeBinance(fn),
+    () => getBinanceCache(),
+    () => ({}),
+  );
+}
 
 export const Route = createFileRoute("/")({ component: Landing });
 
