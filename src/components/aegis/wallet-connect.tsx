@@ -348,7 +348,7 @@ function WalletPicker({
         aria-hidden
       />
       <div
-        className="relative w-full max-w-[380px] sm:max-w-[420px] flex flex-col max-h-[85dvh] animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200"
+        className="relative w-full max-w-[440px] sm:max-w-[500px] flex flex-col max-h-[88dvh] animate-in fade-in zoom-in-95 slide-in-from-bottom-2 duration-200"
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
@@ -367,15 +367,23 @@ function WalletPicker({
           </div>
 
           {/* Header — Monad chain identity */}
-          <div className="relative p-4 sm:p-5 border-b flex-shrink-0" style={{ borderColor: `${CYAN}1f` }}>
+          <div className="relative p-5 sm:p-6 border-b flex-shrink-0" style={{ borderColor: `${CYAN}1f` }}>
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white/[0.04] ring-1 ring-white/[0.06] p-[3px]">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white/[0.04] ring-1 ring-white/[0.06] p-[3px]">
                   <img src="/wallet-logos/monad.png" alt="Monad" className="w-full h-full object-contain rounded-[10px]" draggable={false} />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-bold" style={{ color: "#f5f7fa" }}>Connect Wallet</h2>
-                  <p className="text-xs sm:text-sm truncate" style={{ color: "rgba(245,247,250,0.55)" }}>
+                  <h2
+                    className="text-lg sm:text-xl font-bold uppercase"
+                    style={{ color: "#f5f7fa", fontFamily: "var(--font-display)", letterSpacing: "0.14em" }}
+                  >
+                    Connect Wallet
+                  </h2>
+                  <p
+                    className="text-[10px] sm:text-[11px] truncate uppercase mt-0.5"
+                    style={{ color: "rgba(245,247,250,0.55)", fontFamily: "var(--font-display)", letterSpacing: "0.22em" }}
+                  >
                     {ACTIVE_MONAD.chainName} · Chain {ACTIVE_MONAD.chainIdDec}
                   </p>
                 </div>
@@ -412,7 +420,7 @@ function WalletPicker({
                   key={r.key}
                   type="button"
                   onClick={r.onClick}
-                  className={`w-full min-h-[64px] p-3 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-3 sm:gap-4 transition-colors duration-150 group text-left ${container}`}
+                  className={`w-full min-h-[72px] p-4 sm:p-5 rounded-xl sm:rounded-2xl flex items-center gap-3 sm:gap-4 transition-colors duration-150 group text-left ${container}`}
                 >
                   <div className="relative flex-shrink-0 transform group-hover:scale-105 transition-transform duration-200 pointer-events-none">
                     <WalletLogo name={r.name} icon={r.icon} />
@@ -423,8 +431,18 @@ function WalletPicker({
                     )}
                   </div>
                   <div className="flex-1 text-left min-w-0 pointer-events-none">
-                    <span className="font-semibold text-sm sm:text-base block truncate" style={{ color: "#f5f7fa" }}>{r.name}</span>
-                    <span className={`text-xs sm:text-sm block truncate ${statusCls}`}>{status}</span>
+                    <span
+                      className="font-semibold text-sm sm:text-base block truncate uppercase"
+                      style={{ color: "#f5f7fa", fontFamily: "var(--font-display)", letterSpacing: "0.1em" }}
+                    >
+                      {r.name}
+                    </span>
+                    <span
+                      className={`text-[10px] sm:text-[11px] block truncate uppercase mt-0.5 ${statusCls}`}
+                      style={{ fontFamily: "var(--font-display)", letterSpacing: "0.18em" }}
+                    >
+                      {status}
+                    </span>
                   </div>
                   <div className="flex-shrink-0 pointer-events-none">
                     {isPremium ? (
