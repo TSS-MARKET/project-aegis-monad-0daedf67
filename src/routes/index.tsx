@@ -244,26 +244,6 @@ function Landing() {
               block samples, opportunity ranks, and evidence links. Grounded in on chain proof. Never vibes.
           </p>
 
-          <div
-            className="gl-hero__reveal max-w-xl mt-1 p-3.5 rounded-[8px]"
-            style={{
-              animationDelay: "380ms",
-              border: "1px solid rgba(34,211,238,0.22)",
-              background: "linear-gradient(90deg, rgba(34,211,238,0.06), rgba(10,18,28,0.4))",
-              fontFamily: SANS,
-              fontSize: "0.86rem",
-              lineHeight: 1.55,
-              color: "rgba(245,247,250,0.82)",
-            }}
-          >
-            <span style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#22d3ee" }}>
-              The daily problem →
-            </span>
-            <span className="block mt-1.5">
-              Every morning: 14 open tabs, 6 Discords, 3 Telegrams, one Twitter timeline of screenshots. Twenty minutes of scrolling to answer <em>"what actually moved on Monad since I slept?"</em> Aegis answers it in <strong style={{ color: "#f5f7fa" }}>seven seconds</strong>, with block-anchored proof.
-            </span>
-          </div>
-
           <div className="gl-hero__reveal flex flex-wrap items-center gap-3.5 pt-1" style={{ animationDelay: "440ms" }}>
             <Link
               to="/app"
@@ -548,7 +528,7 @@ function Landing() {
           <div className="gl-ribbon__track whitespace-nowrap" style={{ fontFamily: SERIF, fontSize: "clamp(1.4rem,3vw,2.4rem)", color: "rgba(245,247,250,0.85)", letterSpacing: "-0.02em" }}>
             {[...Array(2)].map((_, k) => (
               <span key={k} className="flex items-center gap-10 shrink-0">
-                {["Monad · 10,000 TPS","sub second finality","fees under $0.001","evidence first","never vibes","cited or it did not happen","the public analyst"].map((w,i)=>(
+                {["Monad · 10,000 TPS","sub-second finality","fees under $0.001","evidence first · never vibes","cited or it didn't happen","block-anchored intelligence","the public analyst for Monad","20 minutes of research → 7 seconds","judged by proof, not vibes"].map((w,i)=>(
                   <span key={i} className="flex items-center gap-10">
                     <span style={{ fontStyle: i%2 ? "italic" : "normal", color: i%3===0 ? "#22d3ee" : "rgba(245,247,250,0.85)" }}>{w}</span>
                     <span style={{ color: "rgba(34,211,238,0.4)" }}>✦</span>

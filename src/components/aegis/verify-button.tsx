@@ -49,13 +49,14 @@ export function VerifyButton({ event, size = "sm", variant = "ghost", className 
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={(e) => { e.stopPropagation(); e.preventDefault(); setOpen(true); }}
+        type="button"
         className={`${base} ${pad} ${className}`}
         style={{ ...style, fontFamily: MONO, fontSize, letterSpacing: "0.16em", textTransform: "uppercase" }}
         aria-label="Verify this event"
       >
         <ShieldCheck className={iconSize} strokeWidth={2} />
-        Verify
+        Verify on-chain
       </button>
 
       {open && (
