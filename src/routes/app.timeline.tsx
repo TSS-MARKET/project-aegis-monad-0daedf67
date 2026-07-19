@@ -98,7 +98,10 @@ function TimelinePage() {
     refetchInterval: 60_000,
   });
 
-  const events = q.data?.events ?? [];
+  // Suppress zero-notional entries — they read as "$0.0000" cards and add no
+  // value. Real transfers with zero MON value and synthetic events that
+  // rounded to $0 both get dropped here.
+  const events = (q.data?.events ?? []).filter((e) => (e.amountUsd ?? 0) > 0 || e.category === "protocol_activity" || e.category === "new_wallet_wave");
 
   // Rank: recency × importance × evidence quality (evidence count) × confidence × unusualness bonus
   const ranked = useMemo(() => {
