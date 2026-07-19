@@ -252,7 +252,7 @@ function invalidationFor(t: MonadToken, setup: OpportunitySetup): string {
   const level = (t.priceUsd * (setup === "distribution" || setup === "fade" ? 1.04 : 0.94));
   const fmt = level < 1 ? level.toFixed(4) : level.toFixed(2);
   if (setup === "distribution" || setup === "fade")
-    return `Loss of thesis on reclaim of $${fmt} with rising whale buys.`;
+    return `Loss of thesis on reclaim of $${fmt} with rising observed inflow.`;
   return `Loss of thesis on close below $${fmt} or net distribution > $500K/hr.`;
 }
 

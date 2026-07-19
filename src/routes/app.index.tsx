@@ -51,7 +51,7 @@ function DashboardPage() {
   const topNarrative = [...narratives].sort((a, b) => b.strength - a.strength)[0];
   const bottomNarrative = [...narratives].sort((a, b) => a.change - b.change)[0];
 
-  // Ecosystem conviction: composite of stable inflow, top narrative, active wallets growth signal.
+  // Ecosystem conviction: composite of live 24h narrative change, market volume, and Monad RPC activity.
   const conviction = snap.data
     ? Math.max(
         5,
@@ -59,9 +59,9 @@ function DashboardPage() {
           95,
           Math.round(
             50 +
-              (snap.data.ecosystem.stablecoinInflow24hUsd > 0 ? 10 : -8) +
+              (snap.data.ecosystem.dexVolume24hUsd > 0 ? 8 : -8) +
               (topNarrative ? topNarrative.change : 0) * 1.4 +
-              (snap.data.ecosystem.activeWallets24h > 700_000 ? 8 : 0),
+              (snap.data.ecosystem.activeWallets24h > 0 ? 6 : 0),
           ),
         ),
       )

@@ -515,7 +515,7 @@ function Landing() {
             { icon: Rewind, title: "Replay the Chain", body: "Scrub the last 24 hours of Monad activity like a DVR. Every event opens an inspector that explains why it mattered.", tone: "#22d3ee" },
             { icon: Timer, title: "Intelligence Timeline", body: "A newsroom style ranked feed of what actually happened on Monad. Deep link any moment into Ask Aegis for a grounded explanation.", tone: "#6ee7b7" },
             { icon: Fingerprint, title: "Wallet DNA", body: "Paste any Monad address and see its behavioral fingerprint. Regime, cohort, risk posture and an AI strategist read.", tone: "#c4b5fd" },
-            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across momentum, whale flow, narrative strength, price action and turnover. Thesis, catalysts, risks, invalidation.", tone: "#fcd34d" },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across momentum, live RPC activity, narrative strength, price action and turnover. Thesis, catalysts, risks, invalidation.", tone: "#fcd34d" },
             { icon: Sparkles, title: "Ask Aegis, cited", body: "A Monad native analyst wired to the live event stream. Every answer must cite an [E-id] tag that deep links back to the Timeline.", tone: "#f0abfc" },
             { icon: Link2, title: "Live on chain layer", body: "Real Monad wallet connect on mainnet 143 and testnet 10143. Header polls RPC every eight seconds for true block height and gas.", tone: "#22d3ee" },
           ].map((f, i) => (

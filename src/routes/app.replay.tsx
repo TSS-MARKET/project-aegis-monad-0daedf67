@@ -423,7 +423,7 @@ function ReplayPage() {
         <div className="rounded-[10px] p-5" style={{ background: PANEL_BG, border: BORDER }}>
           {selected ? <Inspector e={selected} /> : (
             <div className="text-sm" style={{ color: "rgba(245,247,250,0.55)" }}>
-              Select an event to inspect evidence, wallets, and why it matters.
+              Select an event to inspect block evidence and why it matters.
             </div>
           )}
         </div>

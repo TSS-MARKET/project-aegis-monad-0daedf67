@@ -28,7 +28,7 @@ const STEPS: Step[] = [
     ms: 4200,
     eyebrow: "02 · Live Monad state",
     title: "Every panel is anchored to real chain events.",
-    body: "Rolling TPS, gas load, whale flow, narrative rotation — one glance, one truth. No dashboards to configure.",
+    body: "Rolling block activity, gas load, volume flow, narrative rotation — one glance, one truth. No dashboards to configure.",
   },
   {
     to: "/app/timeline",
@@ -49,7 +49,7 @@ const STEPS: Step[] = [
     ms: 4200,
     eyebrow: "05 · Opportunity Engine",
     title: "Every setup shows its receipts.",
-    body: "Deterministic scoring across momentum, turnover, whale flow, and narrative — each opportunity anchored to the three events proving it.",
+    body: "Deterministic scoring across momentum, turnover, live RPC activity, and narrative — each opportunity anchored to evidence.",
   },
   {
     to: "/app/wallet",
