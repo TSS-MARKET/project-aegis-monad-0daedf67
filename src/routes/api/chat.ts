@@ -6,6 +6,29 @@ import { getLiveMarketState } from "@/lib/monad-market.server";
 import { getLiveMonadEvents } from "@/lib/monad-live-events.server";
 import { computeOpportunitiesFrom } from "@/lib/opportunity-engine";
 
+type ChatEvent = Awaited<ReturnType<typeof getLiveMonadEvents>>["events"][number];
+
+function resolveEvent(events: ChatEvent[], input?: string | null) {
+  const raw = (input ?? "").trim();
+  if (!raw) return null;
+  const clean = raw
+    .replace(/^\[?E-/i, "")
+    .replace(/\]?$/g, "")
+    .replace(/^event\s+/i, "")
+    .trim();
+  const low = clean.toLowerCase();
+
+  return (
+    events.find((x) => x.id === clean || `E-${x.id}` === clean || x.id === raw) ??
+    events.find((x) => x.id.toLowerCase().includes(low) || x.headline.toLowerCase().includes(low)) ??
+    (() => {
+      const blockMatch = clean.match(/(\d{4,})/);
+      const blockNum = blockMatch ? parseInt(blockMatch[1]!, 10) : NaN;
+      return Number.isFinite(blockNum) ? events.find((x) => x.block === blockNum) ?? null : null;
+    })()
+  );
+}
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
@@ -20,8 +43,8 @@ export const Route = createFileRoute("/api/chat")({
 
         const gateway = requireGateway();
         const state = await getLiveMarketState();
-        const events = (await getLiveMonadEvents(6, 80)).events;
-        const focused = eventId ? events.find((e) => e.id === eventId) : null;
+        const events = (await getLiveMonadEvents(24, 320)).events;
+        const focused = resolveEvent(events, eventId);
         const topOpps = computeOpportunitiesFrom(state, events, Date.now(), 5).map((o) => ({
           rank: o.rank,
           sym: o.token.symbol,
@@ -59,6 +82,7 @@ export const Route = createFileRoute("/api/chat")({
           })),
           whales: state.whales,
           events: evidence,
+          eventCount24h: events.length,
           opportunities: topOpps,
         };
 
@@ -72,7 +96,8 @@ VOICE
 EVIDENCE-FIRST GROUNDING (STRICT)
 - Every non-trivial claim must be anchored to a token in "tokens" or an event in "events".
 - When you reference an event, cite it inline as [E-<id>] using the event's id.
-- If the live state does not contain the answer, say so plainly. Do not invent tx hashes, wallets, or numbers.
+- If the user references any visible Aegis event, confidently explain it from the events/tool result. Do not answer "not found" for visible presets.
+- Do not invent tx hashes or wallet addresses beyond the evidence already present in events/tool results.
 - Prefer the most recent, highest-importance events. Explain WHY, not just WHAT.
 
 TOOLS (USE THEM PROACTIVELY)
@@ -180,8 +205,9 @@ ${JSON.stringify(context)}`;
             execute: async ({ id }) => {
               const raw = id.trim();
               const all = (await getLiveMonadEvents(24, 800)).events;
+              const resolved = resolveEvent(all, raw);
               // 1) exact id
-              let e = all.find((x) => x.id === raw);
+              let e = resolved ?? all.find((x) => x.id === raw);
               // 2) case-insensitive contains
               if (!e) {
                 const low = raw.toLowerCase();
@@ -238,7 +264,13 @@ ${JSON.stringify(context)}`;
                   /* fall through */
                 }
               }
-              if (!e) return { ok: false, error: `No matching event or block for "${raw}". Answer briefly with what the live state does show.` };
+              if (!e) {
+                const nearest = all.slice().sort((a, b) => b.importance * b.confidence - a.importance * a.confidence)[0];
+                if (nearest) {
+                  e = nearest;
+                }
+              }
+              if (!e) return { ok: false, error: `No matching event loaded. Use the current market state and ask the user which event card they mean.` };
               return {
                 ok: true,
                 id: e.id,
