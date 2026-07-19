@@ -706,27 +706,27 @@ function Landing() {
       </section>
 
       {/* Why Monad — closing manifesto, editorial two column with big pull quote */}
-      <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-8">
-        <div className="flex flex-col items-center text-center mb-14 gl-rise">
-          <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
-          <div className="mt-3" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
-          <h2 className="mt-10 w-full max-w-[960px] flex flex-col items-center gap-6">
+      <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-16">
+        <div className="flex flex-col items-center text-center mb-16 gl-rise">
+          <span className="gl-chapter" style={{ fontSize: "clamp(4.5rem,10vw,8rem)" }}>06</span>
+          <div className="mt-4" style={{ fontFamily: MONO, fontSize: "0.7rem", letterSpacing: "0.32em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
+          <h2 className="mt-14 w-full max-w-[1180px] flex flex-col items-center gap-10 md:gap-12">
             {[
               { chain: "Ethereum", phrase: "priced people out.", tone: "dim" },
               { chain: "Solana", phrase: "keeps breaking.", tone: "dim" },
               { chain: "Monad", phrase: "is what came next.", tone: "bright" },
             ].map((r) => (
-              <div key={r.chain} className="flex flex-col sm:flex-row items-center gap-x-6 gap-y-1">
+              <div key={r.chain} className="w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3">
                 <span
                   style={{
                     fontFamily: "var(--font-display)",
                     fontWeight: 800,
-                    letterSpacing: "0.34em",
+                    letterSpacing: "0.38em",
                     textTransform: "uppercase",
-                    fontSize: "0.78rem",
-                    color: r.tone === "bright" ? "#22d3ee" : "rgba(245,247,250,0.45)",
-                    textShadow: r.tone === "bright" ? "0 0 24px rgba(34,211,238,0.55)" : "none",
-                    minWidth: "6.5rem",
+                    fontSize: r.tone === "bright" ? "1.35rem" : "1.05rem",
+                    color: r.tone === "bright" ? "#22d3ee" : "rgba(245,247,250,0.55)",
+                    textShadow: r.tone === "bright" ? "0 0 32px rgba(34,211,238,0.65)" : "none",
+                    minWidth: "clamp(9rem, 15vw, 14rem)",
                     textAlign: "right",
                   }}
                 >
@@ -735,10 +735,10 @@ function Landing() {
                 <span
                   className="hidden sm:block h-px"
                   style={{
-                    width: 44,
+                    width: r.tone === "bright" ? 96 : 72,
                     background: r.tone === "bright"
-                      ? "linear-gradient(90deg, rgba(34,211,238,0.9), rgba(34,211,238,0.15))"
-                      : "linear-gradient(90deg, rgba(245,247,250,0.25), transparent)",
+                      ? "linear-gradient(90deg, rgba(34,211,238,0.95), rgba(34,211,238,0.15))"
+                      : "linear-gradient(90deg, rgba(245,247,250,0.35), transparent)",
                   }}
                 />
                 <span
@@ -746,10 +746,11 @@ function Landing() {
                     fontFamily: SERIF,
                     fontStyle: "italic",
                     fontWeight: 400,
-                    fontSize: r.tone === "bright" ? "clamp(1.85rem, 4vw, 2.9rem)" : "clamp(1.5rem, 3.2vw, 2.35rem)",
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.02em",
-                    color: r.tone === "bright" ? "#f5f7fa" : "rgba(245,247,250,0.7)",
+                    fontSize: r.tone === "bright" ? "clamp(3rem, 7vw, 5.4rem)" : "clamp(2.4rem, 5.4vw, 4.2rem)",
+                    lineHeight: 1.05,
+                    letterSpacing: "-0.025em",
+                    color: r.tone === "bright" ? "#f5f7fa" : "rgba(245,247,250,0.72)",
+                    textShadow: r.tone === "bright" ? "0 0 40px rgba(34,211,238,0.28)" : "none",
                   }}
                 >
                   {r.phrase}
@@ -757,7 +758,7 @@ function Landing() {
               </div>
             ))}
           </h2>
-          <div className="mt-6 h-px w-40" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.6), transparent)" }} />
+          <div className="mt-12 h-px w-60" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.7), transparent)" }} />
         </div>
 
         <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
