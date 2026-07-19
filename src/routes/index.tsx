@@ -34,12 +34,12 @@ const SANS = 'var(--font-sans)';
 function ProofRow({ Icon, label, value, accent }: { Icon: LucideIcon; label: string; value: string; accent?: boolean }) {
   return (
     <div
-      className="flex items-center justify-between gap-3 py-3 px-2 -mx-2"
+      className="gl-proof-row group flex items-center justify-between gap-3 py-3 px-3 -mx-2 rounded-md"
       style={{ borderBottom: "1px solid rgba(34,211,238,0.08)" }}
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <span
-          className="inline-flex items-center justify-center rounded-md shrink-0"
+          className="inline-flex items-center justify-center rounded-md shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
           style={{
             width: 24,
             height: 24,
@@ -62,6 +62,7 @@ function ProofRow({ Icon, label, value, accent }: { Icon: LucideIcon; label: str
         </span>
       </div>
       <span
+        className="transition-colors duration-300 group-hover:text-[color:#67e8f9]"
         style={{
           fontFamily: SANS,
           fontSize: "0.86rem",
@@ -242,7 +243,7 @@ function Landing() {
             }}
           >
             The alpha era of insider Telegrams is dying.
-            <span style={{ color: "#f5f7fa" }}> Monad deserves a public analyst.</span>
+            <span className="gl-manifesto-shine" style={{ fontWeight: 500 }}> Monad deserves a public analyst.</span>
           </div>
         </div>
 
@@ -404,11 +405,18 @@ function Landing() {
                   <span className="relative">Read Today's Digest</span>
                   <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
                 </Link>
-                <div className="flex items-center gap-6">
-                  {[{k:"45m",v:"saved / day"},{k:"1m",v:"to read"},{k:"24/7",v:"never sleeps"}].map((s)=>(
-                    <div key={s.k} className="flex items-baseline gap-2">
-                      <span className="gl-num" style={{ fontSize: "1.7rem", color: "#22d3ee" }}>{s.k}</span>
-                      <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.v}</span>
+                <div className="flex flex-wrap items-stretch gap-3">
+                  {[
+                    { k: "45", unit: "min", v: "saved every morning" },
+                    { k: "60", unit: "sec", v: "to read the brief" },
+                    { k: "24", unit: "/7", v: "Aegis never sleeps" },
+                  ].map((s) => (
+                    <div key={s.k} className="gl-stat-pod group flex flex-col justify-between min-w-[9rem]">
+                      <div className="flex items-baseline gap-1">
+                        <span className="gl-num transition-all duration-500 group-hover:scale-110 origin-left" style={{ fontSize: "2.4rem", color: "#22d3ee", lineHeight: 1, textShadow: "0 0 24px rgba(34,211,238,0.35)" }}>{s.k}</span>
+                        <span className="gl-num" style={{ fontSize: "1rem", color: "rgba(103,232,249,0.85)", letterSpacing: "0.02em" }}>{s.unit}</span>
+                      </div>
+                      <span className="mt-1.5" style={{ fontFamily: MONO, fontSize: "0.58rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{s.v}</span>
                     </div>
                   ))}
                 </div>
@@ -716,8 +724,9 @@ function Landing() {
               { chain: "Solana", phrase: "keeps breaking.", tone: "dim" },
               { chain: "Monad", phrase: "is what came next.", tone: "bright" },
             ].map((r) => (
-              <div key={r.chain} className="w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3">
+              <div key={r.chain} className={`gl-ch06__row ${r.tone === "bright" ? "is-bright" : "is-dim"} w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3`}>
                 <span
+                  className="gl-ch06__chain"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontWeight: 800,
@@ -733,7 +742,7 @@ function Landing() {
                   {r.chain}
                 </span>
                 <span
-                  className="hidden sm:block h-px"
+                  className="gl-ch06__rule hidden sm:block h-px"
                   style={{
                     width: r.tone === "bright" ? 96 : 72,
                     background: r.tone === "bright"
@@ -742,6 +751,7 @@ function Landing() {
                   }}
                 />
                 <span
+                  className="gl-ch06__phrase"
                   style={{
                     fontFamily: SERIF,
                     fontStyle: "italic",

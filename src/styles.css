@@ -552,3 +552,101 @@
 .markdown-body code { font-family: var(--font-mono); font-size: 0.82em; padding: 0.05rem 0.35rem; background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.18); border-radius: 4px; color: #67e8f9; }
 .markdown-body a { color: #22d3ee; text-decoration: underline; text-underline-offset: 3px; }
 .markdown-body blockquote { border-left: 2px solid rgba(34,211,238,0.5); padding-left: 0.8rem; color: rgba(245,247,250,0.7); margin: 0.6rem 0; }
+
+/* -------------------------------------------------------------
+   Premium interaction layer — hover glow, row lift, chapter-06 wow
+   ------------------------------------------------------------- */
+
+/* Reactive proof row — each layer of the Live Proof card is individually hoverable */
+.gl-proof-row {
+  position: relative;
+  transition: background 320ms ease, transform 320ms cubic-bezier(.22,.98,.24,1), padding 320ms ease;
+  cursor: default;
+}
+.gl-proof-row::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, transparent, #22d3ee, transparent);
+  transform: scaleY(0); transform-origin: center;
+  transition: transform 380ms cubic-bezier(.22,.98,.24,1);
+}
+.gl-proof-row:hover {
+  background: linear-gradient(90deg, rgba(34,211,238,0.10), transparent 70%);
+  transform: translateX(4px);
+}
+.gl-proof-row:hover::before { transform: scaleY(1); }
+
+/* Digest stat pod — used for 45m / 1m / 24-7 */
+.gl-stat-pod {
+  position: relative;
+  padding: 0.85rem 1.05rem;
+  border-radius: 10px;
+  border: 1px solid rgba(34,211,238,0.18);
+  background: linear-gradient(180deg, rgba(10,18,28,0.72), rgba(4,10,16,0.72));
+  transition: transform 350ms cubic-bezier(.22,.98,.24,1), border-color 350ms ease, box-shadow 350ms ease;
+  overflow: hidden;
+  isolation: isolate;
+}
+.gl-stat-pod::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit;
+  background: radial-gradient(120% 100% at 0% 0%, rgba(34,211,238,0.22), transparent 55%);
+  opacity: 0; transition: opacity 380ms ease; z-index: -1;
+}
+.gl-stat-pod:hover {
+  transform: translateY(-3px);
+  border-color: rgba(34,211,238,0.55);
+  box-shadow: 0 22px 60px -22px rgba(34,211,238,0.45);
+}
+.gl-stat-pod:hover::after { opacity: 1; }
+
+/* Chapter 06 row — Ethereum / Solana / Monad */
+.gl-ch06__row {
+  position: relative;
+  padding: 0.6rem 0;
+  transition: transform 500ms cubic-bezier(.22,.98,.24,1);
+}
+.gl-ch06__row .gl-ch06__chain,
+.gl-ch06__row .gl-ch06__phrase,
+.gl-ch06__row .gl-ch06__rule { transition: filter 500ms ease, color 500ms ease, opacity 500ms ease, letter-spacing 500ms ease, width 500ms ease; }
+.gl-ch06__row.is-dim .gl-ch06__phrase { text-decoration: line-through; text-decoration-color: rgba(245,247,250,0.28); text-decoration-thickness: 1px; }
+.gl-ch06__row:hover { transform: translateX(6px); }
+.gl-ch06__row:hover .gl-ch06__chain { letter-spacing: 0.44em; filter: drop-shadow(0 0 12px rgba(34,211,238,0.4)); }
+.gl-ch06__row.is-bright .gl-ch06__chain {
+  animation: gl-ch06-pulse 3.6s ease-in-out infinite;
+}
+@keyframes gl-ch06-pulse {
+  0%,100% { text-shadow: 0 0 24px rgba(34,211,238,0.45); }
+  50%     { text-shadow: 0 0 48px rgba(34,211,238,0.95), 0 0 8px rgba(103,232,249,0.7); }
+}
+.gl-ch06__row.is-bright .gl-ch06__rule {
+  position: relative; overflow: hidden;
+}
+.gl-ch06__row.is-bright .gl-ch06__rule::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, #67e8f9, transparent);
+  animation: gl-ch06-sweep 2.4s ease-in-out infinite;
+}
+@keyframes gl-ch06-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.gl-ch06__sub {
+  position: relative;
+  background: linear-gradient(90deg, #f5f7fa 0%, #22d3ee 45%, #67e8f9 55%, #f5f7fa 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gl-hero-shimmer 6s linear infinite;
+}
+
+/* Manifesto shimmer — for hero italic pull line */
+.gl-manifesto-shine {
+  background: linear-gradient(90deg, #f5f7fa 0%, #22d3ee 50%, #f5f7fa 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gl-hero-shimmer 6.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-proof-row, .gl-stat-pod, .gl-ch06__row, .gl-ch06__row *, .gl-ch06__sub, .gl-manifesto-shine {
+    animation: none !important; transition: none !important; transform: none !important;
+  }
+}
