@@ -117,7 +117,7 @@ async function fetchPrices(): Promise<Record<string, PriceRow>> {
 
 async function fetchMonadStats() {
   const { getLiveMonadReplayWindow } = await import("./monad-live-events.server");
-  const replay = await getLiveMonadReplayWindow(1, 160);
+  const replay = await getLiveMonadReplayWindow(1, 90);
   const sampledTx = replay.events.reduce((s, e) => s + Math.max(0, Number(e.evidence.find((x) => x.id === "tx-count")?.value.replace(/,/g, "") ?? 0)), 0);
   const oldest = replay.events[0]?.ts ?? Date.now();
   const newest = replay.events[replay.events.length - 1]?.ts ?? Date.now();
@@ -128,7 +128,10 @@ async function fetchMonadStats() {
 
 export async function getLiveMarketState(): Promise<MarketState> {
   try {
-    const [prices, stats] = await Promise.all([fetchPrices(), fetchMonadStats()]);
+    const [pricesResult, statsResult] = await Promise.allSettled([fetchPrices(), fetchMonadStats()]);
+    if (pricesResult.status !== "fulfilled") throw pricesResult.reason;
+    const prices = pricesResult.value;
+    const stats = statsResult.status === "fulfilled" ? statsResult.value : { sampledTx: 0, tps: 0 };
     const tokens = COINGECKO_IDS.map((id) => tokenFromRow(id, prices[id])).filter((t): t is MonadToken => !!t);
     const monad = tokens.filter((t) => t.chain === "Monad");
     const monadVolume = monad.reduce((s, t) => s + t.volume24hUsd, 0);
@@ -139,7 +142,9 @@ export async function getLiveMarketState(): Promise<MarketState> {
       generatedAt: new Date().toISOString(),
       bucketMinute: Math.floor(Date.now() / 60_000),
       dataType: "live",
-      source: "CoinGecko simple price + Monad public RPC",
+      source: statsResult.status === "fulfilled"
+        ? "CoinGecko simple price + Monad public RPC"
+        : `CoinGecko simple price; Monad RPC unavailable: ${(statsResult.reason as Error)?.message ?? "unknown"}`,
       ecosystem: {
         totalTvlUsd: monadCap,
         dexVolume24hUsd: monadVolume,

@@ -41,8 +41,8 @@ function uniqueNumbers(nums: number[]) {
 
 async function fetchBlocks(url: string, numbers: number[]) {
   const out: RawBlock[] = [];
-  for (let i = 0; i < numbers.length; i += 45) {
-    const batch = numbers.slice(i, i + 45);
+  for (let i = 0; i < numbers.length; i += 28) {
+    const batch = numbers.slice(i, i + 28);
     const blocks = await rpcBatch<RawBlock>(
       url,
       batch.map((n) => ({ method: "eth_getBlockByNumber", params: [`0x${n.toString(16)}`, false] })),
@@ -119,14 +119,15 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   const avgBlockMs = Math.max(250, Math.min(12_000, (headTs - oldTs) / Math.max(1, probeDistance)));
   const blocksBack = Math.ceil(windowMs / avgBlockMs);
   const startBlock = Math.max(0, head - blocksBack);
-  const sampleCount = Math.min(limit, hours === 24 ? 300 : hours === 6 ? 260 : 180);
+  const sampleCount = Math.min(limit, hours === 24 ? 180 : hours === 6 ? 120 : 80);
 
   const sampled = Array.from({ length: sampleCount }, (_, i) => {
     if (sampleCount === 1) return head;
     return Math.round(startBlock + ((head - startBlock) * i) / (sampleCount - 1));
   });
-  const latest = Array.from({ length: Math.min(24, head + 1) }, (_, i) => head - i);
+  const latest = Array.from({ length: Math.min(48, head + 1) }, (_, i) => head - i);
   const blocks = await fetchBlocks(url, uniqueNumbers([...sampled, ...latest]));
+  if (!blocks.length) throw new Error(`${chainName} RPC returned no sampled blocks`);
   const events = blocks.map((b) => blockToEvent(b, now)).sort((a, b) => a.ts - b.ts || a.block - b.block);
 
   return {
@@ -141,7 +142,7 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
   };
 }
 
-export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 300): Promise<LiveReplayWindow> {
+export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 160): Promise<LiveReplayWindow> {
   const primary = ACTIVE_MONAD;
   const fallback = primary.chainIdDec === MONAD_MAINNET.chainIdDec ? MONAD_TESTNET : MONAD_MAINNET;
   try {
