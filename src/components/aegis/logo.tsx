@@ -12,8 +12,7 @@ export function AegisLogo({ className }: { className?: string }) {
         className="font-mono text-[0.66rem] font-medium uppercase tracking-[0.18em] text-foreground"
         style={{ fontFamily: "var(--font-mono)" }}
       >
-        Aegis <span className="text-[rgba(34,211,238,0.5)]">//</span>{" "}
-        <span className="text-[rgba(245,247,250,0.6)]">MONAD INTELLIGENCE</span>
+        Aegis
       </span>
     </div>
   );
