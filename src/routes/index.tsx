@@ -537,12 +537,12 @@ function Landing() {
         </div>
         <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
           {[
-            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap-to-pay on Monad clears faster than Visa — Aegis previews the fee, the merchant, and a plain-English safety check before you sign." },
-            { icon: ShoppingCart, title: "Grocery run, on-chain", body: "Weekly spend tracked automatically. Aegis writes a Sunday summary: where your MON went, what saved you money, what to watch." },
-            { icon: Send, title: "Send money anywhere, instantly", body: "Global transfers in one block. Aegis translates addresses to human names, flags scam contracts, and simulates the exact amount received." },
-            { icon: Wallet, title: "Salary streaming", body: "Get paid by the second. Aegis auto-splits your paycheck into savings, bills and spending — no bank, no waiting three days." },
-            { icon: Bell, title: "Real-time alerts", body: "Rug pull on a token you hold? Whale dumping your bag? Aegis pings you before the price moves, in language your mom understands." },
-            { icon: Zap, title: "One-tap DeFi", body: "\"Aegis, park my paycheck at the best safe yield.\" It routes through vetted Monad protocols, shows the risk score, and executes." },
+            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap to pay on Monad clears faster than Visa. Aegis previews the fee, the merchant and a plain English safety check before you sign." },
+            { icon: ShoppingCart, title: "Grocery run, on chain", body: "Weekly spend tracked automatically. Aegis writes a Sunday summary of where your MON went, what saved you money and what to watch." },
+            { icon: Send, title: "Send money anywhere instantly", body: "Global transfers in one Monad block. Aegis translates addresses to human names, flags scam contracts and simulates the exact amount received." },
+            { icon: Wallet, title: "Salary streaming", body: "Get paid by the second on Monad. Aegis auto splits your paycheck into savings, bills and spending. No bank, no three day wait." },
+            { icon: Bell, title: "Real time alerts", body: "Rug pull on a token you hold. Whale dumping your bag. Aegis pings you before the price moves, in language anyone understands." },
+            { icon: Zap, title: "One tap DeFi", body: "Ask Aegis to park your paycheck at the best safe yield. It routes through vetted Monad protocols, shows the risk score and executes." },
           ].map((f) => (
             <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
               <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
