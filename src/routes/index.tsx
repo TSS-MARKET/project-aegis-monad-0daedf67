@@ -16,6 +16,7 @@ import { Coffee, ShoppingCart, Send, Wallet, Bell, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
+import { FloatingChat } from "@/components/aegis/floating-chat";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
 
@@ -125,7 +126,7 @@ function Landing() {
       >
         {/* LEFT */}
         <div className="flex flex-col gap-8 min-w-0">
-          <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
+          <div className="gl-hero__reveal flex items-center gap-2.5 min-w-0 flex-wrap" style={{ animationDelay: "60ms" }}>
             <span
               className="block w-1.5 h-1.5 rounded-full shrink-0"
               style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.18)" }}
@@ -149,7 +150,9 @@ function Landing() {
           </div>
 
           <h1
+            className="gl-hero__reveal"
             style={{
+              animationDelay: "180ms",
               fontFamily: SERIF,
               fontWeight: 400,
               color: "#f5f7fa",
@@ -162,7 +165,7 @@ function Landing() {
             <span className="block">The Monad firehose,</span>
             <span className="block">
               <em
-                className="text-gradient"
+                className="gl-hero__shimmer"
                 style={{ fontStyle: "italic", fontFamily: SERIF, fontWeight: 400 }}
               >
                 translated into edge
@@ -172,8 +175,9 @@ function Landing() {
           </h1>
 
           <p
-            className="max-w-xl"
+            className="gl-hero__reveal max-w-xl"
             style={{
+              animationDelay: "320ms",
               fontFamily: SANS,
               fontSize: "1.05rem",
               lineHeight: 1.6,
@@ -186,7 +190,7 @@ function Landing() {
             Not vibes.
           </p>
 
-          <div className="flex flex-wrap items-center gap-3.5 pt-1">
+          <div className="gl-hero__reveal flex flex-wrap items-center gap-3.5 pt-1" style={{ animationDelay: "440ms" }}>
             <Link
               to="/app"
               className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden"
@@ -227,8 +231,9 @@ function Landing() {
 
           <Link
             to="/app/radar"
-            className="group inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full"
+            className="gl-hero__reveal group inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full"
             style={{
+              animationDelay: "540ms",
               fontFamily: MONO,
               fontSize: "0.66rem",
               textTransform: "uppercase",
@@ -248,8 +253,9 @@ function Landing() {
 
           {/* Manifesto */}
           <div
-            className="mt-4 max-w-lg"
+            className="gl-hero__reveal mt-4 max-w-lg"
             style={{
+              animationDelay: "640ms",
               fontFamily: SERIF,
               fontSize: "1.15rem",
               color: "rgba(245,247,250,0.55)",
@@ -265,8 +271,9 @@ function Landing() {
         {/* RIGHT — Live Proof card */}
         <div
           id="proof"
-          className="relative rounded-[10px] p-6 sm:p-7 backdrop-blur-xl hover-lift"
+          className="gl-hero__reveal gl-hero__card relative rounded-[10px] p-6 sm:p-7 backdrop-blur-xl"
           style={{
+            animationDelay: "260ms",
             border: "1px solid rgba(34,211,238,0.16)",
             background:
               "linear-gradient(180deg, rgba(10,18,28,0.72), rgba(4,10,16,0.72))",
@@ -585,6 +592,7 @@ function Landing() {
         <span>Aegis · Monad Intelligence · Hackathon build</span>
         <span>Not financial advice.</span>
       </footer>
+      <FloatingChat />
     </div>
   );
 }

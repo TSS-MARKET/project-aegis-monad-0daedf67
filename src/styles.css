@@ -197,6 +197,57 @@
   100% { transform: translateX(120%); }
 }
 
+/* Glavior-style hero reveal (staggered rise + shimmer + card hover) */
+.gl-hero__reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: gl-hero-rise 900ms cubic-bezier(.22,.98,.24,1) forwards;
+  will-change: opacity, transform;
+}
+@keyframes gl-hero-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+.gl-hero__shimmer {
+  background: linear-gradient(90deg, #f5f7fa 0%, #22d3ee 40%, #67e8f9 55%, #22d3ee 70%, #f5f7fa 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gl-hero-shimmer 5.5s linear infinite;
+}
+@keyframes gl-hero-shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.gl-hero__card {
+  transition: transform .5s cubic-bezier(.22,.98,.24,1), box-shadow .5s ease, border-color .5s ease;
+}
+.gl-hero__card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(34,211,238,0.4) !important;
+  box-shadow:
+    0 55px 130px -30px rgba(34,211,238,0.5),
+    0 0 0 1px rgba(34,211,238,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 0 80px rgba(34,211,238,0.07) !important;
+}
+.gl-hero__scan {
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,0.55), transparent);
+  animation: gl-hero-scan 6.5s linear infinite;
+  opacity: 0.55;
+}
+@keyframes gl-hero-scan {
+  0%   { transform: translateX(-30%); }
+  100% { transform: translateX(130%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gl-hero__reveal, .gl-hero__shimmer, .gl-hero__scan {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 .markdown-body p { margin: 0.5rem 0; line-height: 1.65; }
 .markdown-body strong { color: #f5f7fa; font-weight: 600; }
 .markdown-body em { color: #22d3ee; font-style: normal; font-weight: 500; }
