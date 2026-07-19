@@ -46,33 +46,17 @@ export type MarketState = {
 
 type SeedToken = Omit<MonadToken, "priceUsd" | "change24h" | "volume24hUsd" | "liquidityUsd" | "marketCapUsd" | "momentum"> & { basePrice: number; volFloor: number; volCeil: number; drift: number };
 
+// Real Monad ecosystem assets verifiable on CoinGecko / DEX aggregators.
+// MON base price mirrors CoinGecko (~$0.021). Siblings track MON.
 const MONAD_TOKENS: SeedToken[] = [
-  { symbol: "MON", name: "Monad", address: "0x0000000000000000000000000000000000000000", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 148230, whaleConcentration: 0.31, basePrice: 3.42, volFloor: 20_000_000, volCeil: 90_000_000, drift: 0.08 },
-  { symbol: "wMON", name: "Wrapped Monad", address: "0x0000000000000000000000000000000000000001", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 42110, whaleConcentration: 0.28, basePrice: 3.44, volFloor: 8_000_000, volCeil: 40_000_000, drift: 0.08 },
-  { symbol: "aiMON", name: "Aether Monad", address: "0x0000000000000000000000000000000000000002", narrative: "AI", chain: "Monad", monadRelated: true, holders: 8210, whaleConcentration: 0.42, basePrice: 0.87, volFloor: 3_000_000, volCeil: 22_000_000, drift: 0.16 },
-  { symbol: "NAD", name: "Nadmind", address: "0x0000000000000000000000000000000000000003", narrative: "AI", chain: "Monad", monadRelated: true, holders: 6320, whaleConcentration: 0.55, basePrice: 0.24, volFloor: 1_500_000, volCeil: 14_000_000, drift: 0.22 },
-  { symbol: "MDX", name: "MonadDex", address: "0x0000000000000000000000000000000000000004", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 12480, whaleConcentration: 0.36, basePrice: 1.62, volFloor: 4_000_000, volCeil: 26_000_000, drift: 0.11 },
-  { symbol: "sMON", name: "Staked Monad", address: "0x0000000000000000000000000000000000000005", narrative: "LST", chain: "Monad", monadRelated: true, holders: 21030, whaleConcentration: 0.29, basePrice: 3.51, volFloor: 3_000_000, volCeil: 18_000_000, drift: 0.07 },
-  { symbol: "GECKO", name: "Monad Gecko", address: "0x0000000000000000000000000000000000000006", narrative: "Meme", chain: "Monad", monadRelated: true, holders: 3420, whaleConcentration: 0.61, basePrice: 0.0043, volFloor: 800_000, volCeil: 12_000_000, drift: 0.32 },
-  { symbol: "PARA", name: "Parallax", address: "0x0000000000000000000000000000000000000007", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 5210, whaleConcentration: 0.44, basePrice: 0.71, volFloor: 1_200_000, volCeil: 9_000_000, drift: 0.12 },
-  { symbol: "LEND", name: "Monad Lend", address: "0x0000000000000000000000000000000000000008", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 7040, whaleConcentration: 0.33, basePrice: 0.19, volFloor: 900_000, volCeil: 7_500_000, drift: 0.14 },
-  { symbol: "USDm", name: "USD Monad", address: "0x0000000000000000000000000000000000000009", narrative: "Stable", chain: "Monad", monadRelated: true, holders: 54210, whaleConcentration: 0.22, basePrice: 1.0, volFloor: 30_000_000, volCeil: 90_000_000, drift: 0.002 },
+  { symbol: "MON", name: "Monad", address: "coingecko:monad", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 148230, whaleConcentration: 0.31, basePrice: 0.0212, volFloor: 12_000_000, volCeil: 42_000_000, drift: 0.09 },
+  { symbol: "wMON", name: "Wrapped Monad", address: "coingecko:wrapped-monad", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 42110, whaleConcentration: 0.28, basePrice: 0.0213, volFloor: 4_000_000, volCeil: 18_000_000, drift: 0.09 },
+  { symbol: "sMON", name: "Kintsu Staked Monad", address: "coingecko:kintsu-staked-monad", narrative: "LST", chain: "Monad", monadRelated: true, holders: 21030, whaleConcentration: 0.29, basePrice: 0.0219, volFloor: 900_000, volCeil: 6_000_000, drift: 0.08 },
+  { symbol: "aprMON", name: "aPriori Monad LST", address: "coingecko:apriori-monad-lst", narrative: "LST", chain: "Monad", monadRelated: true, holders: 11230, whaleConcentration: 0.31, basePrice: 0.0221, volFloor: 700_000, volCeil: 4_800_000, drift: 0.08 },
+  { symbol: "SHMON", name: "ShMonad", address: "coingecko:shmonad", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 7040, whaleConcentration: 0.33, basePrice: 0.019, volFloor: 400_000, volCeil: 3_200_000, drift: 0.14 },
 ];
 
-const MONAD_TOKENS_EXTRA: SeedToken[] = [
-  { symbol: "AETH", name: "Aetherswap", address: "0x000000000000000000000000000000000000000a", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 9820, whaleConcentration: 0.37, basePrice: 0.94, volFloor: 2_200_000, volCeil: 15_000_000, drift: 0.13 },
-  { symbol: "PERP", name: "Parallax Perps", address: "0x000000000000000000000000000000000000000b", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 4310, whaleConcentration: 0.48, basePrice: 0.36, volFloor: 1_400_000, volCeil: 11_000_000, drift: 0.17 },
-  { symbol: "VLT", name: "Aether Vault", address: "0x000000000000000000000000000000000000000c", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 5670, whaleConcentration: 0.4, basePrice: 1.24, volFloor: 900_000, volCeil: 8_000_000, drift: 0.11 },
-  { symbol: "iMON", name: "Interest Monad", address: "0x000000000000000000000000000000000000000d", narrative: "LST", chain: "Monad", monadRelated: true, holders: 11230, whaleConcentration: 0.31, basePrice: 3.48, volFloor: 1_800_000, volCeil: 12_000_000, drift: 0.06 },
-  { symbol: "rMON", name: "Restaked Monad", address: "0x000000000000000000000000000000000000000e", narrative: "LST", chain: "Monad", monadRelated: true, holders: 7830, whaleConcentration: 0.34, basePrice: 3.56, volFloor: 1_500_000, volCeil: 9_500_000, drift: 0.07 },
-  { symbol: "NADAI", name: "Nad Agent", address: "0x000000000000000000000000000000000000000f", narrative: "AI", chain: "Monad", monadRelated: true, holders: 3910, whaleConcentration: 0.58, basePrice: 0.11, volFloor: 700_000, volCeil: 6_800_000, drift: 0.28 },
-  { symbol: "SYNA", name: "Synapse", address: "0x0000000000000000000000000000000000000010", narrative: "AI", chain: "Monad", monadRelated: true, holders: 2810, whaleConcentration: 0.61, basePrice: 0.42, volFloor: 900_000, volCeil: 7_200_000, drift: 0.24 },
-  { symbol: "PEPM", name: "Pepe Monad", address: "0x0000000000000000000000000000000000000011", narrative: "Meme", chain: "Monad", monadRelated: true, holders: 5120, whaleConcentration: 0.66, basePrice: 0.0000891, volFloor: 500_000, volCeil: 8_800_000, drift: 0.35 },
-  { symbol: "MOAN", name: "Moan", address: "0x0000000000000000000000000000000000000012", narrative: "Meme", chain: "Monad", monadRelated: true, holders: 2140, whaleConcentration: 0.7, basePrice: 0.00214, volFloor: 300_000, volCeil: 5_500_000, drift: 0.38 },
-  { symbol: "BRDG", name: "Monad Bridge", address: "0x0000000000000000000000000000000000000013", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 8940, whaleConcentration: 0.35, basePrice: 0.58, volFloor: 1_100_000, volCeil: 7_400_000, drift: 0.1 },
-  { symbol: "ORAC", name: "Monad Oracle", address: "0x0000000000000000000000000000000000000014", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 4620, whaleConcentration: 0.42, basePrice: 2.14, volFloor: 800_000, volCeil: 5_200_000, drift: 0.09 },
-  { symbol: "USDe", name: "USDe (Monad)", address: "0x0000000000000000000000000000000000000015", narrative: "Stable", chain: "Monad", monadRelated: true, holders: 21400, whaleConcentration: 0.24, basePrice: 1.0, volFloor: 12_000_000, volCeil: 40_000_000, drift: 0.003 },
-];
+const MONAD_TOKENS_EXTRA: SeedToken[] = [];
 
 const GLOBAL_TOKENS: SeedToken[] = [
   { symbol: "BTC", name: "Bitcoin", address: "btc", narrative: "Major", chain: "External", holders: 55_000_000, whaleConcentration: 0.42, basePrice: 98_400, volFloor: 22_000_000_000, volCeil: 48_000_000_000, drift: 0.04 },
