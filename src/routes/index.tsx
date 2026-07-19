@@ -551,7 +551,7 @@ function Landing() {
             { k: "100%", v: "answers cited to evidence", tone: "#fcd34d" },
           ].map((m, i) => (
             <div key={m.v} className="gl-bignum-card rounded-[10px] p-5 flex flex-col justify-between h-[140px] relative overflow-hidden">
-              <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{String(i+1).padStart(2,"0")}</span>
+              <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{"\n"}</span>
               <div className="gl-num" style={{ fontSize: "2.4rem", color: m.tone, lineHeight: 1 }}>{m.k}</div>
               <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{m.v}</div>
             </div>
@@ -733,7 +733,7 @@ function Landing() {
             {[
               { chain: "Ethereum", phrase: "priced people out.", tone: "dim" },
               { chain: "Solana", phrase: "keeps breaking.", tone: "dim" },
-              { chain: "Monad", phrase: "is what came next.", tone: "bright" },
+              { chain: "Monad", phrase: "is what came to rule.", tone: "bright" },
             ].map((r) => (
               <div key={r.chain} className={`gl-ch06__row ${r.tone === "bright" ? "is-bright" : "is-dim"} w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3`}>
                 <span
