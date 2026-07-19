@@ -15,6 +15,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppWhalesRouteImport } from './routes/app.whales'
 import { Route as AppWalletRouteImport } from './routes/app.wallet'
 import { Route as AppTokensRouteImport } from './routes/app.tokens'
+import { Route as AppReplayRouteImport } from './routes/app.replay'
 import { Route as AppRadarRouteImport } from './routes/app.radar'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as AppOnchainRouteImport } from './routes/app.onchain'
@@ -51,6 +52,11 @@ const AppTokensRoute = AppTokensRouteImport.update({
   path: '/tokens',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReplayRoute = AppReplayRouteImport.update({
+  id: '/replay',
+  path: '/replay',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRadarRoute = AppRadarRouteImport.update({
   id: '/radar',
   path: '/radar',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
+  '/app/replay': typeof AppReplayRoute
   '/app/tokens': typeof AppTokensRoute
   '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
+  '/app/replay': typeof AppReplayRoute
   '/app/tokens': typeof AppTokensRoute
   '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/app/onchain': typeof AppOnchainRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/radar': typeof AppRadarRoute
+  '/app/replay': typeof AppReplayRoute
   '/app/tokens': typeof AppTokensRoute
   '/app/wallet': typeof AppWalletRoute
   '/app/whales': typeof AppWhalesRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
+    | '/app/replay'
     | '/app/tokens'
     | '/app/wallet'
     | '/app/whales'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
+    | '/app/replay'
     | '/app/tokens'
     | '/app/wallet'
     | '/app/whales'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/app/onchain'
     | '/app/opportunities'
     | '/app/radar'
+    | '/app/replay'
     | '/app/tokens'
     | '/app/wallet'
     | '/app/whales'
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTokensRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/replay': {
+      id: '/app/replay'
+      path: '/replay'
+      fullPath: '/app/replay'
+      preLoaderRoute: typeof AppReplayRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/radar': {
       id: '/app/radar'
       path: '/radar'
@@ -250,6 +269,7 @@ interface AppRouteChildren {
   AppOnchainRoute: typeof AppOnchainRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppRadarRoute: typeof AppRadarRoute
+  AppReplayRoute: typeof AppReplayRoute
   AppTokensRoute: typeof AppTokensRoute
   AppWalletRoute: typeof AppWalletRoute
   AppWhalesRoute: typeof AppWhalesRoute
@@ -261,6 +281,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOnchainRoute: AppOnchainRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppRadarRoute: AppRadarRoute,
+  AppReplayRoute: AppReplayRoute,
   AppTokensRoute: AppTokensRoute,
   AppWalletRoute: AppWalletRoute,
   AppWhalesRoute: AppWhalesRoute,
