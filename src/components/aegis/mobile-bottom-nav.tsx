@@ -19,7 +19,7 @@ export function MobileBottomNav() {
     >
       <ul className="grid grid-cols-5">
         {items.map((it) => {
-          const active = it.exact ? pathname === it.to : pathname.startsWith(it.to);
+          const active = pathname === it.to || pathname.startsWith(it.to + "/");
           return (
             <li key={it.to}>
               <Link
