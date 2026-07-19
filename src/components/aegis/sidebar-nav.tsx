@@ -64,7 +64,7 @@ export function SidebarNav() {
             className="h-1.5 w-1.5 rounded-full"
             style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }}
           />
-          Monad · Live
+          {"\n"}
         </div>
       </div>
     </aside>
