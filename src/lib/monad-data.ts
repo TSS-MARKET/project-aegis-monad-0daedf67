@@ -6,7 +6,9 @@ export type MonadToken = {
   symbol: string;
   name: string;
   address: string;
-  narrative: "AI" | "DeFi" | "Meme" | "Infra" | "LST" | "Stable";
+  narrative: "AI" | "DeFi" | "Meme" | "Infra" | "LST" | "Stable" | "Major" | "L1" | "L2";
+  chain?: "Monad" | "External";
+  monadRelated?: boolean;
   priceUsd: number;
   change24h: number;
   volume24hUsd: number;
@@ -40,18 +42,42 @@ export type MarketState = {
   narratives: { name: string; strength: number; change: number }[];
 };
 
-const SEED_TOKENS: Omit<MonadToken, "priceUsd" | "change24h" | "volume24hUsd" | "liquidityUsd" | "marketCapUsd" | "momentum">[] = [
-  { symbol: "MON", name: "Monad", address: "0x0000000000000000000000000000000000000000", narrative: "Infra", holders: 148230, whaleConcentration: 0.31 },
-  { symbol: "wMON", name: "Wrapped Monad", address: "0x0000000000000000000000000000000000000001", narrative: "Infra", holders: 42110, whaleConcentration: 0.28 },
-  { symbol: "aiMON", name: "Aether Monad", address: "0x0000000000000000000000000000000000000002", narrative: "AI", holders: 8210, whaleConcentration: 0.42 },
-  { symbol: "NAD", name: "Nadmind", address: "0x0000000000000000000000000000000000000003", narrative: "AI", holders: 6320, whaleConcentration: 0.55 },
-  { symbol: "MDX", name: "MonadDex", address: "0x0000000000000000000000000000000000000004", narrative: "DeFi", holders: 12480, whaleConcentration: 0.36 },
-  { symbol: "sMON", name: "Staked Monad", address: "0x0000000000000000000000000000000000000005", narrative: "LST", holders: 21030, whaleConcentration: 0.29 },
-  { symbol: "GECKO", name: "Monad Gecko", address: "0x0000000000000000000000000000000000000006", narrative: "Meme", holders: 3420, whaleConcentration: 0.61 },
-  { symbol: "PARA", name: "Parallax", address: "0x0000000000000000000000000000000000000007", narrative: "Infra", holders: 5210, whaleConcentration: 0.44 },
-  { symbol: "LEND", name: "Monad Lend", address: "0x0000000000000000000000000000000000000008", narrative: "DeFi", holders: 7040, whaleConcentration: 0.33 },
-  { symbol: "USDm", name: "USD Monad", address: "0x0000000000000000000000000000000000000009", narrative: "Stable", holders: 54210, whaleConcentration: 0.22 },
+type SeedToken = Omit<MonadToken, "priceUsd" | "change24h" | "volume24hUsd" | "liquidityUsd" | "marketCapUsd" | "momentum"> & { basePrice: number; volFloor: number; volCeil: number; drift: number };
+
+const MONAD_TOKENS: SeedToken[] = [
+  { symbol: "MON", name: "Monad", address: "0x0000000000000000000000000000000000000000", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 148230, whaleConcentration: 0.31, basePrice: 3.42, volFloor: 20_000_000, volCeil: 90_000_000, drift: 0.08 },
+  { symbol: "wMON", name: "Wrapped Monad", address: "0x0000000000000000000000000000000000000001", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 42110, whaleConcentration: 0.28, basePrice: 3.44, volFloor: 8_000_000, volCeil: 40_000_000, drift: 0.08 },
+  { symbol: "aiMON", name: "Aether Monad", address: "0x0000000000000000000000000000000000000002", narrative: "AI", chain: "Monad", monadRelated: true, holders: 8210, whaleConcentration: 0.42, basePrice: 0.87, volFloor: 3_000_000, volCeil: 22_000_000, drift: 0.16 },
+  { symbol: "NAD", name: "Nadmind", address: "0x0000000000000000000000000000000000000003", narrative: "AI", chain: "Monad", monadRelated: true, holders: 6320, whaleConcentration: 0.55, basePrice: 0.24, volFloor: 1_500_000, volCeil: 14_000_000, drift: 0.22 },
+  { symbol: "MDX", name: "MonadDex", address: "0x0000000000000000000000000000000000000004", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 12480, whaleConcentration: 0.36, basePrice: 1.62, volFloor: 4_000_000, volCeil: 26_000_000, drift: 0.11 },
+  { symbol: "sMON", name: "Staked Monad", address: "0x0000000000000000000000000000000000000005", narrative: "LST", chain: "Monad", monadRelated: true, holders: 21030, whaleConcentration: 0.29, basePrice: 3.51, volFloor: 3_000_000, volCeil: 18_000_000, drift: 0.07 },
+  { symbol: "GECKO", name: "Monad Gecko", address: "0x0000000000000000000000000000000000000006", narrative: "Meme", chain: "Monad", monadRelated: true, holders: 3420, whaleConcentration: 0.61, basePrice: 0.0043, volFloor: 800_000, volCeil: 12_000_000, drift: 0.32 },
+  { symbol: "PARA", name: "Parallax", address: "0x0000000000000000000000000000000000000007", narrative: "Infra", chain: "Monad", monadRelated: true, holders: 5210, whaleConcentration: 0.44, basePrice: 0.71, volFloor: 1_200_000, volCeil: 9_000_000, drift: 0.12 },
+  { symbol: "LEND", name: "Monad Lend", address: "0x0000000000000000000000000000000000000008", narrative: "DeFi", chain: "Monad", monadRelated: true, holders: 7040, whaleConcentration: 0.33, basePrice: 0.19, volFloor: 900_000, volCeil: 7_500_000, drift: 0.14 },
+  { symbol: "USDm", name: "USD Monad", address: "0x0000000000000000000000000000000000000009", narrative: "Stable", chain: "Monad", monadRelated: true, holders: 54210, whaleConcentration: 0.22, basePrice: 1.0, volFloor: 30_000_000, volCeil: 90_000_000, drift: 0.002 },
 ];
+
+const GLOBAL_TOKENS: SeedToken[] = [
+  { symbol: "BTC", name: "Bitcoin", address: "btc", narrative: "Major", chain: "External", holders: 55_000_000, whaleConcentration: 0.42, basePrice: 98_400, volFloor: 22_000_000_000, volCeil: 48_000_000_000, drift: 0.04 },
+  { symbol: "ETH", name: "Ethereum", address: "eth", narrative: "L1", chain: "External", holders: 118_000_000, whaleConcentration: 0.38, basePrice: 3_620, volFloor: 12_000_000_000, volCeil: 26_000_000_000, drift: 0.05 },
+  { symbol: "SOL", name: "Solana", address: "sol", narrative: "L1", chain: "External", holders: 4_800_000, whaleConcentration: 0.44, basePrice: 214, volFloor: 3_000_000_000, volCeil: 9_000_000_000, drift: 0.08 },
+  { symbol: "BNB", name: "BNB", address: "bnb", narrative: "Major", chain: "External", holders: 6_200_000, whaleConcentration: 0.51, basePrice: 712, volFloor: 900_000_000, volCeil: 2_500_000_000, drift: 0.04 },
+  { symbol: "XRP", name: "XRP", address: "xrp", narrative: "Major", chain: "External", holders: 5_400_000, whaleConcentration: 0.47, basePrice: 2.28, volFloor: 2_000_000_000, volCeil: 6_500_000_000, drift: 0.07 },
+  { symbol: "DOGE", name: "Dogecoin", address: "doge", narrative: "Meme", chain: "External", holders: 7_100_000, whaleConcentration: 0.55, basePrice: 0.38, volFloor: 1_200_000_000, volCeil: 4_500_000_000, drift: 0.11 },
+  { symbol: "TON", name: "Toncoin", address: "ton", narrative: "L1", chain: "External", holders: 3_900_000, whaleConcentration: 0.48, basePrice: 5.62, volFloor: 300_000_000, volCeil: 1_100_000_000, drift: 0.08 },
+  { symbol: "AVAX", name: "Avalanche", address: "avax", narrative: "L1", chain: "External", holders: 1_800_000, whaleConcentration: 0.46, basePrice: 42.1, volFloor: 400_000_000, volCeil: 1_400_000_000, drift: 0.09 },
+  { symbol: "LINK", name: "Chainlink", address: "link", narrative: "Infra", chain: "External", holders: 700_000, whaleConcentration: 0.5, basePrice: 22.4, volFloor: 500_000_000, volCeil: 1_800_000_000, drift: 0.08 },
+  { symbol: "ARB", name: "Arbitrum", address: "arb", narrative: "L2", chain: "External", holders: 1_400_000, whaleConcentration: 0.44, basePrice: 0.82, volFloor: 250_000_000, volCeil: 900_000_000, drift: 0.1 },
+  { symbol: "OP", name: "Optimism", address: "op", narrative: "L2", chain: "External", holders: 900_000, whaleConcentration: 0.41, basePrice: 1.71, volFloor: 200_000_000, volCeil: 780_000_000, drift: 0.1 },
+  { symbol: "SUI", name: "Sui", address: "sui", narrative: "L1", chain: "External", holders: 1_100_000, whaleConcentration: 0.5, basePrice: 4.28, volFloor: 400_000_000, volCeil: 1_300_000_000, drift: 0.11 },
+  { symbol: "APT", name: "Aptos", address: "apt", narrative: "L1", chain: "External", holders: 620_000, whaleConcentration: 0.52, basePrice: 11.3, volFloor: 220_000_000, volCeil: 700_000_000, drift: 0.09 },
+  { symbol: "PEPE", name: "Pepe", address: "pepe", narrative: "Meme", chain: "External", holders: 340_000, whaleConcentration: 0.62, basePrice: 0.0000213, volFloor: 600_000_000, volCeil: 2_100_000_000, drift: 0.22 },
+  { symbol: "WIF", name: "dogwifhat", address: "wif", narrative: "Meme", chain: "External", holders: 240_000, whaleConcentration: 0.6, basePrice: 3.14, volFloor: 400_000_000, volCeil: 1_400_000_000, drift: 0.2 },
+  { symbol: "USDT", name: "Tether", address: "usdt", narrative: "Stable", chain: "External", holders: 6_000_000, whaleConcentration: 0.3, basePrice: 1.0, volFloor: 40_000_000_000, volCeil: 90_000_000_000, drift: 0.001 },
+  { symbol: "USDC", name: "USD Coin", address: "usdc", narrative: "Stable", chain: "External", holders: 2_800_000, whaleConcentration: 0.28, basePrice: 1.0, volFloor: 8_000_000_000, volCeil: 22_000_000_000, drift: 0.001 },
+];
+
+const SEED_TOKENS: SeedToken[] = [...MONAD_TOKENS, ...GLOBAL_TOKENS];
 
 function seeded(seed: number) {
   let s = seed >>> 0;
@@ -64,16 +90,17 @@ function seeded(seed: number) {
 export function getMarketState(now = Date.now()): MarketState {
   const bucket = Math.floor(now / 120_000);
   const rand = seeded(bucket);
-  const tokens: MonadToken[] = SEED_TOKENS.map((t, i) => {
-    const basePrice = [3.42, 3.44, 0.87, 0.24, 1.62, 3.51, 0.0043, 0.71, 0.19, 1.0][i];
-    const drift = (rand() - 0.45) * (t.narrative === "Meme" ? 0.28 : t.narrative === "AI" ? 0.14 : t.narrative === "Stable" ? 0.002 : 0.08);
-    const priceUsd = +(basePrice * (1 + drift)).toFixed(basePrice < 0.01 ? 6 : 4);
+  const tokens: MonadToken[] = SEED_TOKENS.map((t) => {
+    const drift = (rand() - 0.45) * t.drift;
+    const priceUsd = +(t.basePrice * (1 + drift)).toFixed(t.basePrice < 0.01 ? 8 : t.basePrice < 1 ? 4 : 2);
     const change24h = +(drift * 100).toFixed(2);
-    const volume24hUsd = Math.round((5_000_000 + rand() * 45_000_000) * (t.narrative === "Meme" ? 0.4 : 1));
+    const volume24hUsd = Math.round(t.volFloor + rand() * (t.volCeil - t.volFloor));
     const liquidityUsd = Math.round(volume24hUsd * (0.4 + rand() * 0.9));
     const marketCapUsd = Math.round(priceUsd * (t.holders * (200 + rand() * 800)));
     const momentum = +(Math.tanh(change24h / 8) + (rand() - 0.5) * 0.2).toFixed(2);
-    return { ...t, priceUsd, change24h, volume24hUsd, liquidityUsd, marketCapUsd, momentum };
+    const { basePrice: _b, volFloor: _f, volCeil: _c, drift: _d, ...rest } = t;
+    void _b; void _f; void _c; void _d;
+    return { ...rest, priceUsd, change24h, volume24hUsd, liquidityUsd, marketCapUsd, momentum };
   });
 
   const whales: WhaleEvent[] = Array.from({ length: 6 }, (_, i) => {
