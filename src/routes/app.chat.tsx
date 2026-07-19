@@ -2,11 +2,24 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Sparkles, TrendingUp, Fish, ShieldAlert, Radar, Loader2 } from "lucide-react";
+import { ArrowUp, Sparkles, TrendingUp, Fish, ShieldAlert, Radar, Loader2, LinkIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+import { getEventFeed } from "@/lib/intelligence.functions";
+import { z } from "zod";
 
-export const Route = createFileRoute("/app/chat")({ component: ChatPage });
+const chatSearchSchema = z.object({
+  q: z.string().optional(),
+  eventId: z.string().optional(),
+  focus: z.string().optional(),
+});
+
+export const Route = createFileRoute("/app/chat")({
+  component: ChatPage,
+  validateSearch: chatSearchSchema,
+});
 
 const MONO = "var(--font-mono)";
 const SERIF = "var(--font-serif)";
@@ -19,19 +32,40 @@ const suggestions = [
 ];
 
 function ChatPage() {
+  const { q, eventId, focus } = Route.useSearch();
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      body: () => ({ eventId, focus }),
+    }),
   });
   const [input, setInput] = useState("");
   const busy = status === "submitted" || status === "streaming";
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const autoSent = useRef(false);
+
+  const fetchFeed = useServerFn(getEventFeed);
+  const { data: feed } = useQuery({
+    queryKey: ["chat-evidence-rail"],
+    queryFn: () => fetchFeed({ data: { windowHours: 6, limit: 5 } }),
+    staleTime: 60_000,
+  });
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, busy]);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
+
+  // Auto-send deep-linked prompt (from Explain buttons, Replay, Timeline).
+  useEffect(() => {
+    if (autoSent.current) return;
+    if (q && q.trim()) {
+      autoSent.current = true;
+      sendMessage({ text: q.trim() });
+    }
+  }, [q, sendMessage]);
 
   function submit(text?: string) {
     const t = (text ?? input).trim();
@@ -89,6 +123,49 @@ function ChatPage() {
                   No advice, no invented numbers.
                 </p>
               </div>
+
+              {feed && feed.length > 0 && (
+                <div
+                  className="p-4 rounded-[8px]"
+                  style={{
+                    background: "linear-gradient(180deg, rgba(10,18,28,0.55), rgba(4,10,16,0.55))",
+                    border: "1px solid rgba(34,211,238,0.14)",
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(34,211,238,0.8)" }}>
+                      Evidence rail · grounded on {feed.length} live events
+                    </span>
+                    <LinkIcon className="h-3 w-3" style={{ color: "rgba(34,211,238,0.6)" }} />
+                  </div>
+                  <div className="space-y-2">
+                    {feed.map((e) => (
+                      <button
+                        key={e.id}
+                        onClick={() => submit(`Explain event ${e.id}: ${e.headline}. Why does it matter and what should I watch next?`)}
+                        className="w-full text-left flex items-start gap-3 px-3 py-2 rounded-[6px] transition-colors hover:bg-[rgba(34,211,238,0.06)]"
+                      >
+                        <span
+                          className="mt-1 shrink-0 h-1.5 w-1.5 rounded-full"
+                          style={{ background: "#22d3ee", boxShadow: "0 0 8px rgba(34,211,238,0.6)" }}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm truncate" style={{ color: "#f5f7fa" }}>{e.headline}</div>
+                          <div className="mt-0.5 flex items-center gap-2" style={{ fontFamily: MONO, fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}>
+                            <span>{e.minutesAgo}m ago</span>
+                            <span>·</span>
+                            <span>imp {e.importance}</span>
+                            <span>·</span>
+                            <span>conf {e.confidence}</span>
+                            {e.asset && (<><span>·</span><span style={{ color: "rgba(34,211,238,0.7)" }}>{e.asset.symbol}</span></>)}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="grid sm:grid-cols-2 gap-2.5">
                 {suggestions.map((s) => (
                   <button
