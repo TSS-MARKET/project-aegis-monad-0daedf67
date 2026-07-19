@@ -138,16 +138,41 @@ export function getMonadEvents(opts?: {
   return events.slice(0, limit);
 }
 
+function replayTarget(hours: 1 | 6 | 24, requested?: number) {
+  const floor = hours === 1 ? 91 : hours === 6 ? 161 : 251;
+  const target = Math.max(floor, requested ?? floor);
+  return target % 2 === 0 ? target + 1 : target;
+}
+
+function sampleAcrossWindow(events: MonadEvent[], target: number) {
+  if (events.length <= target) return events;
+  const picked: MonadEvent[] = [];
+  const used = new Set<string>();
+  for (let i = 0; i < target; i++) {
+    const idx = Math.round((i * (events.length - 1)) / Math.max(1, target - 1));
+    const event = events[idx];
+    if (!event || used.has(event.id)) continue;
+    used.add(event.id);
+    picked.push(event);
+  }
+  return picked;
+}
+
 /** Slice for the Replay the Chain scrubber. */
-export function getReplayWindow(hours: 1 | 6 | 24 = 6, now = Date.now()) {
+export function getReplayWindow(hours: 1 | 6 | 24 = 6, now = Date.now(), requestedLimit?: number) {
   const windowMs = hours * 60 * 60 * 1000;
-  const events = getMonadEvents({ now, windowMs, limit: 300 });
+  const target = replayTarget(hours, requestedLimit);
+  const scanLimit = hours === 24 ? 4_000 : hours === 6 ? 1_200 : 260;
+  const allEvents = getMonadEvents({ now, windowMs, limit: scanLimit })
+    .filter((e) => e.ts >= now - windowMs && e.ts <= now)
+    .sort((a, b) => a.ts - b.ts || a.block - b.block);
+  const events = sampleAcrossWindow(allEvents, target);
   const startTs = now - windowMs;
   return {
     startTs,
     endTs: now,
     windowMs,
-    events: events.sort((a, b) => a.ts - b.ts),
+    events,
     dataType: "curated" as const,
     generatedAt: new Date(now).toISOString(),
   };
