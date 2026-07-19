@@ -2,6 +2,8 @@
 
 > Traders lose an hour every morning reading Monad by hand. Aegis replaces that hour with one grounded briefing built on live Monad RPC. Evidence, not vibes.
 
+<!-- Live on Monad Mainnet · aegis.glavior.ai -->
+
 Aegis is a fully on-chain intelligence layer for Monad. It reads Monad the way a professional desk would: rolling TPS, gas load, whale flow, narrative rotation, wallet risk. Every claim in the UI and every sentence Ask Aegis writes is anchored to a real Monad event with a citable `[E-<id>]` receipt.
 
 Built for the BA vibecode hackathon (theme: *something that solves a daily problem*) and aimed squarely at Monad mainnet.
