@@ -733,7 +733,7 @@ function Landing() {
             {[
               { chain: "Ethereum", phrase: "priced people out.", tone: "dim" },
               { chain: "Solana", phrase: "keeps breaking.", tone: "dim" },
-              { chain: "Monad", phrase: "is what came next.", tone: "bright" },
+              { chain: "Monad", phrase: "is what came to rule.", tone: "bright" },
             ].map((r) => (
               <div key={r.chain} className={`gl-ch06__row ${r.tone === "bright" ? "is-bright" : "is-dim"} w-full flex flex-col sm:flex-row items-center justify-center gap-x-10 gap-y-3`}>
                 <span
