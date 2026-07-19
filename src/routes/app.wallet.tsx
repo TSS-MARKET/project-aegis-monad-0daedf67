@@ -37,7 +37,7 @@ function WalletPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl p-6 md:p-10 space-y-6">
+    <div className="mx-auto max-w-5xl px-4 md:px-10 pt-4 md:pt-6 pb-8 space-y-6">
       <header>
         <div className="text-xs uppercase tracking-widest text-muted-foreground">Portfolio</div>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight">Wallet Intelligence</h1>
