@@ -576,10 +576,10 @@ function Landing() {
         {/* Big-number strip — different card shape than pulse strip */}
         <div className="mt-14 grid gap-3 md:grid-cols-4">
           {[
-            { k: "10,000", v: "peak TPS on Monad", tone: "#22d3ee" },
-            { k: "0.5s", v: "block finality", tone: "#67e8f9" },
-            { k: "$0.001", v: "gas per transaction", tone: "#6ee7b7" },
-            { k: "100%", v: "answers cited to evidence", tone: "#fcd34d" },
+            { k: "6", v: "flagship intelligence surfaces", tone: "#22d3ee" },
+            { k: "100%", v: "AI answers cited to evidence", tone: "#67e8f9" },
+            { k: "8s", v: "live RPC refresh cadence", tone: "#6ee7b7" },
+            { k: "24h", v: "on-chain replay window", tone: "#fcd34d" },
           ].map((m, i) => (
             <div key={m.v} className="gl-bignum-card rounded-[10px] p-5 flex flex-col justify-between h-[140px] relative overflow-hidden">
               <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{"\n"}</span>
