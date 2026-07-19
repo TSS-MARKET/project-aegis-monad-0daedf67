@@ -146,7 +146,7 @@ function TimelinePage() {
             Intelligence <em style={{ color: "#22d3ee" }}>Timeline</em>
           </h1>
           <p className="mt-2 text-sm max-w-2xl" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Ranked by impact, confidence, evidence, unusualness, and recency. Every item comes from live Monad RPC blocks.
+            Curated pattern signals ranked by impact, confidence, and recency. Notionals are conservative estimates — verifiable on-chain transactions live in the Live On-Chain panel on the dashboard.
           </p>
         </div>
 
