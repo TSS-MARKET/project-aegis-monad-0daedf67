@@ -389,10 +389,10 @@ function Landing() {
 
         <div className="grid gap-px md:grid-cols-4 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
           {[
-            { icon: Activity, title: "Market Brief", body: "AI-authored ecosystem summary. Sentiment, movers, narrative rotation — refreshed every 2 minutes." },
-            { icon: Compass, title: "Opportunities", body: "Grounded theses with confidence, catalyst, and risk. No 'to the moon' — only reasoning you can audit." },
-            { icon: Radar, title: "Whale Radar", body: "Cluster wallet activity into human-readable stories. Not a wall of hashes." },
-            { icon: MessageSquare, title: "Ask Aegis", body: "Chat with a Monad-native analyst. Every answer grounded in the live market state." },
+            { icon: Activity, title: "Market Brief", body: "AI authored ecosystem summary. Sentiment, movers and narrative rotation, refreshed every two minutes on live Monad state." },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across five signals with confidence, catalyst and invalidation price. Reasoning you can audit line by line." },
+            { icon: Radar, title: "Whale Radar", body: "Clusters Monad wallet flow into human readable stories. Not a wall of hashes, an actual narrative of who is moving what." },
+            { icon: MessageSquare, title: "Ask Aegis", body: "A Monad native analyst grounded in the live event stream. Every answer cites the exact evidence tag it is reasoning from." },
           ].map((f) => (
             <div
               key={f.title}
