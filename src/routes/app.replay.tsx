@@ -105,8 +105,8 @@ function ReplayPage() {
     if (selectedId || !events.length) return;
     const cursor = startTs + playhead;
     const visible = events.filter((e) => e.ts <= cursor);
-    if (!visible.length) return;
-    const top = visible.slice().sort((a, b) => b.importance - a.importance)[0];
+    const pool = visible.length ? visible : events;
+    const top = pool.slice().sort((a, b) => b.importance - a.importance)[0];
     setSelectedId(top.id);
   }, [events, startTs, playhead, selectedId]);
 
@@ -140,9 +140,9 @@ function ReplayPage() {
   }, [playing, speed, windowMs]);
 
   const cursorTs = startTs + playhead;
-  const revealed = useMemo(() => events.filter((e) => e.ts <= cursorTs), [events, cursorTs]);
+  const activeEvents = useMemo(() => events.filter((e) => e.ts <= cursorTs), [events, cursorTs]);
   const filtered = useMemo(() => {
-    if (filter === "all") return revealed;
+    if (filter === "all") return events;
     const map: Record<string, EventCategory[]> = {
       whales: ["whale_accumulation", "whale_distribution", "large_transfer", "coordinated_wallets"],
       liquidity: ["liquidity_add", "liquidity_remove"],
@@ -150,8 +150,8 @@ function ReplayPage() {
       protocols: ["protocol_activity", "dex_volume_spike", "new_wallet_wave"],
       risk: ["whale_distribution", "liquidity_remove", "unusual_behavior"],
     };
-    return revealed.filter((e) => map[filter]?.includes(e.category));
-  }, [revealed, filter]);
+    return events.filter((e) => map[filter]?.includes(e.category));
+  }, [events, filter]);
 
   const selected = useMemo(
     () => events.find((e) => e.id === selectedId) ?? filtered[filtered.length - 1] ?? null,
@@ -290,7 +290,7 @@ function ReplayPage() {
               {fmtClock(cursorTs)}
             </span>
             <span style={{ fontFamily: MONO, fontSize: "0.66rem", color: "#22d3ee" }}>
-              {revealed.length}/{events.length}
+              {activeEvents.length}/{events.length}
             </span>
           </div>
         </div>
@@ -412,7 +412,7 @@ function ReplayPage() {
             ))}
             {!filtered.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
-                {revealed.length ? "No intelligence records match this filter yet." : "Press play or scrub to reveal the intelligence stream."}
+                No intelligence records match this filter yet.
               </div>
             )}
           </div>
