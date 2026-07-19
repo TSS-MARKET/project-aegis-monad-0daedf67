@@ -35,7 +35,16 @@ function useBinancePrices(): Record<string, BinanceQuote> {
   );
 }
 
-export const Route = createFileRoute("/")({ component: Landing });
+export const Route = createFileRoute("/")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: ["landing-market"],
+      queryFn: () => getMarketSnapshot(),
+    });
+    return null;
+  },
+  component: Landing,
+});
 
 const MONO = 'var(--font-mono)';
 const SERIF = 'var(--font-serif)';
