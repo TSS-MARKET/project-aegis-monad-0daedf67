@@ -36,13 +36,6 @@ function useBinancePrices(): Record<string, BinanceQuote> {
 }
 
 export const Route = createFileRoute("/")({
-) => {
-    await context.queryClient.ensureQueryData({
-      queryKey: ["landing-market"],
-      queryFn: () => getMarketSnapshot(),
-    });
-    return null;
-  },
   component: Landing,
 });
 

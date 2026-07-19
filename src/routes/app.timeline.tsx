@@ -27,13 +27,6 @@ import { ACTIVE_MONAD } from "@/lib/monad-wallet";
 const EXPLORER = ACTIVE_MONAD.blockExplorerUrls[0];
 
 export const Route = createFileRoute("/app/timeline")({
-) => {
-    await context.queryClient.ensureQueryData({
-      queryKey: ["timeline", 6],
-      queryFn: () => getEventFeed({ data: { windowHours: 6, limit: 150 } }),
-    });
-    return null;
-  },
   component: TimelinePage,
 });
 

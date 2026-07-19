@@ -6,10 +6,6 @@ import { GlassCard } from "@/components/aegis/glass-card";
 import { formatUsd } from "@/lib/monad-data";
 
 export const Route = createFileRoute("/app/tokens")({
-) => {
-    await context.queryClient.ensureQueryData({ queryKey: ["snap"], queryFn: () => getMarketSnapshot() });
-    return null;
-  },
   component: TokensPage,
 });
 

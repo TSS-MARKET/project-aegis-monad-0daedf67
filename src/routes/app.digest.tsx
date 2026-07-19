@@ -11,13 +11,6 @@ import { VerifyButton } from "@/components/aegis/verify-button";
 import { getEventFeed } from "@/lib/intelligence.functions";
 
 export const Route = createFileRoute("/app/digest")({
-) => {
-    await context.queryClient.ensureQueryData({
-      queryKey: ["digest-events-24h"],
-      queryFn: () => getEventFeed({ data: { windowHours: 24, limit: 180 } }),
-    });
-    return null;
-  },
   component: DigestPage,
 });
 
