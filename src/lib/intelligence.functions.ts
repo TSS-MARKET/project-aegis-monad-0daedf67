@@ -3,6 +3,7 @@ import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 import { requireGateway } from "./ai-gateway.server";
 import { getMarketState } from "./monad-data";
+import { getMonadEvents, getReplayWindow, getHeadlineEvent } from "./monad-events";
 
 const MODEL = "openai/gpt-5.5";
 
@@ -181,4 +182,37 @@ Rules: narrativeExposure shares sum to ~1. Health = one word. Recommendations de
 
 export const getMarketSnapshot = createServerFn({ method: "GET" }).handler(async () => {
   return getMarketState();
+});
+
+// -------- Event / Replay / Headline endpoints ------------------------------
+// Cheap, deterministic, cacheable. Consumed by the dashboard headline card,
+// the Intelligence Timeline, the Replay the Chain scrubber, and Ask Aegis
+// grounding.
+
+export const getEventFeed = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        windowHours: z.number().min(1).max(24).optional(),
+        limit: z.number().min(1).max(200).optional(),
+      })
+      .parse(data ?? {}),
+  )
+  .handler(async ({ data }) => {
+    const windowMs = (data.windowHours ?? 6) * 60 * 60 * 1000;
+    return {
+      events: getMonadEvents({ windowMs, limit: data.limit ?? 80 }),
+      dataType: "curated" as const,
+      generatedAt: new Date().toISOString(),
+    };
+  });
+
+export const getReplayFeed = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) =>
+    z.object({ hours: z.union([z.literal(1), z.literal(6), z.literal(24)]).optional() }).parse(data ?? {}),
+  )
+  .handler(async ({ data }) => getReplayWindow(data.hours ?? 6));
+
+export const getHeadline = createServerFn({ method: "GET" }).handler(async () => {
+  return { event: getHeadlineEvent(), generatedAt: new Date().toISOString() };
 });
