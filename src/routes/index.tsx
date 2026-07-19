@@ -714,9 +714,15 @@ function Landing() {
             { icon: Zap, title: "One tap DeFi routing", body: "Ask Aegis to park your paycheck at the best safe yield. It routes through vetted Monad protocols, shows the risk score and executes.", tone: "#c4b5fd", tag: "YIELD" },
             { icon: ShoppingCart, title: "Sunday spend report", body: "Weekly spending tracked automatically. Aegis writes a plain English summary of where your MON went and what to watch next.", tone: "#22d3ee", tag: "TRACKING" },
           ].map((f, i) => {
-            const flip = i % 2 === 1;
             return (
-              <div key={f.title} className={`group relative grid grid-cols-1 md:grid-cols-[80px_1fr] gap-6 items-center p-6 rounded-[10px] transition-all duration-500 hover:translate-x-1 ${flip ? "md:ml-16" : "md:mr-16"}`} style={{ border: "1px solid rgba(34,211,238,0.08)", background: flip ? "linear-gradient(90deg, rgba(4,10,16,0.4), rgba(10,18,28,0.7))" : "linear-gradient(270deg, rgba(4,10,16,0.4), rgba(10,18,28,0.7))" }}>
+              <div
+                key={f.title}
+                className="group relative grid grid-cols-1 md:grid-cols-[96px_1fr] gap-6 items-center p-6 rounded-[10px] transition-all duration-500 hover-lift"
+                style={{
+                  border: "1px solid rgba(34,211,238,0.10)",
+                  background: "linear-gradient(90deg, rgba(10,18,28,0.72), rgba(4,10,16,0.72))",
+                }}
+              >
                 <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-1">
                   <span className="gl-num" style={{ fontSize: "2rem", color: f.tone, lineHeight: 1 }}>{String(i+1).padStart(2,"0")}</span>
                   <span style={{ fontFamily: MONO, fontSize: "0.56rem", letterSpacing: "0.22em", color: f.tone, opacity: 0.75 }}>{f.tag}</span>
