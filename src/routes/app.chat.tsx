@@ -33,10 +33,12 @@ const suggestions = [
 
 function ChatPage() {
   const { q, eventId, focus } = Route.useSearch();
+  const ctxRef = useRef({ eventId, focus });
+  ctxRef.current = { eventId, focus };
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
-      body: () => ({ eventId, focus }),
+      body: () => ({ eventId: ctxRef.current.eventId, focus: ctxRef.current.focus }),
     }),
   });
   const [input, setInput] = useState("");
@@ -63,9 +65,10 @@ function ChatPage() {
     if (autoSent.current) return;
     if (q && q.trim()) {
       autoSent.current = true;
-      sendMessage({ text: q.trim() });
+      const prefix = eventId ? `Regarding event E-${eventId}: ` : "";
+      sendMessage({ text: prefix + q.trim() });
     }
-  }, [q, sendMessage]);
+  }, [q, eventId, sendMessage]);
 
   function submit(text?: string) {
     const t = (text ?? input).trim();
