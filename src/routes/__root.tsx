@@ -77,21 +77,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Aegis — Monad Intelligence" },
+      { title: "Aegis - Monad Intelligence" },
       {
         name: "description",
         content:
-          "Autonomous AI market analyst for the Monad ecosystem. Real-time briefings, opportunities, and wallet strategy — grounded in on-chain evidence.",
+          "Autonomous AI market analyst for the Monad ecosystem. Real-time briefings, opportunities, and wallet strategy  grounded in on-chain evidence.",
       },
       { name: "author", content: "Aegis" },
-      { property: "og:title", content: "Aegis — Monad Intelligence" },
+      { property: "og:title", content: "Aegis - Monad Intelligence" },
       {
         property: "og:description",
         content:
-          "Autonomous AI market analyst for the Monad ecosystem. Real-time briefings, opportunities, and wallet strategy.",
+          "Autonomous AI market analyst for the Monad ecosystem. Real-time briefings, opportunities, and wallet strategy  grounded in on-chain evidence.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Aegis - Monad Intelligence" },
+      { name: "twitter:description", content: "Autonomous AI market analyst for the Monad ecosystem. Real-time briefings, opportunities, and wallet strategy  grounded in on-chain evidence." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c9c4560b-aed5-40fd-ab4c-d588489d50bc/id-preview-18cf5315--1a161b8d-e760-46fd-85aa-bab5ce0cacdc.lovable.app-1784420560880.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c9c4560b-aed5-40fd-ab4c-d588489d50bc/id-preview-18cf5315--1a161b8d-e760-46fd-85aa-bab5ce0cacdc.lovable.app-1784420560880.png" },
     ],
     links: [
       {
