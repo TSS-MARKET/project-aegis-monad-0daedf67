@@ -573,7 +573,7 @@ function Inspector({ e }: { e: MonadEvent }) {
 
       <div className="flex gap-2 pt-1">
         <a
-          href={`/app/chat?q=${encodeURIComponent("Explain this event and what to watch next.")}&eventId=${encodeURIComponent(e.id)}`}
+          href={`/app/chat?q=${encodeURIComponent(`Verify event E-${e.id} — walk me through the evidence and what to watch next.`)}&eventId=${encodeURIComponent(e.id)}`}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs shine-sweep"
           style={{ background: "rgba(34,211,238,0.12)", border: "1px solid rgba(34,211,238,0.4)", color: "#22d3ee" }}
         >
