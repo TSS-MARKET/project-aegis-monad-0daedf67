@@ -227,9 +227,10 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
 export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 160): Promise<LiveReplayWindow> {
   const primary = ACTIVE_MONAD;
   const fallback = primary.chainIdDec === MONAD_MAINNET.chainIdDec ? MONAD_TESTNET : MONAD_MAINNET;
+  const requestedWindowMs = hours * 60 * 60 * 1000;
   if (
     lastReplayCache &&
-    lastReplayCache.windowMs === hours * 60 * 60 * 1000 &&
+    lastReplayCache.windowMs === requestedWindowMs &&
     Date.now() - new Date(lastReplayCache.generatedAt).getTime() < 25_000
   ) {
     return lastReplayCache;
@@ -244,7 +245,7 @@ export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 16
       lastReplayCache = live;
       return live;
     } catch {
-      if (lastReplayCache?.events.length) {
+      if (lastReplayCache?.events.length && lastReplayCache.windowMs === requestedWindowMs) {
         return {
           ...lastReplayCache,
           source: `${lastReplayCache.source} · cached live sample`,
