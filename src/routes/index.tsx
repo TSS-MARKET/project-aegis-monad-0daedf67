@@ -13,6 +13,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { Coffee, ShoppingCart, Send, Wallet, Bell, Zap } from "lucide-react";
+import { Rewind, Timer, Fingerprint, Sparkles, Gauge, Link2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
