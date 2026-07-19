@@ -359,16 +359,17 @@ function Landing() {
             </div>
           </div>
 
-          {/* Equalizer */}
-          <div className="mt-6 flex items-end gap-[3px] h-10">
-            {Array.from({ length: 32 }).map((_, i) => (
+          {/* Equalizer — continuously waving */}
+          <div className="mt-6 flex items-end gap-[3px] h-12">
+            {Array.from({ length: 40 }).map((_, i) => (
               <span
                 key={i}
-                className="flex-1 rounded-sm"
+                className="gl-bar flex-1 rounded-[2px]"
                 style={{
-                  height: `${20 + Math.abs(Math.sin(i * 0.7)) * 80}%`,
-                  background: "linear-gradient(180deg, #67e8f9, #22d3ee 60%, rgba(34,211,238,0.2))",
-                  animation: `pulse-glow ${1.6 + (i % 5) * 0.2}s ease-in-out ${i * 40}ms infinite`,
+                  height: "100%",
+                  background: "linear-gradient(180deg, #67e8f9, #22d3ee 60%, rgba(34,211,238,0.15))",
+                  animationDelay: `${(i * 80) % 2400}ms`,
+                  animationDuration: `${2 + (i % 5) * 0.25}s`,
                 }}
               />
             ))}
@@ -619,9 +620,19 @@ function Landing() {
               </div>
               <div>
                 <div className="gl-num truncate" style={{ color: s.tone, fontSize: "1.9rem", lineHeight: 1 }}>{s.value}</div>
-                <div className="mt-3 flex items-end gap-[2px] h-6">
-                  {Array.from({length: 22}).map((_,j)=>(
-                    <span key={j} className="flex-1 rounded-[1px]" style={{ height: `${25 + Math.abs(Math.sin(j*0.6 + i))*70}%`, background: s.tone, opacity: 0.35 + (j/22)*0.5 }} />
+                <div className="mt-3 flex items-end gap-[2px] h-7">
+                  {Array.from({length: 26}).map((_,j)=>(
+                    <span
+                      key={j}
+                      className="gl-bar flex-1 rounded-[1px]"
+                      style={{
+                        height: "100%",
+                        background: s.tone,
+                        opacity: 0.45 + (j/26)*0.45,
+                        animationDelay: `${(j*90 + i*220) % 2400}ms`,
+                        animationDuration: `${2.2 + ((j+i) % 4) * 0.2}s`,
+                      }}
+                    />
                   ))}
                 </div>
               </div>
