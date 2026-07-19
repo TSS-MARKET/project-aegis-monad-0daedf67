@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({
-  loader: async ({ context }) => {
+) => {
     // Populate SSR cache so the shell renders with real values (not zeros).
     await Promise.all([
       context.queryClient.ensureQueryData({ queryKey: ["snap"], queryFn: () => getMarketSnapshot() }),

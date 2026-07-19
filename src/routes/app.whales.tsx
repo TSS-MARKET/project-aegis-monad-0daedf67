@@ -8,7 +8,7 @@ import { ArrowDownRight, ArrowUpRight, Repeat, Waves, TrendingUp, Wallet, Activi
 import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/app/whales")({
-  loader: async ({ context }) => {
+) => {
     await context.queryClient.ensureQueryData({
       queryKey: ["whale-live-blocks"],
       queryFn: () => getEventFeed({ data: { windowHours: 1, limit: 60 } }),

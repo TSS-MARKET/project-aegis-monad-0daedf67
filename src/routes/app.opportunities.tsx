@@ -17,7 +17,7 @@ import { getOpportunityBoard } from "@/lib/intelligence.functions";
 import { ExplainButton } from "@/components/aegis/explain-button";
 
 export const Route = createFileRoute("/app/opportunities")({
-  loader: async ({ context }) => {
+) => {
     await context.queryClient.ensureQueryData({
       queryKey: ["opportunity-board"],
       queryFn: () => getOpportunityBoard({ data: { limit: 6 } }),

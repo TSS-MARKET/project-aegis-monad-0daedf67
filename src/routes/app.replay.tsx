@@ -27,7 +27,7 @@ import {
 import type { MonadEvent, EventCategory } from "@/lib/monad-events";
 
 export const Route = createFileRoute("/app/replay")({
-  loader: async ({ context }) => {
+) => {
     // Prime SSR cache with the default 6h replay window so the timeline
     // and event stream render populated on first paint (no "0 records").
     await context.queryClient.ensureQueryData({
