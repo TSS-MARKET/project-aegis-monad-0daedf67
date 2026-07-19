@@ -95,7 +95,7 @@ function ChatPage() {
               AEGIS · COPILOT
             </div>
             <div style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>
-              Ask <em style={{ color: "#22d3ee" }}>Aegis</em>
+              Ask Aegis
             </div>
           </div>
         </div>
