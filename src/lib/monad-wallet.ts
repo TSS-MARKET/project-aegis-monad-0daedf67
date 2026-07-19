@@ -1,6 +1,15 @@
 // Client-side Monad wallet connection via EIP-1193 (MetaMask etc.)
-// Monad Testnet reference: chainId 10143, RPC https://testnet-rpc.monad.xyz
+// Supports Monad Mainnet (143) and Monad Testnet (10143).
 import { useCallback, useEffect, useState } from "react";
+
+export const MONAD_MAINNET = {
+  chainIdHex: "0x8f", // 143
+  chainIdDec: 143,
+  chainName: "Monad",
+  nativeCurrency: { name: "Monad", symbol: "MON", decimals: 18 },
+  rpcUrls: ["https://rpc.monad.xyz"],
+  blockExplorerUrls: ["https://monadexplorer.com"],
+};
 
 export const MONAD_TESTNET = {
   chainIdHex: "0x279F", // 10143
@@ -11,13 +20,16 @@ export const MONAD_TESTNET = {
   blockExplorerUrls: ["https://testnet.monadexplorer.com"],
 };
 
+const CHAIN_ENV = (import.meta.env.VITE_AEGIS_CHAIN as string | undefined)?.toLowerCase();
+export const ACTIVE_MONAD = CHAIN_ENV === "testnet" ? MONAD_TESTNET : MONAD_MAINNET;
+
 type Eth = {
   request: (a: { method: string; params?: unknown[] }) => Promise<unknown>;
   on?: (event: string, cb: (...args: unknown[]) => void) => void;
   removeListener?: (event: string, cb: (...args: unknown[]) => void) => void;
 };
 
-function eth(): Eth | null {
+export function eth(): Eth | null {
   if (typeof window === "undefined") return null;
   const w = window as unknown as { ethereum?: Eth };
   return w.ethereum ?? null;
@@ -75,11 +87,11 @@ export function useMonadWallet() {
       if (!accs?.[0]) throw new Error("No account granted");
       setAddress(accs[0]);
       localStorage.setItem("aegis_wallet", accs[0]);
-      // Try to switch to Monad Testnet; if unknown, add it.
+      // Try to switch to the active Monad chain; if unknown, add it.
       try {
         await e.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: MONAD_TESTNET.chainIdHex }],
+          params: [{ chainId: ACTIVE_MONAD.chainIdHex }],
         });
       } catch (err) {
         const code = (err as { code?: number })?.code;
@@ -88,11 +100,11 @@ export function useMonadWallet() {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: MONAD_TESTNET.chainIdHex,
-                chainName: MONAD_TESTNET.chainName,
-                nativeCurrency: MONAD_TESTNET.nativeCurrency,
-                rpcUrls: MONAD_TESTNET.rpcUrls,
-                blockExplorerUrls: MONAD_TESTNET.blockExplorerUrls,
+                chainId: ACTIVE_MONAD.chainIdHex,
+                chainName: ACTIVE_MONAD.chainName,
+                nativeCurrency: ACTIVE_MONAD.nativeCurrency,
+                rpcUrls: ACTIVE_MONAD.rpcUrls,
+                blockExplorerUrls: ACTIVE_MONAD.blockExplorerUrls,
               },
             ],
           });
@@ -112,6 +124,6 @@ export function useMonadWallet() {
     localStorage.removeItem("aegis_wallet");
   }, []);
 
-  const onMonad = chainId?.toLowerCase() === MONAD_TESTNET.chainIdHex.toLowerCase();
+  const onMonad = chainId?.toLowerCase() === ACTIVE_MONAD.chainIdHex.toLowerCase();
   return { address, chainId, onMonad, connecting, error, connect, disconnect };
 }

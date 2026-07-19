@@ -204,7 +204,7 @@ function Landing() {
             </Link>
 
             <Link
-              to="/app/chat"
+              to="/app/onchain"
               className="group relative inline-flex items-center gap-2.5"
               style={{
                 fontFamily: 'var(--font-display)',
@@ -221,7 +221,7 @@ function Landing() {
               }}
             >
               <PlayCircle className="w-4 h-4" strokeWidth={2} />
-              <span className="whitespace-nowrap">Ask The Analyst</span>
+              <span className="whitespace-nowrap">On-Chain Layer</span>
             </Link>
           </div>
 

@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Activity, MessageSquare, Radar, Wallet, LineChart, Waves } from "lucide-react";
+import { Activity, MessageSquare, Radar, Wallet, LineChart, Waves, Cpu } from "lucide-react";
 import { AegisLogo } from "./logo";
 import { cn } from "@/lib/utils";
 import { WalletConnectButton } from "./wallet-connect";
@@ -11,6 +11,7 @@ const items = [
   { to: "/app/tokens", label: "Token Explorer", icon: LineChart },
   { to: "/app/whales", label: "Whale Intelligence", icon: Waves },
   { to: "/app/wallet", label: "Wallet Intelligence", icon: Wallet },
+  { to: "/app/onchain", label: "On-Chain Layer", icon: Cpu },
   { to: "/app/chat", label: "Ask Aegis", icon: MessageSquare },
 ];
 
