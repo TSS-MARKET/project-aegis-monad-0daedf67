@@ -239,7 +239,7 @@ function WhalesPage() {
               <div className="mt-4 space-y-2.5">
                 {assetFlows.length === 0 ? (
                   <span className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "rgba(245,247,250,0.4)" }}>
-                    transfer_indexer_not_connected
+                    warming up · awaiting next Monad sample
                   </span>
                 ) : assetFlows.map((f) => {
                   const buyPct = f.total > 0 ? (f.buy / f.total) * 100 : 0;
