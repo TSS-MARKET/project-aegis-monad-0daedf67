@@ -26,8 +26,6 @@ function OpportunitiesPage() {
             <Skeleton key={i} className="h-64 rounded-xl" />
           ))}
         </div>
-      ) : !q.data.ok ? (
-        <div className="text-sm text-destructive">Failed: {q.data.error}</div>
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {q.data.data.opportunities.map((o, i) => (
