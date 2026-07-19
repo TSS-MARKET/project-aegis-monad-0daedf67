@@ -190,7 +190,7 @@ function OnChainPage() {
             <div className="text-sm mt-1" style={{ color: "rgba(245,247,250,0.65)" }}>Aegis is non-custodial. Read-only until you sign a transaction.</div>
           </div>
           <button
-            onClick={connect}
+            onClick={() => connect()}
             disabled={connecting}
             className="cta-cyan rounded-[6px] px-4 py-2.5"
             style={{ fontFamily: "var(--font-display)", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase" }}
