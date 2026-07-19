@@ -133,7 +133,7 @@ function Landing() {
       />
 
       <header className="relative mx-auto flex max-w-[1560px] items-center justify-between px-6 md:px-10 py-3 md:py-4">
-        <AegisLogo />
+        <Link to="/" aria-label="Aegis home"><AegisLogo /></Link>
         <div className="flex items-center gap-3">
           <WalletConnectButton compact />
         </div>
