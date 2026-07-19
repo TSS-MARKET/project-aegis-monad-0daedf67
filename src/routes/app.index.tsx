@@ -210,6 +210,9 @@ function DashboardPage() {
         loading={feed.isLoading}
       />
 
+      {/* Live on-chain events — real Monad RPC, real tx hashes, real explorer links */}
+      <LiveChainPanel data={chain.data} loading={chain.isLoading} />
+
       {/* Row: AI brief (wider) + narrative rotation */}
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <BriefPanel state={brief} />
