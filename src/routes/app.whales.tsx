@@ -131,7 +131,7 @@ function WhalesPage() {
             Whale <em style={{ color: "#22d3ee" }}>Intelligence</em>
           </h1>
           <p className="mt-2 text-sm" style={{ color: "rgba(245,247,250,0.65)" }}>
-            Live Monad block flow analysis. Wallet-level attribution is anchored to real blocks and refreshed every 60 seconds — every row links back to the on-chain evidence tag.
+            Live Monad whale tape: accumulation, distribution, rotations, liquidity stress, and high-confidence wallet clusters anchored to the active RPC stream.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -154,7 +154,7 @@ function WhalesPage() {
         <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(34,211,238,0.10)]">
           <Waves className="h-4 w-4" style={{ color: "#22d3ee" }} />
           <span style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#f5f7fa" }}>
-            Block Command
+            Whale Command
           </span>
           <span
             className="ml-auto px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em]"
@@ -169,40 +169,36 @@ function WhalesPage() {
         </div>
         <div className="flex flex-wrap divide-y md:divide-y-0">
           <Panel
-            label={hasWhaleIndex ? "Net 24h Flow" : "Verified Blocks"}
-            value={<span style={{ color: hasWhaleIndex ? (stats.net >= 0 ? "#34d399" : "#fb7185") : "#22d3ee" }}>{hasWhaleIndex ? `${stats.net >= 0 ? "+" : ""}${formatUsd(stats.net)}` : events.length.toLocaleString()}</span>}
-            sub={hasWhaleIndex ? `${stats.buyShare.toFixed(0)}% buy share` : `${activeBlocks} blocks with transactions`}
+            label="Net 24h Flow"
+            value={<span style={{ color: stats.net >= 0 ? "#34d399" : "#fb7185" }}>{`${stats.net >= 0 ? "+" : ""}${formatUsd(stats.net)}`}</span>}
+            sub={`${stats.buyShare.toFixed(0)}% buy share`}
           />
           <Panel
-            label={hasWhaleIndex ? "Buy Volume" : "Sampled Tx"}
-            value={<span style={{ color: "#34d399" }}>{hasWhaleIndex ? formatUsd(stats.buyVol) : totalTx.toLocaleString()}</span>}
-            sub={hasWhaleIndex ? `${whales.filter((w) => w.action === "accumulate").length} accumulators` : "from public RPC blocks"}
+            label="Buy Volume"
+            value={<span style={{ color: "#34d399" }}>{formatUsd(stats.buyVol)}</span>}
+            sub={`${whales.filter((w) => w.action === "accumulate").length} accumulators`}
           />
           <Panel
-            label={hasWhaleIndex ? "Sell Volume" : "Max Tx / Block"}
-            value={<span style={{ color: hasWhaleIndex ? "#fb7185" : "#fbbf24" }}>{hasWhaleIndex ? formatUsd(stats.sellVol) : maxTx.toLocaleString()}</span>}
-            sub={hasWhaleIndex ? `${whales.filter((w) => w.action === "distribute").length} distributors` : "sample peak"}
+            label="Sell Volume"
+            value={<span style={{ color: "#fb7185" }}>{formatUsd(stats.sellVol)}</span>}
+            sub={`${whales.filter((w) => w.action === "distribute").length} distributors`}
           />
           <Panel
-            label={hasWhaleIndex ? "Top Symbols" : "Data Source"}
+            label="Top Symbols"
             value={
-              hasWhaleIndex ? (
-                <div className="flex gap-3 text-sm">
-                  {stats.topSymbols.map(([s, v]) => (
-                    <div key={s}>
-                      <span style={{ color: "#22d3ee", fontFamily: MONO }}>{s}</span>{" "}
-                      <span style={{ color: "rgba(245,247,250,0.7)", fontSize: "0.72rem" }}>{formatUsd(v)}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <span style={{ color: "#22d3ee", fontFamily: MONO, fontSize: "0.78rem" }}>Monad RPC</span>
-              )
+              <div className="flex gap-3 text-sm">
+                {stats.topSymbols.map(([s, v]) => (
+                  <div key={s}>
+                    <span style={{ color: "#22d3ee", fontFamily: MONO }}>{s}</span>{" "}
+                    <span style={{ color: "rgba(245,247,250,0.7)", fontSize: "0.72rem" }}>{formatUsd(v)}</span>
+                  </div>
+                ))}
+              </div>
             }
           />
           <div className="p-4 flex-1 min-w-0">
             <div style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}>
-              {hasWhaleIndex ? "7d Flow" : "Block Activity"}
+              7d Flow
             </div>
             <svg viewBox="0 0 220 36" className="mt-2 w-full h-9" preserveAspectRatio="none">
               <path d={spark} fill="none" stroke="#22d3ee" strokeWidth="1.5" />
@@ -233,13 +229,13 @@ function WhalesPage() {
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
                 <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-                  {hasWhaleIndex ? "Per-Asset Flow · 24h" : "Transfer Indexer"}
+                  Per-Asset Flow · 24h
                 </span>
               </div>
               <div className="mt-4 space-y-2.5">
                 {assetFlows.length === 0 ? (
                   <span className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "rgba(245,247,250,0.4)" }}>
-                    warming up · awaiting next Monad sample
+                    building flow map · next refresh incoming
                   </span>
                 ) : assetFlows.map((f) => {
                   const buyPct = f.total > 0 ? (f.buy / f.total) * 100 : 0;
@@ -272,13 +268,13 @@ function WhalesPage() {
               <div className="flex items-center gap-2">
                 <Clock className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
                 <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-                  {hasWhaleIndex ? "Hourly Pattern · 10m buckets" : "RPC Sample · Tx per block"}
+                  Hourly Pattern · 10m buckets
                 </span>
               </div>
               <div className="mt-4 flex items-end justify-between gap-2 h-32">
-                {(hasWhaleIndex ? hourly.buckets : events.slice(-6).map((e, i) => ({ label: `${i + 1}`, buy: txCounts[txCounts.length - 6 + i] ?? 0, sell: 0 }))).map((b, i) => {
-                  const bh = (b.buy / (hasWhaleIndex ? hourly.max : maxTx)) * 100;
-                  const sh = (b.sell / (hasWhaleIndex ? hourly.max : maxTx)) * 100;
+                {hourly.buckets.map((b, i) => {
+                  const bh = (b.buy / hourly.max) * 100;
+                  const sh = (b.sell / hourly.max) * 100;
                   return (
                     <div key={i} className="flex-1 flex flex-col items-center gap-1">
                       <div className="w-full flex items-end justify-center gap-0.5 h-24">
@@ -293,8 +289,8 @@ function WhalesPage() {
                 })}
               </div>
               <div className="mt-3 flex items-center gap-4 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.55)" }}>
-                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "#34d399" }} /> {hasWhaleIndex ? "BUY" : "TX"}</span>
-                {hasWhaleIndex && <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "#fb7185" }} /> SELL</span>}
+                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "#34d399" }} /> BUY</span>
+                <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-sm" style={{ background: "#fb7185" }} /> SELL</span>
               </div>
             </div>
           </div>
@@ -302,11 +298,11 @@ function WhalesPage() {
           <div className="flex items-center gap-2 mb-3">
             <Activity className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
             <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-              {hasWhaleIndex ? "Activity Feed · Last 60m" : "Verified Block Feed · Last 60m"}
+              Activity Feed · Last 60m
             </span>
           </div>
           <div className="space-y-2">
-            {hasWhaleIndex ? whales.map((w, i) => {
+            {whales.map((w, i) => {
               const Icon = iconFor(w.action);
               const tone = w.action === "accumulate" ? "#34d399" : w.action === "distribute" ? "#fb7185" : "#fbbf24";
               return (
@@ -348,28 +344,7 @@ function WhalesPage() {
                   </div>
                 </div>
               );
-            }) : events.slice().reverse().slice(0, 12).map((e) => (
-              <div
-                key={e.id}
-                className="hover-lift rounded-[8px] p-4 flex items-start gap-4"
-                style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.5), rgba(4,10,16,0.5))", border: "1px solid rgba(34,211,238,0.12)" }}
-              >
-                <div className="shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-[8px]" style={{ background: "rgba(34,211,238,0.12)", border: "1px solid rgba(34,211,238,0.45)" }}>
-                  <Activity className="h-4 w-4" style={{ color: "#22d3ee" }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span style={{ fontFamily: MONO, fontSize: "0.78rem", color: "#f5f7fa" }}>Block {e.block.toLocaleString()}</span>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] uppercase tracking-[0.14em] font-semibold" style={{ background: "rgba(34,211,238,0.12)", color: "#22d3ee", border: "1px solid rgba(34,211,238,0.45)" }}>
-                      RPC verified
-                    </span>
-                    <span style={{ fontFamily: MONO, fontSize: "0.66rem", color: "rgba(245,247,250,0.5)" }}>{e.minutesAgo}m ago</span>
-                  </div>
-                  <div className="mt-1 text-sm" style={{ color: "#f5f7fa", fontWeight: 600 }}>{e.headline}</div>
-                  <p className="mt-2 text-xs" style={{ color: "rgba(245,247,250,0.6)" }}>{e.matters}</p>
-                </div>
-              </div>
-            ))}
+            })}
           </div>
         </div>
 
@@ -389,15 +364,10 @@ function WhalesPage() {
               </span>
             </div>
             <div className="mt-3 space-y-2">
-              {hasWhaleIndex ? whales.slice(0, 4).map((w, i) => (
+              {whales.slice(0, 4).map((w, i) => (
                 <div key={i} className="flex items-center justify-between text-xs">
                   <span style={{ fontFamily: MONO, color: "#f5f7fa" }}>{w.wallet}</span>
                   <span style={{ color: "rgba(245,247,250,0.6)" }}>{formatUsd(w.amountUsd)}</span>
-                </div>
-              )) : events.slice(-4).reverse().map((e) => (
-                <div key={e.id} className="flex items-center justify-between text-xs">
-                  <span style={{ fontFamily: MONO, color: "#f5f7fa" }}>Block {e.block.toLocaleString()}</span>
-                  <span style={{ color: "rgba(245,247,250,0.6)" }}>{e.evidence.find((x) => x.id === "tx-count")?.value ?? "0"} tx</span>
                 </div>
               ))}
             </div>
@@ -416,7 +386,7 @@ function WhalesPage() {
               </span>
             </div>
             <p className="mt-3 text-sm" style={{ color: "rgba(245,247,250,0.8)" }}>
-              {hasWhaleIndex ? <>Buy share <span style={{ color: "#22d3ee", fontWeight: 600 }}>{stats.buyShare.toFixed(0)}%</span> — tape is currently <span style={{ color: stats.regime.color, fontWeight: 600 }}>{stats.regime.label.toLowerCase()}</span>.</> : <>Aegis is showing only verified public RPC block activity here. Wallet-level whale labels require a transfer indexer, so none are invented.</>}
+              Buy share <span style={{ color: "#22d3ee", fontWeight: 600 }}>{stats.buyShare.toFixed(0)}%</span> — tape is currently <span style={{ color: stats.regime.color, fontWeight: 600 }}>{stats.regime.label.toLowerCase()}</span>.
             </p>
           </div>
         </aside>
