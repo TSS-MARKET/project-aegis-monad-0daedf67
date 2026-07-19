@@ -243,7 +243,7 @@ function Landing() {
             }}
           >
             The alpha era of insider Telegrams is dying.
-            <span style={{ color: "#f5f7fa" }}> Monad deserves a public analyst.</span>
+            <span className="gl-manifesto-shine" style={{ fontWeight: 500 }}> Monad deserves a public analyst.</span>
           </div>
         </div>
 
@@ -405,11 +405,18 @@ function Landing() {
                   <span className="relative">Read Today's Digest</span>
                   <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
                 </Link>
-                <div className="flex items-center gap-6">
-                  {[{k:"45m",v:"saved / day"},{k:"1m",v:"to read"},{k:"24/7",v:"never sleeps"}].map((s)=>(
-                    <div key={s.k} className="flex items-baseline gap-2">
-                      <span className="gl-num" style={{ fontSize: "1.7rem", color: "#22d3ee" }}>{s.k}</span>
-                      <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.v}</span>
+                <div className="flex flex-wrap items-stretch gap-3">
+                  {[
+                    { k: "45", unit: "min", v: "saved every morning" },
+                    { k: "60", unit: "sec", v: "to read the brief" },
+                    { k: "24", unit: "/7", v: "Aegis never sleeps" },
+                  ].map((s) => (
+                    <div key={s.k} className="gl-stat-pod group flex flex-col justify-between min-w-[9rem]">
+                      <div className="flex items-baseline gap-1">
+                        <span className="gl-num transition-all duration-500 group-hover:scale-110 origin-left" style={{ fontSize: "2.4rem", color: "#22d3ee", lineHeight: 1, textShadow: "0 0 24px rgba(34,211,238,0.35)" }}>{s.k}</span>
+                        <span className="gl-num" style={{ fontSize: "1rem", color: "rgba(103,232,249,0.85)", letterSpacing: "0.02em" }}>{s.unit}</span>
+                      </div>
+                      <span className="mt-1.5" style={{ fontFamily: MONO, fontSize: "0.58rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{s.v}</span>
                     </div>
                   ))}
                 </div>
