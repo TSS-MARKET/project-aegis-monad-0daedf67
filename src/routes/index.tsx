@@ -18,7 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
-// demo tour buttons removed from landing per design
+import { DemoModeButton } from "@/components/aegis/demo-mode";
 import { WalletGuardian } from "@/components/aegis/wallet-guardian";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
@@ -109,6 +109,7 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
+          <div className="hidden md:block"><DemoModeButton variant="premium" /></div>
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
@@ -236,6 +237,7 @@ function Landing() {
               <span className="relative whitespace-nowrap">Launch Dashboard</span>
               <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
+            <DemoModeButton variant="premium" />
           </div>
 
           {/* Manifesto */}
