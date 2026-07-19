@@ -23,6 +23,8 @@ export type LiveReplayWindow = {
   error?: string;
 };
 
+let lastReplayCache: LiveReplayWindow | null = null;
+
 async function rpcBatch<T>(url: string, calls: { method: string; params?: unknown[] }[]) {
   const res = await fetch(url, {
     method: "POST",
@@ -145,12 +147,30 @@ async function buildFromRpc(url: string, chainName: string, hours: 1 | 6 | 24, l
 export async function getLiveMonadReplayWindow(hours: 1 | 6 | 24 = 6, limit = 160): Promise<LiveReplayWindow> {
   const primary = ACTIVE_MONAD;
   const fallback = primary.chainIdDec === MONAD_MAINNET.chainIdDec ? MONAD_TESTNET : MONAD_MAINNET;
+  if (
+    lastReplayCache &&
+    lastReplayCache.windowMs === hours * 60 * 60 * 1000 &&
+    Date.now() - new Date(lastReplayCache.generatedAt).getTime() < 25_000
+  ) {
+    return lastReplayCache;
+  }
   try {
-    return await buildFromRpc(primary.rpcUrls[0], primary.chainName, hours, limit);
+    const live = await buildFromRpc(primary.rpcUrls[0], primary.chainName, hours, limit);
+    lastReplayCache = live;
+    return live;
   } catch (primaryError) {
     try {
-      return await buildFromRpc(fallback.rpcUrls[0], `${fallback.chainName} fallback`, hours, limit);
+      const live = await buildFromRpc(fallback.rpcUrls[0], `${fallback.chainName} fallback`, hours, limit);
+      lastReplayCache = live;
+      return live;
     } catch {
+      if (lastReplayCache?.events.length) {
+        return {
+          ...lastReplayCache,
+          source: `${lastReplayCache.source} · cached live sample`,
+          error: (primaryError as Error).message || "Monad RPC unavailable",
+        };
+      }
       const now = Date.now();
       return {
         startTs: now - hours * 60 * 60 * 1000,
