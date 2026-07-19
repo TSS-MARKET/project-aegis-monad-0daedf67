@@ -93,7 +93,7 @@ function WhalesPage() {
     return { buckets, max };
   }, [whales]);
 
-  // Fake 7d sparkline off deterministic totals
+  // Decorative activity sparkline from the current verified sample totals.
   const spark = useMemo(() => {
     const w = 220, h = 36;
     const pts = Array.from({ length: 7 }, (_, i) => {
@@ -137,7 +137,7 @@ function WhalesPage() {
         <div className="flex items-center gap-3 px-4 py-3 border-b border-[rgba(34,211,238,0.10)]">
           <Waves className="h-4 w-4" style={{ color: "#22d3ee" }} />
           <span style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#f5f7fa" }}>
-            Whale Command
+            Block Command
           </span>
           <span
             className="ml-auto px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.14em]"
@@ -216,7 +216,7 @@ function WhalesPage() {
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-3.5 w-3.5" style={{ color: "#22d3ee" }} />
                 <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-                  {hasWhaleIndex ? "Per-Asset Flow · 24h" : "Indexed Whale Flow"}
+                  {hasWhaleIndex ? "Per-Asset Flow · 24h" : "Transfer Indexer"}
                 </span>
               </div>
               <div className="mt-4 space-y-2.5">

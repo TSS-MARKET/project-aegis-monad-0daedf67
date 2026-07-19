@@ -184,11 +184,11 @@ function confidenceFor(components: ScoreComponent[], evidenceCount: number): num
 }
 
 function riskFor(t: MonadToken, s: EventSignals): number {
-  const whale = t.whaleConcentration * 5; // 0..5
+  const concentration = t.whaleConcentration * 5; // 0..5 for indexed/fallback data; live API rows default to 0.
   const liqRisk = t.liquidityUsd < 5_000_000 ? 2 : t.liquidityUsd < 15_000_000 ? 1 : 0;
   const vol = Math.min(3, Math.abs(t.change24h) / 6);
   const evtStress = clamp((s.coordinatedCount * 1 + s.unusualCount * 0.5), 0, 2);
-  return clamp(Math.round(whale + liqRisk + vol + evtStress) / 2, 1, 10);
+  return clamp(Math.round(concentration + liqRisk + vol + evtStress) / 2, 1, 10);
 }
 
 // ---------------------------------------------------------------------------
@@ -211,7 +211,7 @@ function catalystsFor(t: MonadToken, s: EventSignals): string[] {
 function risksFor(t: MonadToken, s: EventSignals): string[] {
   const out: string[] = [];
   if (t.whaleConcentration > 0.5)
-    out.push(`Whale concentration ${Math.round(t.whaleConcentration * 100)}% — supply overhang`);
+    out.push(`Holder concentration ${Math.round(t.whaleConcentration * 100)}% — supply overhang`);
   if (s.sellPressureUsd > 200_000)
     out.push(`${usd(s.sellPressureUsd)} distribution logged in the last 6h`);
   if (s.liquidityRemoveUsd > 150_000)

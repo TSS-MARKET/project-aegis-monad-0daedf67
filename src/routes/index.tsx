@@ -283,7 +283,7 @@ function Landing() {
                 color: "rgba(245,247,250,0.5)",
               }}
             >
-              MONAD · TESTNET
+              {state.source?.includes("fallback") ? "MONAD · FALLBACK" : "MONAD · LIVE"}
             </span>
           </div>
 
