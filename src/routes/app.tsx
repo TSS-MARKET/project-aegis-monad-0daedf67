@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { SidebarNav } from "@/components/aegis/sidebar-nav";
 import { MobileBottomNav } from "@/components/aegis/mobile-bottom-nav";
 import { AegisLogo } from "@/components/aegis/logo";
+import { DemoModeButton } from "@/components/aegis/demo-mode";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/app")({
@@ -26,6 +27,7 @@ function AppShell() {
         <Outlet />
       </main>
       <MobileBottomNav />
+      <DemoModeButton />
     </div>
   );
 }
