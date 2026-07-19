@@ -724,19 +724,25 @@ function Landing() {
           <h2
             className="mt-8 max-w-[1100px]"
             style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 800,
-              fontSize: "clamp(1.75rem, 4.6vw, 3.6rem)",
-              lineHeight: 1.08,
-              letterSpacing: "0.005em",
-              textTransform: "uppercase",
+              fontFamily: SERIF,
+              fontWeight: 400,
+              fontSize: "clamp(1.6rem, 3.6vw, 2.85rem)",
+              lineHeight: 1.15,
+              letterSpacing: "-0.022em",
               color: "#f5f7fa",
             }}
           >
-            <span className="block">Ethereum <span style={{ color: "rgba(245,247,250,0.55)" }}>priced people out.</span></span>
-            <span className="block mt-2">Solana <span style={{ color: "rgba(245,247,250,0.55)" }}>keeps breaking.</span></span>
+            <span className="block">
+              <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.14em", fontSize: "0.72em", textTransform: "uppercase", color: "#f5f7fa", marginRight: "0.5em" }}>Ethereum</span>
+              <em style={{ fontStyle: "italic", color: "rgba(245,247,250,0.55)" }}>priced people out.</em>
+            </span>
             <span className="block mt-3">
-              <em className="gl-hero__shimmer" style={{ fontStyle: "normal", fontFamily: "var(--font-display)", fontWeight: 900 }}>Monad is what came next.</em>
+              <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.14em", fontSize: "0.72em", textTransform: "uppercase", color: "#f5f7fa", marginRight: "0.5em" }}>Solana</span>
+              <em style={{ fontStyle: "italic", color: "rgba(245,247,250,0.55)" }}>keeps breaking.</em>
+            </span>
+            <span className="block mt-5" style={{ fontSize: "1.15em" }}>
+              <span className="gl-hero__shimmer" style={{ fontFamily: "var(--font-display)", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "0.78em", marginRight: "0.45em" }}>Monad</span>
+              <em style={{ fontStyle: "italic", color: "#f5f7fa" }}>is what came next.</em>
             </span>
           </h2>
           <div className="mt-6 h-px w-40" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.6), transparent)" }} />
