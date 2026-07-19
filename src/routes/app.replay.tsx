@@ -165,21 +165,11 @@ function ReplayPage() {
   }, [events, filter]);
   const streamEvents = useMemo(() => filtered.filter((e) => e.ts <= cursorTs), [filtered, cursorTs]);
 
-  // While playback is running, the inspector follows the newest revealed event
-  // so the page behaves like a real replay feed instead of a static archive.
-  useEffect(() => {
-    if (!streamEvents.length) {
-      if (playing) setSelectedId(null);
-      return;
-    }
-    const newest = streamEvents[streamEvents.length - 1];
-    const selectedStillVisible = selectedId ? streamEvents.some((e) => e.id === selectedId) : false;
-    if ((playing || !selectedStillVisible) && selectedId !== newest.id) setSelectedId(newest.id);
-  }, [playing, selectedId, streamEvents]);
+  const liveSelectedId = playing ? (streamEvents[streamEvents.length - 1]?.id ?? selectedId) : selectedId;
 
   const selected = useMemo(
-    () => streamEvents.find((e) => e.id === selectedId) ?? streamEvents[streamEvents.length - 1] ?? null,
-    [selectedId, streamEvents],
+    () => streamEvents.find((e) => e.id === liveSelectedId) ?? streamEvents[streamEvents.length - 1] ?? null,
+    [liveSelectedId, streamEvents],
   );
 
   return (
@@ -432,7 +422,7 @@ function ReplayPage() {
           </div>
           <div className="max-h-[560px] overflow-y-auto divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
             {streamEvents.slice().reverse().map((e) => (
-              <EventRow key={e.id} e={e} selected={e.id === selectedId} onSelect={() => setSelectedId(e.id)} />
+              <EventRow key={e.id} e={e} selected={e.id === liveSelectedId} onSelect={() => setSelectedId(e.id)} />
             ))}
             {!streamEvents.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
