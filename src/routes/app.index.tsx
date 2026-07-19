@@ -10,6 +10,7 @@ import {
 import { formatUsd } from "@/lib/monad-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NetworkStatus } from "@/components/aegis/network-status";
+import { VerifyButton } from "@/components/aegis/verify-button";
 import {
   TrendingUp,
   TrendingDown,
@@ -286,12 +287,13 @@ function HeadlineHero({ data, loading }: { data: HeadlineEvent | null; loading: 
             </Link>
             <Link
               to="/app/chat"
-              search={{ q: `Explain: ${data.headline}. Why does it matter and what should we watch next?` } as never}
+              search={{ q: `Verify event E-${data.id} — ${data.headline}. Walk me through the evidence.`, eventId: data.id } as never}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-[6px] text-xs hover-lift"
               style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(245,247,250,0.85)" }}
             >
               <MessageSquare className="h-3.5 w-3.5" /> Explain with Aegis
             </Link>
+            <VerifyButton event={data} size="sm" variant="solid" />
           </div>
         </>
       )}
