@@ -1,5 +1,5 @@
 import { useMonadWallet, short, isInIframe, topLevelUrl, eth } from "@/lib/monad-wallet";
-import { Wallet, LogOut, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
+import { Wallet, LogOut, AlertTriangle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function WalletConnectButton({ compact = false }: { compact?: boolean }) {
@@ -31,8 +31,8 @@ export function WalletConnectButton({ compact = false }: { compact?: boolean }) 
           title="Wallets block dApps loaded in iframes. Opens Aegis in a new tab so your wallet can connect."
         >
           <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)" }} />
-          <ExternalLink className="w-3.5 h-3.5" />
-          <span className="relative">Open to Connect</span>
+          <Wallet className="w-3.5 h-3.5" />
+          <span className="relative">Connect Wallet</span>
         </a>
       );
     }
