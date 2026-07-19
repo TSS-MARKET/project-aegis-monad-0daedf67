@@ -1,30 +1,83 @@
-import { useMonadWallet, short } from "@/lib/monad-wallet";
-import { Wallet, LogOut, AlertTriangle, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useMonadWallet, short, isInIframe, topLevelUrl, eth } from "@/lib/monad-wallet";
+import { Wallet, LogOut, AlertTriangle, Loader2, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function WalletConnectButton({ compact = false }: { compact?: boolean }) {
   const { address, onMonad, connecting, error, connect, disconnect } = useMonadWallet();
   const [open, setOpen] = useState(false);
+  const [framed, setFramed] = useState(false);
+  const [hasProvider, setHasProvider] = useState(true);
+  useEffect(() => {
+    setFramed(isInIframe());
+    setHasProvider(!!eth());
+  }, []);
 
   if (!address) {
+    if (framed) {
+      return (
+        <a
+          href={topLevelUrl()}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative inline-flex items-center gap-2 rounded-[6px] cta-cyan overflow-hidden"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: compact ? "0.66rem" : "0.72rem",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.16em",
+            padding: compact ? "0.55rem 0.85rem" : "0.7rem 1rem",
+          }}
+          title="Wallets block dApps loaded in iframes. Opens Aegis in a new tab so your wallet can connect."
+        >
+          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)" }} />
+          <ExternalLink className="w-3.5 h-3.5" />
+          <span className="relative">Open to Connect</span>
+        </a>
+      );
+    }
+    if (!hasProvider) {
+      return (
+        <a
+          href="https://metamask.io/download/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative inline-flex items-center gap-2 rounded-[6px] cta-cyan overflow-hidden"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: compact ? "0.66rem" : "0.72rem",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.16em",
+            padding: compact ? "0.55rem 0.85rem" : "0.7rem 1rem",
+          }}
+        >
+          <Wallet className="w-3.5 h-3.5" />
+          <span className="relative">Install Wallet</span>
+        </a>
+      );
+    }
     return (
-      <button
-        onClick={connect}
-        disabled={connecting}
-        className="group relative inline-flex items-center gap-2 rounded-[6px] cta-cyan overflow-hidden disabled:opacity-70"
-        style={{
-          fontFamily: "var(--font-display)",
-          fontSize: compact ? "0.66rem" : "0.72rem",
-          fontWeight: 800,
-          textTransform: "uppercase",
-          letterSpacing: "0.16em",
-          padding: compact ? "0.55rem 0.85rem" : "0.7rem 1rem",
-        }}
-      >
-        <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)" }} />
-        {connecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wallet className="w-3.5 h-3.5" />}
-        <span className="relative">{connecting ? "Connecting" : "Connect Wallet"}</span>
-      </button>
+      <div className="flex flex-col items-end gap-1">
+        <button
+          onClick={connect}
+          disabled={connecting}
+          className="group relative inline-flex items-center gap-2 rounded-[6px] cta-cyan overflow-hidden disabled:opacity-70"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: compact ? "0.66rem" : "0.72rem",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.16em",
+            padding: compact ? "0.55rem 0.85rem" : "0.7rem 1rem",
+          }}
+        >
+          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)" }} />
+          {connecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wallet className="w-3.5 h-3.5" />}
+          <span className="relative">{connecting ? "Connecting" : "Connect Wallet"}</span>
+        </button>
+        {error && <span className="text-[10px] text-amber-300 max-w-[220px] text-right leading-tight">{error}</span>}
+      </div>
     );
   }
 
