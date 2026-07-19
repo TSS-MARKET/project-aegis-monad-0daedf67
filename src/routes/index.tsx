@@ -84,7 +84,7 @@ function Landing() {
   const monadTokens = state.tokens.filter((t) => t.chain === "Monad");
   const majors = state.tokens.filter((t) => t.chain === "External").slice(0, 3);
   return (
-    <div className="min-h-screen relative overflow-x-clip">
+    <div className="min-h-screen relative overflow-x-clip" style={{ background: "#000" }}>
       {/* Ambient */}
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-70" />
       <div
@@ -117,9 +117,20 @@ function Landing() {
 
       {/* HERO */}
       <section
-        className="relative mx-auto max-w-[1560px] px-6 md:px-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start pt-2 md:pt-6 pb-24"
-        style={{ minHeight: "82vh" }}
+        className="relative mx-auto w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start"
+        style={{
+          minHeight: "88vh",
+          maxWidth: "min(1560px, 96vw)",
+          paddingLeft: "clamp(0.75rem, 4vw, 3rem)",
+          paddingRight: "clamp(0.75rem, 4vw, 3rem)",
+          paddingTop: "clamp(0.5rem, 2vh, 2rem)",
+          paddingBottom: "clamp(0.5rem, 2vh, 3rem)",
+          background: "#000",
+        }}
       >
+        {/* Glavior ambient layers */}
+        <div aria-hidden className="gl-hero__aurora pointer-events-none absolute inset-0" />
+        <div aria-hidden className="gl-hero__scan pointer-events-none absolute inset-x-0 top-0 h-px" />
         {/* Ambient hero motion */}
         <div aria-hidden className="gl-hero__grid" />
         <div aria-hidden className="gl-hero__orb" style={{ width: 520, height: 520, left: "-8%", top: "-10%", background: "radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%)" }} />
