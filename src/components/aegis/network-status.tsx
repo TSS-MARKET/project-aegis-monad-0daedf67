@@ -14,16 +14,13 @@ export function NetworkStatus({ compact = false }: { compact?: boolean }) {
     staleTime: 6_000,
   });
   const d = q.data;
-  const ok = !!d && d.ok !== false && "blockNumber" in d;
+  const live = d && "blockNumber" in d ? d : null;
+  const ok = !!live;
   const dot = ok ? "#22d3ee" : "#fb7185";
-  const label = ok
-    ? `${d!.chainName}`
-    : d
-      ? "RPC unreachable"
-      : "Probing Monad RPC";
-  const block = ok ? "#" + d!.blockNumber.toLocaleString() : "—";
-  const gas = ok && d!.gasPriceGwei != null ? d!.gasPriceGwei.toFixed(2) + " gwei" : "—";
-  const lat = ok ? d!.latencyMs + "ms" : "—";
+  const label = ok ? live!.chainName : d ? "RPC unreachable" : "Probing Monad RPC";
+  const block = ok ? "#" + live!.blockNumber.toLocaleString() : "—";
+  const gas = ok && live!.gasPriceGwei != null ? live!.gasPriceGwei.toFixed(2) + " gwei" : "—";
+  const lat = ok ? live!.latencyMs + "ms" : "—";
   return (
     <div
       className="inline-flex items-center gap-2 md:gap-3 px-2.5 py-1.5 rounded-[6px]"
@@ -36,7 +33,7 @@ export function NetworkStatus({ compact = false }: { compact?: boolean }) {
         textTransform: "uppercase",
         color: "rgba(245,247,250,0.75)",
       }}
-      title={ok ? `${d!.chainName} · block ${d!.blockNumber} · ${lat}` : "Monad RPC unavailable"}
+      title={ok ? `${live!.chainName} · block ${live!.blockNumber} · ${lat}` : "Monad RPC unavailable"}
     >
       <span className="relative inline-flex h-2 w-2">
         <span className="absolute inset-0 rounded-full animate-ping" style={{ background: dot, opacity: 0.5 }} />
