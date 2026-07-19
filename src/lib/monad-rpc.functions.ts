@@ -39,9 +39,9 @@ export const getMonadNetworkStatus = createServerFn({ method: "GET" }).handler(a
   const active = ACTIVE_MONAD;
   // Try active first, fall back to the other network so the strip is never blank.
   const primary = await probe(active.rpcUrls[0], active.chainName);
-  if (primary) return { ok: true as const, chainIdDec: active.chainIdDec, ...primary, generatedAt: Date.now() };
+  if (primary) return { chainIdDec: active.chainIdDec, ...primary, generatedAt: Date.now() };
   const fallback = active.chainIdDec === MONAD_MAINNET.chainIdDec ? MONAD_TESTNET : MONAD_MAINNET;
   const alt = await probe(fallback.rpcUrls[0], fallback.chainName + " (fallback)");
-  if (alt) return { ok: true as const, chainIdDec: fallback.chainIdDec, ...alt, generatedAt: Date.now() };
+  if (alt) return { chainIdDec: fallback.chainIdDec, ...alt, generatedAt: Date.now() };
   return { ok: false as const, error: "Monad RPC unreachable", generatedAt: Date.now() };
 });
