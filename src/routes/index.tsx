@@ -19,7 +19,6 @@ import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
 import { DemoModeButton } from "@/components/aegis/demo-mode";
-import { LiveFirehose } from "@/components/aegis/live-firehose";
 import { WalletGuardian } from "@/components/aegis/wallet-guardian";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
@@ -111,6 +110,7 @@ function Landing() {
           <a href="#monad" className="hover:text-foreground transition-colors">Monad</a>
         </nav>
         <div className="flex items-center gap-3">
+          <DemoModeButton variant="inline" />
           <div className="hidden sm:block"><WalletConnectButton compact /></div>
         </div>
       </header>
