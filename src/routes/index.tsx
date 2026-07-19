@@ -233,7 +233,7 @@ function Landing() {
             <button
               type="button"
               onClick={() => startAegisDemo()}
-              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] cta-tour"
+              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: "0.78rem",
@@ -242,6 +242,9 @@ function Landing() {
                 letterSpacing: "0.18em",
                 color: "#eafcff",
                 padding: "1rem 1.5rem",
+                background: "linear-gradient(180deg, rgba(10,22,32,0.9), rgba(4,12,18,0.9))",
+                border: "1px solid rgba(34,211,238,0.45)",
+                boxShadow: "0 10px 40px rgba(34,211,238,0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
               aria-label="Play the 30 second judge tour"
             >
