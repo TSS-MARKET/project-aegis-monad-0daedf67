@@ -12,6 +12,7 @@ import {
   Compass,
   MessageSquare,
 } from "lucide-react";
+import { Coffee, ShoppingCart, Send, Wallet, Bell, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
@@ -224,8 +225,8 @@ function Landing() {
             </Link>
           </div>
 
-          <a
-            href="#proof"
+          <Link
+            to="/app/radar"
             className="group inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full"
             style={{
               fontFamily: MONO,
@@ -243,7 +244,7 @@ function Landing() {
             />
             <span>MARKET RADAR</span>
             <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
-          </a>
+          </Link>
 
           {/* Manifesto */}
           <div
