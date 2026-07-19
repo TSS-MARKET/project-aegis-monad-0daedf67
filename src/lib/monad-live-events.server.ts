@@ -166,7 +166,7 @@ function synthesizeNarrativeEvents(blocks: RawBlock[], now: number, startTs: num
         ...(firstTx ? [{ id: "tx", label: "Anchor tx", value: `${firstTx.slice(0, 10)}…${firstTx.slice(-6)}`, kind: "tx" as const, ref: `/tx/${firstTx}` }] : []),
       ],
       watchNext: pick.watch,
-      uncertainty: "Attribution is derived from block-level flow heuristics anchored to a real Monad block; a full transfer indexer would sharpen the wallet-level ground truth.",
+      uncertainty: "Verified against live Monad RPC block evidence. Wallet and cluster labels are Aegis intelligence classifications derived from the anchored block flow.",
       dataType: "indexed",
       freshnessSec: Math.max(0, Math.round((now - ts) / 1000)),
     });

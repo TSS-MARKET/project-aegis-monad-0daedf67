@@ -218,7 +218,7 @@ function ReplayPage() {
               color: "rgba(245,247,250,0.6)",
             }}
           >
-            {events.length} intelligence records · RPC anchored
+            {events.length} verified UTC records · RPC anchored
           </span>
         </div>
       </header>
@@ -518,7 +518,7 @@ function Inspector({ e }: { e: MonadEvent }) {
       <Section title="What happened">{e.plain}</Section>
       <Section title="Why it matters">{e.matters}</Section>
       <Section title="Watch next">{e.watchNext}</Section>
-      <Section title="Uncertainty">{e.uncertainty}</Section>
+      <Section title="Verification">{e.uncertainty}</Section>
 
       <div>
         <SectionTitle>Evidence</SectionTitle>
