@@ -18,6 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { AegisLogo } from "@/components/aegis/logo";
 import { WalletConnectButton } from "@/components/aegis/wallet-connect";
 import { FloatingChat } from "@/components/aegis/floating-chat";
+import { LiveFirehose } from "@/components/aegis/live-firehose";
 import { getMarketState, formatUsd } from "@/lib/monad-data";
 import { useEffect, useState } from "react";
 
