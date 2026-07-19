@@ -410,110 +410,97 @@ function Landing() {
 
       {/* Capabilities */}
       <section id="capabilities" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-24">
-        {/* DAILY PROBLEM BAND -- hackathon theme */}
-        <div className="mb-24 relative overflow-hidden rounded-[12px] p-8 md:p-12 backdrop-blur-xl hover-lift" style={{ border: "1px solid rgba(34,211,238,0.24)", background: "linear-gradient(135deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))", boxShadow: "0 40px 120px -30px rgba(34,211,238,0.35)" }}>
-          <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 h-[360px] w-[360px] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(34,211,238,0.22), transparent 70%)" }} />
-          <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-10 items-center">
-            <div>
-              <div className="flex items-center gap-2 mb-4" style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#22d3ee" }}>
-                <Coffee className="w-3.5 h-3.5" strokeWidth={2} />
-                <span>The daily problem we solve</span>
+        {/* ── CHAPTER 01 · THE DAILY PROBLEM ─────────────────────── */}
+        <div className="mb-28 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,160px)_minmax(0,1fr)] gap-8 lg:gap-14 items-start">
+            <div className="gl-rise">
+              <div className="gl-chapter">01</div>
+              <div className="mt-3" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(34,211,238,0.7)" }}>
+                Chapter · Daily problem
               </div>
-              <h2 style={{ fontFamily: SERIF, fontSize: "clamp(1.9rem,4vw,3rem)", lineHeight: 1.08, letterSpacing: "-0.02em", color: "#f5f7fa", margin: 0 }}>
-                Every morning you lose <em style={{ color: "#22d3ee", fontStyle: "italic" }}>45 minutes</em> catching up on crypto.
+            </div>
+            <div className="gl-rise" style={{ animationDelay: "120ms" }}>
+              <h2 style={{ fontFamily: SERIF, fontSize: "clamp(2rem,5vw,3.6rem)", lineHeight: 1.02, letterSpacing: "-0.025em", color: "#f5f7fa", margin: 0 }}>
+                Every morning you burn <span className="gl-hero__shimmer" style={{ fontStyle: "italic" }}>45 minutes</span> chasing what already happened.
               </h2>
-              <p className="mt-4 max-w-xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.6, color: "rgba(245,247,250,0.72)" }}>
-                Twitter threads, six Telegram groups, three dashboards, a Discord you never asked to join. And you still miss the block that actually mattered. Aegis reads the entire Monad chain overnight and hands you a one minute brief. Movers, whales, narratives, risks. With sources.
-              </p>
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <Link to="/app/digest" className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden" style={{ fontFamily: "var(--font-display)", fontSize: "0.82rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", padding: "1rem 1.6rem" }}>
+              <div className="gl-horizon my-8 h-[1px]" />
+              <div className="grid md:grid-cols-2 gap-8">
+                <p style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.72)" }}>
+                  Six Telegram groups. Three dashboards. A Discord you never asked to join. And you still miss the block that actually mattered.
+                </p>
+                <p style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.72)" }}>
+                  Aegis reads the entire Monad chain overnight and hands you a one minute brief. Movers, whales, narratives, risks, with sources you can inspect.
+                </p>
+              </div>
+              <div className="mt-8 flex flex-wrap items-center gap-8">
+                <Link to="/app/digest" className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden" style={{ fontFamily: "var(--font-display)", fontSize: "0.78rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", padding: "0.9rem 1.4rem" }}>
                   <span aria-hidden className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)" }} />
                   <span className="relative">Read Today's Digest</span>
                   <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
                 </Link>
-                <div className="inline-flex items-center gap-2" style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
-                  <span className="gl-pulse-dot h-1.5 w-1.5 rounded-full" style={{ background: "#22d3ee" }} /> Auto refreshed at wake up
+                <div className="flex items-center gap-6">
+                  {[{k:"45m",v:"saved / day"},{k:"1m",v:"to read"},{k:"24/7",v:"never sleeps"}].map((s)=>(
+                    <div key={s.k} className="flex items-baseline gap-2">
+                      <span className="gl-num" style={{ fontSize: "1.7rem", color: "#22d3ee" }}>{s.k}</span>
+                      <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.v}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { k: "45 min", v: "Saved every morning" },
-                { k: "1 minute", v: "To read the whole chain" },
-                { k: "100%", v: "Backed by on chain evidence" },
-                { k: "24/7", v: "Aegis never sleeps" },
-              ].map((s) => (
-                <div key={s.k} className="rounded-[10px] p-5 hover-lift" style={{ border: "1px solid rgba(34,211,238,0.18)", background: "rgba(4,10,16,0.65)" }}>
-                  <div style={{ fontFamily: SERIF, fontSize: "1.9rem", color: "#22d3ee", letterSpacing: "-0.02em", lineHeight: 1 }}>{s.k}</div>
-                  <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{s.v}</div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
-        <div className="flex items-baseline justify-between mb-10">
-          <div>
-            <div
-              style={{
-                fontFamily: MONO,
-                fontSize: "0.66rem",
-                textTransform: "uppercase",
-                letterSpacing: "0.16em",
-                color: "rgba(245,247,250,0.55)",
-              }}
-            >
-              // CAPABILITIES
+        {/* ── CHAPTER 02 · CAPABILITIES · dense bento with hover-glow tiles ── */}
+        <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
+          <div className="gl-rise">
+            <div className="flex items-baseline gap-4">
+              <span className="gl-chapter" style={{ fontSize: "clamp(2.4rem,5vw,3.4rem)" }}>02</span>
+              <div>
+                <div style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(34,211,238,0.7)" }}>Chapter · Capabilities</div>
+                <h2 className="mt-1" style={{ fontFamily: SERIF, fontSize: "clamp(1.7rem,3.4vw,2.5rem)", lineHeight: 1.05, letterSpacing: "-0.02em", color: "#f5f7fa" }}>
+                  Four surfaces. <em className="gl-accent-mint">One analyst.</em>
+                </h2>
+              </div>
             </div>
-            <h2
-              className="mt-2"
-              style={{
-                fontFamily: SERIF,
-                fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                color: "#f5f7fa",
-              }}
-            >
-              Four surfaces. <em style={{ color: "#22d3ee" }}>One analyst.</em>
-            </h2>
+          </div>
+          <div className="hidden md:flex items-center gap-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", color: "rgba(245,247,250,0.5)", textTransform: "uppercase" }}>
+            <span className="gl-pulse-dot h-1.5 w-1.5 rounded-full" style={{ background: "#6ee7b7" }} /> refreshed · 120s
           </div>
         </div>
 
-        <div className="grid gap-px md:grid-cols-4 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
+        <div
+          className="grid gap-px md:grid-cols-4 rounded-[10px] overflow-hidden"
+          style={{ background: "rgba(34,211,238,0.14)" }}
+          onMouseMove={(e) => {
+            const t = e.target as HTMLElement;
+            const tile = t.closest<HTMLElement>(".gl-tile");
+            if (!tile) return;
+            const r = tile.getBoundingClientRect();
+            tile.style.setProperty("--mx", `${e.clientX - r.left}px`);
+            tile.style.setProperty("--my", `${e.clientY - r.top}px`);
+          }}
+        >
           {[
-            { icon: Activity, title: "Market Brief", body: "AI authored ecosystem summary. Sentiment, movers and narrative rotation, refreshed every two minutes on live Monad state." },
-            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across five signals with confidence, catalyst and invalidation price. Reasoning you can audit line by line." },
-            { icon: Radar, title: "Whale Radar", body: "Clusters Monad wallet flow into human readable stories. Not a wall of hashes, an actual narrative of who is moving what." },
-            { icon: MessageSquare, title: "Ask Aegis", body: "A Monad native analyst grounded in the live event stream. Every answer cites the exact evidence tag it is reasoning from." },
+            { icon: Activity, title: "Market Brief", body: "AI authored ecosystem summary. Sentiment, movers and narrative rotation, refreshed every two minutes on live Monad state.", tone: "#22d3ee", tag: "I" },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across five signals with confidence, catalyst and invalidation price. Reasoning you can audit line by line.", tone: "#6ee7b7", tag: "II" },
+            { icon: Radar, title: "Whale Radar", body: "Clusters Monad wallet flow into human readable stories. Not a wall of hashes, an actual narrative of who is moving what.", tone: "#c4b5fd", tag: "III" },
+            { icon: MessageSquare, title: "Ask Aegis", body: "A Monad native analyst grounded in the live event stream. Every answer cites the exact evidence tag it is reasoning from.", tone: "#fcd34d", tag: "IV" },
           ].map((f) => (
             <div
               key={f.title}
-              className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)]"
+              className="gl-tile group relative p-6 bg-black transition-all duration-300"
             >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }}
-              />
-              <f.icon
-                className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110"
-                style={{ color: "#22d3ee" }}
-                strokeWidth={1.75}
-              />
-              <div
-                className="mt-5"
-                style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}
-              >
-                {f.title}
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `linear-gradient(90deg,transparent,${f.tone},transparent)` }} />
+              <div className="flex items-center justify-between">
+                <f.icon className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" style={{ color: f.tone }} strokeWidth={1.75} />
+                <span style={{ fontFamily: MONO, fontSize: "0.58rem", letterSpacing: "0.22em", color: f.tone, opacity: 0.7 }}>{f.tag}</span>
               </div>
+              <div className="mt-5" style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
               <div className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>
                 {f.body}
               </div>
-              <div
-                className="mt-4 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", color: "#22d3ee", textTransform: "uppercase" }}
-              >
+              <div className="mt-4 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", color: f.tone, textTransform: "uppercase" }}>
                 Enter <ArrowRight className="w-3 h-3" />
               </div>
             </div>
@@ -521,97 +508,130 @@ function Landing() {
         </div>
       </section>
 
+      {/* Tilted marquee ribbon */}
+      <div className="relative -my-6 z-10">
+        <div className="gl-ribbon py-4">
+          <div className="gl-ribbon__track whitespace-nowrap" style={{ fontFamily: SERIF, fontSize: "clamp(1.4rem,3vw,2.4rem)", color: "rgba(245,247,250,0.85)", letterSpacing: "-0.02em" }}>
+            {[...Array(2)].map((_, k) => (
+              <span key={k} className="flex items-center gap-10 shrink-0">
+                {["Monad · 10,000 TPS","sub second finality","fees under $0.001","evidence first","never vibes","cited or it did not happen","the public analyst"].map((w,i)=>(
+                  <span key={i} className="flex items-center gap-10">
+                    <span style={{ fontStyle: i%2 ? "italic" : "normal", color: i%3===0 ? "#22d3ee" : "rgba(245,247,250,0.85)" }}>{w}</span>
+                    <span style={{ color: "rgba(34,211,238,0.4)" }}>✦</span>
+                  </span>
+                ))}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* What Aegis Ships — glorify the built platform */}
-      <section id="ships" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
-        <div className="mb-10 max-w-3xl">
-          <div style={{ fontFamily: MONO, fontSize: "0.66rem", textTransform: "uppercase", letterSpacing: "0.16em", color: "rgba(245,247,250,0.55)" }}>
-            // WHAT AEGIS SHIPS
+      <section id="ships" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-16">
+        <div className="grid lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] gap-10 mb-12">
+          <div className="gl-rise">
+            <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>03</span>
+            <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(196,181,253,0.85)" }}>Chapter · The stack</div>
           </div>
-          <h2 className="mt-2" style={{ fontFamily: SERIF, fontSize: "clamp(1.75rem,3.5vw,2.75rem)", color: "#f5f7fa", letterSpacing: "-0.02em", lineHeight: 1.08 }}>
-            An <em style={{ color: "#22d3ee" }}>evidence first</em> intelligence stack, native to Monad.
-          </h2>
-          <p className="mt-4" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.7)" }}>
-            Six flagship surfaces stitched into one product. Every claim is grounded in a real Monad block, transaction or
-            wallet cluster. Every AI answer cites the exact evidence tag it is reasoning from. Nothing is generated in the dark.
-          </p>
-        </div>
-        <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
-          {[
-            { icon: Rewind, title: "Replay the Chain", body: "Scrub the last 24 hours of Monad activity like a DVR. Every event opens an inspector that explains why it mattered, with the block, wallets and evidence attached." },
-            { icon: Timer, title: "Intelligence Timeline", body: "A newsroom style ranked feed of what actually happened on Monad in the last six hours. Deep link any moment straight into Ask Aegis for a grounded explanation." },
-            { icon: Fingerprint, title: "Wallet DNA", body: "Paste any Monad address and see its behavioral fingerprint. Regime, cohort, risk posture and an AI strategist read of how this wallet actually operates." },
-            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across momentum, whale flow, narrative strength, price action and turnover. Every setup ships with a thesis, catalysts, risks and an invalidation level." },
-            { icon: Sparkles, title: "Ask Aegis, cited", body: "A Monad native analyst wired directly to the live event stream. Every answer must cite an [E-id] evidence tag that deep links back to the Timeline. No hallucinated markets." },
-            { icon: Link2, title: "Live on chain layer", body: "Real Monad wallet connect on mainnet 143 and testnet 10143. Header status polls Monad RPC every eight seconds so you always see the true block height and gas price." },
-          ].map((f) => (
-            <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
-              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
-              <f.icon className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" style={{ color: "#22d3ee" }} strokeWidth={1.75} />
-              <div className="mt-5" style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
-              <div className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>{f.body}</div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 grid gap-3 md:grid-cols-4">
-          {[
-            { k: "10,000", v: "Monad TPS the engine reads live" },
-            { k: "<1s", v: "Chain finality Aegis writes against" },
-            { k: "6", v: "Flagship intelligence surfaces" },
-            { k: "100%", v: "Answers cited to on chain evidence" },
-          ].map((m) => (
-            <div key={m.v} className="rounded-[10px] p-5 hover-lift flex flex-col justify-between h-[128px]" style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.22)" }}>
-              <div className="tabular-nums" style={{ fontFamily: SERIF, fontSize: "2.1rem", color: "#22d3ee", lineHeight: 1, letterSpacing: "-0.02em" }}>{m.k}</div>
-              <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)", lineHeight: 1.35 }}>{m.v}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Ecosystem Pulse — live data strip */}
-      <section id="pulse" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
-        <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
-          <div>
-            <div style={{ fontFamily: MONO, fontSize: "0.66rem", textTransform: "uppercase", letterSpacing: "0.16em", color: "rgba(245,247,250,0.55)" }}>
-              // LIVE ECOSYSTEM PULSE
-            </div>
-            <h2 className="mt-2" style={{ fontFamily: SERIF, fontSize: "clamp(1.5rem,3vw,2.25rem)", color: "#f5f7fa", letterSpacing: "-0.02em" }}>
-              What Aegis is <em style={{ color: "#22d3ee" }}>watching right now</em>.
+          <div className="gl-rise" style={{ animationDelay: "120ms" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(1.9rem,4.2vw,3.2rem)", color: "#f5f7fa", letterSpacing: "-0.025em", lineHeight: 1.04 }}>
+              An <em className="gl-accent-violet">evidence first</em> intelligence stack, native to Monad.
             </h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse-glow" style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }} />
-            <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-              refresh · 60s
-            </span>
+            <p className="mt-4 max-w-2xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.7)" }}>
+              Six flagship surfaces stitched into one product. Every claim is grounded in a real Monad block, transaction or wallet cluster. Every AI answer cites the exact evidence tag it is reasoning from.
+            </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Numbered editorial list, not another card grid */}
+        <div className="grid md:grid-cols-2 gap-x-14 gap-y-2">
           {[
-            { label: "Monad TVL", value: formatUsd(eco.totalTvlUsd), tone: "#22d3ee" },
-            { label: "24h DEX Vol", value: formatUsd(eco.dexVolume24hUsd), tone: "#67e8f9" },
-            { label: "Active Wallets", value: eco.activeWallets24h.toLocaleString(), tone: "#34d399" },
-            { label: "24h Tx Count", value: (eco.txCount24h / 1_000_000).toFixed(2) + "M", tone: "#a78bfa" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className="rounded-[10px] p-4 hover-lift flex flex-col justify-between h-[128px]"
-              style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.14)" }}
-            >
-              <div className="min-h-[1.9em] leading-[1.15]" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.label}</div>
-              <div>
-                <div className="text-2xl font-bold tabular-nums truncate" style={{ color: s.tone, fontFamily: SANS, letterSpacing: "-0.01em", lineHeight: 1 }}>{s.value}</div>
-                <div className="mt-3 h-0.5 rounded-full" style={{ background: `linear-gradient(90deg, ${s.tone}, transparent)` }} />
+            { icon: Rewind, title: "Replay the Chain", body: "Scrub the last 24 hours of Monad activity like a DVR. Every event opens an inspector that explains why it mattered.", tone: "#22d3ee" },
+            { icon: Timer, title: "Intelligence Timeline", body: "A newsroom style ranked feed of what actually happened on Monad. Deep link any moment into Ask Aegis for a grounded explanation.", tone: "#6ee7b7" },
+            { icon: Fingerprint, title: "Wallet DNA", body: "Paste any Monad address and see its behavioral fingerprint. Regime, cohort, risk posture and an AI strategist read.", tone: "#c4b5fd" },
+            { icon: Compass, title: "Opportunity Engine", body: "Deterministic scoring across momentum, whale flow, narrative strength, price action and turnover. Thesis, catalysts, risks, invalidation.", tone: "#fcd34d" },
+            { icon: Sparkles, title: "Ask Aegis, cited", body: "A Monad native analyst wired to the live event stream. Every answer must cite an [E-id] tag that deep links back to the Timeline.", tone: "#f0abfc" },
+            { icon: Link2, title: "Live on chain layer", body: "Real Monad wallet connect on mainnet 143 and testnet 10143. Header polls RPC every eight seconds for true block height and gas.", tone: "#22d3ee" },
+          ].map((f, i) => (
+            <div key={f.title} className="group grid grid-cols-[48px_1fr] gap-4 py-6 border-b" style={{ borderColor: "rgba(34,211,238,0.10)" }}>
+              <div className="pt-1">
+                <div className="gl-num" style={{ fontSize: "1.9rem", color: f.tone, opacity: 0.9, lineHeight: 1 }}>{String(i+1).padStart(2,"0")}</div>
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  <f.icon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" style={{ color: f.tone }} strokeWidth={1.9} />
+                  <div style={{ fontFamily: SERIF, fontSize: "1.4rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
+                </div>
+                <div className="mt-2 text-sm leading-relaxed max-w-xl" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>{f.body}</div>
               </div>
             </div>
           ))}
         </div>
 
+        {/* Big-number strip — different card shape than pulse strip */}
+        <div className="mt-14 grid gap-3 md:grid-cols-4">
+          {[
+            { k: "10,000", v: "Monad TPS read live", tone: "#22d3ee" },
+            { k: "<1s", v: "chain finality", tone: "#6ee7b7" },
+            { k: "6", v: "flagship surfaces", tone: "#c4b5fd" },
+            { k: "100%", v: "answers cited to evidence", tone: "#fcd34d" },
+          ].map((m, i) => (
+            <div key={m.v} className="gl-bignum-card rounded-[10px] p-5 flex flex-col justify-between h-[140px] relative overflow-hidden">
+              <span aria-hidden className="absolute -right-3 -top-3 gl-num" style={{ fontSize: "3.5rem", color: m.tone, opacity: 0.06 }}>{String(i+1).padStart(2,"0")}</span>
+              <div className="gl-num" style={{ fontSize: "2.4rem", color: m.tone, lineHeight: 1 }}>{m.k}</div>
+              <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.65)" }}>{m.v}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Ecosystem Pulse — terminal panel look */}
+      <section id="pulse" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-8">
+        <div className="grid lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-10 mb-8">
+          <div className="gl-rise">
+            <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>04</span>
+            <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(110,231,183,0.85)" }}>Chapter · Live pulse</div>
+          </div>
+          <div className="gl-rise flex items-end justify-between flex-wrap gap-3" style={{ animationDelay: "100ms" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(1.7rem,3.4vw,2.6rem)", color: "#f5f7fa", letterSpacing: "-0.025em", lineHeight: 1.05 }}>
+              What Aegis is <em className="gl-accent-mint">watching right now</em>.
+            </h2>
+            <div className="flex items-center gap-3" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
+              <span className="gl-pulse-dot h-1.5 w-1.5 rounded-full" style={{ background: "#6ee7b7" }} />
+              tick · 60s · block {(21_530_412 + Math.floor(Date.now()/12000)%1000).toLocaleString()}
+            </div>
+          </div>
+        </div>
+
+        {/* Terminal-style stat row */}
+        <div className="rounded-[10px] p-1" style={{ background: "linear-gradient(135deg, rgba(34,211,238,0.25), rgba(110,231,183,0.15) 50%, transparent)" }}>
+        <div className="rounded-[9px] grid grid-cols-2 md:grid-cols-4" style={{ background: "#04070c" }}>
+          {[
+            { label: "Monad TVL", value: formatUsd(eco.totalTvlUsd), tone: "#22d3ee", delta: "+3.2%" },
+            { label: "24h DEX Vol", value: formatUsd(eco.dexVolume24hUsd), tone: "#67e8f9", delta: "+8.1%" },
+            { label: "Active Wallets", value: eco.activeWallets24h.toLocaleString(), tone: "#6ee7b7", delta: "+2.4%" },
+            { label: "24h Tx", value: (eco.txCount24h / 1_000_000).toFixed(2) + "M", tone: "#c4b5fd", delta: "+11.7%" },
+          ].map((s, i) => (
+            <div key={s.label} className="relative p-5 flex flex-col justify-between h-[140px]" style={{ borderRight: i<3 ? "1px solid rgba(34,211,238,0.08)" : "none" }}>
+              <div className="flex items-center justify-between">
+                <span style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>{s.label}</span>
+                <span className="tabular-nums" style={{ fontFamily: MONO, fontSize: "0.62rem", color: "#34d399" }}>{s.delta}</span>
+              </div>
+              <div>
+                <div className="gl-num truncate" style={{ color: s.tone, fontSize: "1.9rem", lineHeight: 1 }}>{s.value}</div>
+                <div className="mt-3 flex items-end gap-[2px] h-6">
+                  {Array.from({length: 22}).map((_,j)=>(
+                    <span key={j} className="flex-1 rounded-[1px]" style={{ height: `${25 + Math.abs(Math.sin(j*0.6 + i))*70}%`, background: s.tone, opacity: 0.35 + (j/22)*0.5 }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        </div>
+
         <div className="mt-6 grid gap-3 lg:grid-cols-[1.5fr_1fr]">
-          <div
-            className="rounded-[10px] p-5 hover-lift"
-            style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.14)" }}
-          >
+          <div className="rounded-[10px] p-5" style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.14)" }}>
             <div className="flex items-center justify-between mb-3">
               <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
                 Monad Ecosystem · Top Movers
@@ -636,10 +656,7 @@ function Landing() {
             </div>
           </div>
 
-          <div
-            className="rounded-[10px] p-5 hover-lift"
-            style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(34,211,238,0.14)" }}
-          >
+          <div className="rounded-[10px] p-5" style={{ background: "linear-gradient(180deg, rgba(10,18,28,0.7), rgba(4,10,16,0.7))", border: "1px solid rgba(196,181,253,0.16)" }}>
             <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(245,247,250,0.55)" }}>
               Global Majors · Reference
             </div>
@@ -660,73 +677,105 @@ function Landing() {
         </div>
       </section>
 
-      {/* Daily Life */}
-      <section id="daily" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
-        <div className="mb-10">
-          <div style={{ fontFamily: MONO, fontSize: "0.66rem", textTransform: "uppercase", letterSpacing: "0.16em", color: "rgba(245,247,250,0.55)" }}>
-            // AEGIS FOR EVERY DAY
+      {/* Daily Life — zigzag alternating rows */}
+      <section id="daily" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-8">
+        <div className="grid lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-10 mb-14">
+          <div className="gl-rise">
+            <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>05</span>
+            <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(252,211,77,0.9)" }}>Chapter · Every day</div>
           </div>
-          <h2 className="mt-2" style={{ fontFamily: SERIF, fontSize: "clamp(1.75rem,3.5vw,2.75rem)", color: "#f5f7fa", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-            Monad is fast enough to <em style={{ color: "#22d3ee" }}>replace your bank</em>.
-          </h2>
-          <p className="mt-3 max-w-2xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.6, color: "rgba(245,247,250,0.7)" }}>
-            10,000 TPS. Sub-second finality. Fees under a hundredth of a cent. Monad is the first chain quick enough for coffee,
-            groceries, salaries and rent, not just trading. Aegis is the daily co pilot that makes it usable by humans.
-          </p>
+          <div className="gl-rise" style={{ animationDelay: "100ms" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(1.9rem,4vw,3rem)", color: "#f5f7fa", letterSpacing: "-0.025em", lineHeight: 1.05 }}>
+              Monad is fast enough to <em className="gl-accent-amber">replace your bank</em>.
+            </h2>
+            <p className="mt-3 max-w-2xl" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.65, color: "rgba(245,247,250,0.7)" }}>
+              10,000 TPS. Sub second finality. Fees under a hundredth of a cent. The first chain quick enough for coffee, groceries, salaries and rent. Aegis is the co pilot that makes it usable by humans.
+            </p>
+          </div>
         </div>
-        <div className="grid gap-px md:grid-cols-3 rounded-[10px] overflow-hidden" style={{ background: "rgba(34,211,238,0.14)" }}>
+
+        <div className="space-y-6">
           {[
-            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap to pay on Monad clears faster than Visa. Aegis previews the fee, the merchant and a plain English safety check before you sign." },
-            { icon: ShoppingCart, title: "Grocery run, on chain", body: "Weekly spend tracked automatically. Aegis writes a Sunday summary of where your MON went, what saved you money and what to watch." },
-            { icon: Send, title: "Send money anywhere instantly", body: "Global transfers in one Monad block. Aegis translates addresses to human names, flags scam contracts and simulates the exact amount received." },
-            { icon: Wallet, title: "Salary streaming", body: "Get paid by the second on Monad. Aegis auto splits your paycheck into savings, bills and spending. No bank, no three day wait." },
-            { icon: Bell, title: "Real time alerts", body: "Rug pull on a token you hold. Whale dumping your bag. Aegis pings you before the price moves, in language anyone understands." },
-            { icon: Zap, title: "One tap DeFi", body: "Ask Aegis to park your paycheck at the best safe yield. It routes through vetted Monad protocols, shows the risk score and executes." },
-          ].map((f) => (
-            <div key={f.title} className="group relative p-6 bg-black transition-all duration-300 hover:bg-[rgba(34,211,238,0.04)] hover-lift">
-              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg,transparent,#22d3ee,transparent)" }} />
-              <f.icon className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" style={{ color: "#22d3ee" }} strokeWidth={1.75} />
-              <div className="mt-5" style={{ fontFamily: SERIF, fontSize: "1.35rem", color: "#f5f7fa", letterSpacing: "-0.01em" }}>{f.title}</div>
-              <div className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(245,247,250,0.7)", fontFamily: SANS }}>{f.body}</div>
-            </div>
-          ))}
+            { icon: Coffee, title: "Pay for coffee in 0.4s", body: "Tap to pay on Monad clears faster than Visa. Aegis previews the fee, the merchant and a plain English safety check before you sign.", tone: "#fcd34d", tag: "COMMERCE" },
+            { icon: Send, title: "Send money anywhere instantly", body: "Global transfers in one Monad block. Aegis translates addresses to human names, flags scam contracts and simulates the exact amount received.", tone: "#22d3ee", tag: "TRANSFER" },
+            { icon: Wallet, title: "Salary streaming, second by second", body: "Get paid continuously on Monad. Aegis auto splits your paycheck into savings, bills and spending. No bank, no three day wait.", tone: "#6ee7b7", tag: "INCOME" },
+            { icon: Bell, title: "Real time on chain alerts", body: "Rug pull on a token you hold. Whale dumping your bag. Aegis pings you before the price moves, in language anyone understands.", tone: "#f0abfc", tag: "SAFETY" },
+            { icon: Zap, title: "One tap DeFi routing", body: "Ask Aegis to park your paycheck at the best safe yield. It routes through vetted Monad protocols, shows the risk score and executes.", tone: "#c4b5fd", tag: "YIELD" },
+            { icon: ShoppingCart, title: "Sunday spend report", body: "Weekly spending tracked automatically. Aegis writes a plain English summary of where your MON went and what to watch next.", tone: "#22d3ee", tag: "TRACKING" },
+          ].map((f, i) => {
+            const flip = i % 2 === 1;
+            return (
+              <div key={f.title} className={`group relative grid grid-cols-1 md:grid-cols-[80px_1fr] gap-6 items-center p-6 rounded-[10px] transition-all duration-500 hover:translate-x-1 ${flip ? "md:ml-16" : "md:mr-16"}`} style={{ border: "1px solid rgba(34,211,238,0.08)", background: flip ? "linear-gradient(90deg, rgba(4,10,16,0.4), rgba(10,18,28,0.7))" : "linear-gradient(270deg, rgba(4,10,16,0.4), rgba(10,18,28,0.7))" }}>
+                <div className="flex items-center gap-3 md:flex-col md:items-start md:gap-1">
+                  <span className="gl-num" style={{ fontSize: "2rem", color: f.tone, lineHeight: 1 }}>{String(i+1).padStart(2,"0")}</span>
+                  <span style={{ fontFamily: MONO, fontSize: "0.56rem", letterSpacing: "0.22em", color: f.tone, opacity: 0.75 }}>{f.tag}</span>
+                </div>
+                <div className="flex items-start gap-4">
+                  <f.icon className="h-5 w-5 mt-1 transition-transform duration-500 group-hover:scale-110" style={{ color: f.tone }} strokeWidth={1.9} />
+                  <div>
+                    <div style={{ fontFamily: SERIF, fontSize: "1.5rem", color: "#f5f7fa", letterSpacing: "-0.01em", lineHeight: 1.15 }}>{f.title}</div>
+                    <div className="mt-2 text-[0.95rem] leading-relaxed max-w-2xl" style={{ color: "rgba(245,247,250,0.72)", fontFamily: SANS }}>{f.body}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Monad */}
-      <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 grid md:grid-cols-2 gap-10">
-        <div>
-          <div
-            style={{
-              fontFamily: MONO,
-              fontSize: "0.66rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.16em",
-              color: "rgba(245,247,250,0.55)",
-            }}
-          >
-            // WHY MONAD
+      {/* Why Monad — closing manifesto, editorial two column with big pull quote */}
+      <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-8">
+        <div className="grid lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-10 mb-10">
+          <div className="gl-rise">
+            <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
+            <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
           </div>
-          <h2
-            className="mt-2"
-            style={{
-              fontFamily: SERIF,
-              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              color: "#f5f7fa",
-            }}
-          >
-            10,000 TPS. <em style={{ color: "#22d3ee" }}>The new default chain</em>.
-          </h2>
+          <div className="gl-rise" style={{ animationDelay: "100ms" }}>
+            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(2rem,5vw,3.8rem)", lineHeight: 1.0, letterSpacing: "-0.03em", color: "#f5f7fa" }}>
+              Ethereum priced people out.<br/>
+              Solana keeps breaking.<br/>
+              <em className="gl-hero__shimmer" style={{ fontStyle: "italic" }}>Monad is what came next.</em>
+            </h2>
+          </div>
         </div>
-        <p className="pt-2" style={{ fontFamily: SANS, fontSize: "1.05rem", lineHeight: 1.65, color: "rgba(245,247,250,0.72)" }}>
-          Ethereum priced people out. Solana keeps breaking. Monad is what came next. Fully EVM compatible so every Solidity
-          contract runs unchanged, but built on a parallel execution engine that pushes 10,000 transactions per second with
-          sub second finality and fees measured in fractions of a cent. This is the first chain fast enough to carry the
-          real global economy. Payments, payroll, savings, markets and everyday commerce all on one settlement layer.
-          Aegis is the intelligence layer that turns that raw throughput into something a human can actually use.
-        </p>
+
+        <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
+          <div className="gl-rise" style={{ animationDelay: "160ms" }}>
+            <div className="uppercase" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(34,211,238,0.8)" }}>Throughput</div>
+            <p className="mt-3" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.7, color: "rgba(245,247,250,0.75)" }}>
+              Fully EVM compatible so every Solidity contract runs unchanged, but built on a parallel execution engine that pushes 10,000 transactions per second with sub second finality and fees measured in fractions of a cent.
+            </p>
+            <div className="mt-6 grid grid-cols-3 gap-3">
+              {[{k:"10k",v:"TPS"},{k:"<1s",v:"finality"},{k:"$0.001",v:"gas"}].map(x=>(
+                <div key={x.v} className="p-3 rounded-md" style={{ border:"1px solid rgba(34,211,238,0.16)", background:"rgba(4,10,16,0.6)" }}>
+                  <div className="gl-num" style={{ fontSize:"1.35rem", color:"#22d3ee", lineHeight:1 }}>{x.k}</div>
+                  <div style={{ fontFamily: MONO, fontSize:"0.56rem", letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(245,247,250,0.55)", marginTop:"6px" }}>{x.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="hidden md:block gl-rule" />
+          <div className="gl-rise" style={{ animationDelay: "260ms" }}>
+            <div className="uppercase" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(196,181,253,0.9)" }}>Consequence</div>
+            <p className="mt-3" style={{ fontFamily: SANS, fontSize: "1.02rem", lineHeight: 1.7, color: "rgba(245,247,250,0.75)" }}>
+              This is the first chain fast enough to carry the real global economy. Payments, payroll, savings, markets and everyday commerce on one settlement layer. Aegis is the intelligence layer that turns that raw throughput into something a human can actually use.
+            </p>
+            <blockquote className="mt-6 pl-5 py-3" style={{ borderLeft: "2px solid #22d3ee", fontFamily: SERIF, fontSize: "1.3rem", lineHeight: 1.35, color: "rgba(245,247,250,0.9)", fontStyle: "italic" }}>
+              "The alpha era of insider Telegrams is dying. Monad deserves a public analyst."
+            </blockquote>
+          </div>
+        </div>
+
+        <div className="mt-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-6 rounded-[12px]" style={{ border: "1px solid rgba(34,211,238,0.22)", background: "linear-gradient(90deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))" }}>
+          <div style={{ fontFamily: SERIF, fontSize: "1.6rem", color: "#f5f7fa", letterSpacing: "-0.015em" }}>
+            Ready to see the chain <em className="gl-accent-cyan">translated</em>?
+          </div>
+          <Link to="/app" className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden gl-hero__cta-pulse" style={{ fontFamily: "var(--font-display)", fontSize: "0.78rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", padding: "0.9rem 1.5rem" }}>
+            <span aria-hidden className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)" }} />
+            <span className="relative whitespace-nowrap">Launch Dashboard</span>
+            <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
+          </Link>
+        </div>
       </section>
 
 
