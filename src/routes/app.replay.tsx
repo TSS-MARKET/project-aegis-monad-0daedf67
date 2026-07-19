@@ -174,7 +174,7 @@ function ReplayPage() {
     }
     const newest = streamEvents[streamEvents.length - 1];
     const selectedStillVisible = selectedId ? streamEvents.some((e) => e.id === selectedId) : false;
-    if (playing || !selectedStillVisible) setSelectedId(newest.id);
+    if ((playing || !selectedStillVisible) && selectedId !== newest.id) setSelectedId(newest.id);
   }, [playing, selectedId, streamEvents]);
 
   const selected = useMemo(
