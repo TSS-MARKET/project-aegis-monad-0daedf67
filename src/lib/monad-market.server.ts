@@ -77,7 +77,7 @@ function momentum(change: number, vol: number, cap: number) {
 
 function tokenFromRow(id: string, row?: PriceRow): MonadToken | null {
   const meta = META[id];
-  if (!meta || typeof row.usd !== "number") return null;
+  if (!meta || typeof row?.usd !== "number") return null;
   const volume = Math.round(row.usd_24h_vol ?? 0);
   const cap = Math.round(row.usd_market_cap ?? 0);
   const change = Number((row.usd_24h_change ?? 0).toFixed(2));
