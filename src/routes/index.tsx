@@ -582,18 +582,20 @@ function Landing() {
           </h2>
         </div>
         <p className="pt-2" style={{ fontFamily: SANS, fontSize: "1.05rem", lineHeight: 1.65, color: "rgba(245,247,250,0.72)" }}>
-          Ethereum priced you out. Solana broke. Monad is what came next — EVM-compatible, 10,000 TPS, sub-second finality,
-          gas cheaper than a SMS. It's the first blockchain that can carry the entire global economy: payments, payroll,
-          savings, markets — all in one place. Aegis is the AI layer that makes it feel like an app your grandmother could use.
+          Ethereum priced people out. Solana keeps breaking. Monad is what came next. Fully EVM compatible so every Solidity
+          contract runs unchanged, but built on a parallel execution engine that pushes 10,000 transactions per second with
+          sub second finality and fees measured in fractions of a cent. This is the first chain fast enough to carry the
+          real global economy. Payments, payroll, savings, markets and everyday commerce all on one settlement layer.
+          Aegis is the intelligence layer that turns that raw throughput into something a human can actually use.
         </p>
       </section>
 
       <footer
-        className="mx-auto max-w-[1560px] px-6 md:px-10 py-8 border-t border-[rgba(34,211,238,0.12)] flex justify-between"
+        className="mx-auto max-w-[1560px] px-6 md:px-10 py-8 border-t border-[rgba(34,211,238,0.12)] flex justify-between flex-wrap gap-3"
         style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,247,250,0.5)" }}
       >
-        <span>Aegis · Monad Intelligence · Hackathon build</span>
-        <span>Not financial advice.</span>
+        <span>Aegis · Monad Intelligence Layer</span>
+        <span>Read only · Non custodial · Not financial advice</span>
       </footer>
       <FloatingChat />
     </div>
