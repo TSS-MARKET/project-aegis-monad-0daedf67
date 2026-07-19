@@ -631,19 +631,24 @@
   75%  { transform: scaleX(1); opacity: 1; }
   100% { transform: scaleX(1); opacity: 0; }
 }
-/* Auto shimmer on ALL phrase rows so both dim and bright breathe */
+/* Phrase shimmer — kept as solid color with a soft glow so text always
+   renders legibly even if background-clip:text is not supported. */
 .gl-ch06__row .gl-ch06__phrase {
-  background: linear-gradient(90deg, rgba(245,247,250,0.55) 0%, #f5f7fa 45%, #ffffff 55%, rgba(245,247,250,0.55) 100%);
-  background-size: 220% auto;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  animation: gl-hero-shimmer 6s linear infinite;
+  color: rgba(245,247,250,0.78);
+  text-shadow: 0 0 24px rgba(245,247,250,0.08);
+  transition: color 400ms ease, text-shadow 400ms ease, transform 400ms ease;
 }
 .gl-ch06__row.is-bright .gl-ch06__phrase {
-  background: linear-gradient(90deg, #ffffff 0%, #67e8f9 45%, #22d3ee 55%, #ffffff 100%);
-  background-size: 220% auto;
-  animation: gl-hero-shimmer 4.5s linear infinite;
+  color: #f5f7fa;
+  text-shadow: 0 0 40px rgba(34,211,238,0.55), 0 0 12px rgba(103,232,249,0.35);
+  animation: gl-ch06-phrase-breathe 5s ease-in-out infinite;
 }
+@keyframes gl-ch06-phrase-breathe {
+  0%,100% { text-shadow: 0 0 32px rgba(34,211,238,0.45), 0 0 10px rgba(103,232,249,0.25); }
+  50%     { text-shadow: 0 0 56px rgba(34,211,238,0.75), 0 0 18px rgba(103,232,249,0.5); }
+}
+.gl-ch06__row:hover .gl-ch06__phrase { transform: translateX(4px); }
+.gl-ch06__row.is-dim:hover .gl-ch06__phrase { color: rgba(245,247,250,0.92); }
 .gl-ch06__row:hover { transform: translateX(6px); }
 .gl-ch06__row:hover .gl-ch06__chain { letter-spacing: 0.44em; filter: drop-shadow(0 0 12px rgba(34,211,238,0.4)); }
 .gl-ch06__row.is-bright .gl-ch06__chain {
