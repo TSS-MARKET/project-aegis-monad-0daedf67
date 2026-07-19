@@ -412,10 +412,9 @@ function Landing() {
         </div>
       </section>
 
-      {/* Live Monad firehose — real RPC blocks */}
-      <section aria-label="Monad live firehose" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <LiveFirehose />
+      {/* Monad Address Inspector — paste any address, get a live scorecard */}
+      <section aria-label="Monad address inspector" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pt-10">
+        <div className="mx-auto max-w-[720px]">
           <WalletGuardian />
         </div>
       </section>
@@ -815,7 +814,6 @@ function Landing() {
         <span>Read only · Non custodial · Not financial advice</span>
       </footer>
       <FloatingChat />
-      <DemoModeButton />
     </div>
   );
 }
