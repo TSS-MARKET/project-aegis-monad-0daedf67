@@ -122,6 +122,22 @@ function Landing() {
         <div aria-hidden className="gl-hero__orb" style={{ width: 520, height: 520, left: "-8%", top: "-10%", background: "radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%)" }} />
         <div aria-hidden className="gl-hero__orb" style={{ width: 460, height: 460, right: "-6%", top: "35%", background: "radial-gradient(circle, rgba(103,232,249,0.22), transparent 70%)", animationDelay: "-6s" }} />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.5), transparent)" }} />
+        {/* Floating particles */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          {Array.from({ length: 14 }).map((_, i) => (
+            <span
+              key={i}
+              className="gl-particle"
+              style={{
+                left: `${(i * 7 + 4) % 100}%`,
+                bottom: `-${(i * 3) % 20}px`,
+                animationDelay: `${(i * 0.8) % 12}s`,
+                animationDuration: `${12 + (i % 5) * 2}s`,
+                opacity: 0.5 + ((i % 3) * 0.15),
+              }}
+            />
+          ))}
+        </div>
         {/* LEFT */}
         <div className="relative flex flex-col gap-8 min-w-0">
           <div
@@ -137,7 +153,7 @@ function Landing() {
           >
             <span className="inline-flex items-center gap-2 whitespace-nowrap">
               <span
-                className="block w-1.5 h-1.5 rounded-full shrink-0"
+                className="gl-pulse-dot block w-1.5 h-1.5 rounded-full shrink-0"
                 style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.18)" }}
               />
               <span style={{ color: "#f5f7fa" }}>AEGIS · MONAD INTELLIGENCE</span>
@@ -360,8 +376,40 @@ function Landing() {
         </div>
       </section>
 
+      {/* Live ticker — auto-scrolling ecosystem pulse */}
+      <section aria-label="Live Monad ticker" className="relative border-y" style={{ borderColor: "rgba(34,211,238,0.14)", background: "linear-gradient(180deg, rgba(10,18,28,0.55), rgba(4,10,16,0.55))" }}>
+        <div className="mx-auto max-w-[1560px] px-6 md:px-10 py-3 flex items-center gap-6">
+          <span className="hidden sm:inline-flex items-center gap-2 shrink-0" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#f5f7fa" }}>
+            <span className="gl-pulse-dot inline-block w-1.5 h-1.5 rounded-full" style={{ background: "#22d3ee" }} />
+            LIVE
+          </span>
+          <div className="gl-ticker flex-1">
+            <div className="gl-ticker__track">
+              {[...Array(2)].map((_, dup) => (
+                <div key={dup} className="flex items-center gap-12 shrink-0" style={{ fontFamily: MONO, fontSize: "0.72rem", letterSpacing: "0.06em", color: "rgba(245,247,250,0.85)" }}>
+                  {[
+                    ["MON", "$4.82", "+6.4%"],
+                    ["ETH", "$4,120", "+1.8%"],
+                    ["BTC", "$118,240", "+0.6%"],
+                    ["SOL", "$284", "+3.1%"],
+                    ...monadTokens.slice(0, 5).map((t) => [t.symbol, `$${t.priceUsd.toFixed(t.priceUsd < 1 ? 4 : 2)}`, `${t.change24h >= 0 ? "+" : ""}${t.change24h.toFixed(1)}%`] as [string, string, string]),
+                    ["MONAD TPS", "10,000", "SUB-SEC FINALITY"],
+                  ].map((row, i) => (
+                    <span key={`${dup}-${i}`} className="inline-flex items-center gap-2 whitespace-nowrap">
+                      <span style={{ color: "#22d3ee" }}>{row[0]}</span>
+                      <span className="tabular-nums" style={{ color: "#f5f7fa" }}>{row[1]}</span>
+                      <span className="tabular-nums" style={{ color: row[2].startsWith("+") ? "#34d399" : row[2].startsWith("-") ? "#fb7185" : "rgba(245,247,250,0.55)" }}>{row[2]}</span>
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Capabilities */}
-      <section id="capabilities" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24">
+      <section id="capabilities" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-24">
         <div className="flex items-baseline justify-between mb-10">
           <div>
             <div
