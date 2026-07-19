@@ -230,49 +230,33 @@ function Landing() {
               <ArrowRight className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
             </Link>
 
-            <Link
-              to="/app/onchain"
-              className="group relative inline-flex items-center gap-2.5"
+            <button
+              type="button"
+              onClick={() => startAegisDemo()}
+              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] cta-tour"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: "0.78rem",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.18em",
-                color: "#f5f7fa",
-                background: "rgba(10,18,28,0.55)",
+                color: "#eafcff",
                 padding: "1rem 1.5rem",
-                border: "1px solid rgba(245,247,250,0.2)",
-                borderRadius: 6,
-                backdropFilter: "blur(10px)",
               }}
+              aria-label="Play the 30 second judge tour"
             >
-              <PlayCircle className="w-4 h-4" strokeWidth={2} />
-              <span className="whitespace-nowrap">On-Chain Layer</span>
-            </Link>
+              <span
+                aria-hidden
+                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
+                style={{ background: "linear-gradient(90deg,transparent,rgba(34,211,238,0.35),transparent)" }}
+              />
+              <span className="relative inline-flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4" strokeWidth={2} style={{ color: "#22d3ee" }} />
+                <span className="whitespace-nowrap">30-Second Tour</span>
+                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
+              </span>
+            </button>
           </div>
-
-          <Link
-            to="/app/radar"
-            className="gl-hero__reveal group inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full"
-            style={{
-              animationDelay: "540ms",
-              fontFamily: MONO,
-              fontSize: "0.66rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: "rgba(245,247,250,0.85)",
-              border: "1px solid rgba(34,211,238,0.28)",
-              background: "rgba(34,211,238,0.04)",
-            }}
-          >
-            <span
-              className="inline-block w-1.5 h-1.5 rounded-full"
-              style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }}
-            />
-            <span>MARKET RADAR</span>
-            <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2} />
-          </Link>
 
           {/* Manifesto */}
           <div
