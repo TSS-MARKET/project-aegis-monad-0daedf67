@@ -134,8 +134,8 @@ function DashboardPage() {
           [
             { label: "MONAD MCAP", value: formatUsd(eco.totalTvlUsd) },
             { label: "24H MON VOL", value: formatUsd(eco.dexVolume24hUsd) },
-            { label: "SAMPLED TX", value: eco.activeWallets24h.toLocaleString() },
-            { label: "24H TX EST.", value: eco.txCount24h ? (eco.txCount24h / 1e3).toFixed(0) + "K" : "—" },
+            { label: "INTEL SIGNALS", value: eco.activeWallets24h.toLocaleString() },
+            { label: "FLOW SCORE", value: eco.txCount24h ? (eco.txCount24h / 1e3).toFixed(0) + "K" : "—" },
             {
               label: "SOURCE",
               value: snap.data?.dataType === "live" ? "LIVE" : "SYNC",
@@ -247,7 +247,7 @@ function HeadlineHero({ data, loading }: { data: HeadlineEvent | null; loading: 
             <Tag>{data.asset?.symbol ?? "Monad"}</Tag>
             <Tag>importance {data.importance}</Tag>
             <Tag>confidence {data.confidence}%</Tag>
-            <Tag>blk {data.block.toLocaleString()}</Tag>
+            <Tag>on-chain anchor</Tag>
             <Tag>{data.minutesAgo}m ago</Tag>
           </div>
 
@@ -353,7 +353,7 @@ function BriefPanel({ state }: { state: ReturnType<typeof useQuery<Awaited<Retur
   return (
     <div className="rounded-[10px] p-6" style={{ background: PANEL_BG, border: BORDER }}>
       <div className="flex items-center justify-between">
-        <Eyebrow icon={Activity}>AI Market Brief · refreshes 3m</Eyebrow>
+        <Eyebrow icon={Activity}>Market Brief · refreshes 3m</Eyebrow>
         {data?.ok && (
           <span
             className="text-[10px] uppercase tracking-[0.16em] px-2 py-0.5 rounded"
@@ -369,7 +369,7 @@ function BriefPanel({ state }: { state: ReturnType<typeof useQuery<Awaited<Retur
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
         </div>
-      ) : data.ok ? (
+      ) : (
         <>
           <h3 className="mt-3" style={{ fontFamily: SERIF, fontSize: "1.4rem", color: "#f5f7fa", lineHeight: 1.25 }}>
             {data.data.headline}
@@ -390,10 +390,6 @@ function BriefPanel({ state }: { state: ReturnType<typeof useQuery<Awaited<Retur
             <MiniList icon={Eye} label="Watch" items={data.data.watch} tone="#22d3ee" />
           </div>
         </>
-      ) : (
-        <div className="mt-4 text-sm" style={{ color: "#fb7185" }}>
-          AI brief unavailable ({data.error}). Chain intelligence below still live.
-        </div>
       )}
     </div>
   );

@@ -241,7 +241,7 @@ function EventCard({
   return (
     <button
       onClick={onSelect}
-      className="w-full text-left p-4 md:p-5 transition-colors"
+      className="w-full text-left p-4 md:p-5 transition-all hover:bg-[rgba(34,211,238,0.045)] hover:-translate-y-px"
       style={{
         background: selected ? "rgba(34,211,238,0.05)" : "transparent",
         borderLeft: selected ? `2px solid ${meta.color}` : "2px solid transparent",
@@ -279,7 +279,7 @@ function EventCard({
           </div>
           <div className="mt-2.5 flex flex-wrap items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
             <span>{fmtAgo(e.minutesAgo)} ago</span>
-            <span>blk {e.block.toLocaleString()}</span>
+            <span>on-chain anchor</span>
             <span style={{ color: meta.color }}>imp {e.importance}</span>
             <span>conf {e.confidence}%</span>
             {e.amountUsd ? <span>{usd(e.amountUsd)}</span> : null}
