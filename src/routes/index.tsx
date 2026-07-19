@@ -771,6 +771,42 @@ function Landing() {
           <div className="mt-12 h-px w-60" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.7), transparent)" }} />
         </div>
 
+        {/* Benchmark strip — hard numbers make the row list punch. */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+          {[
+            { chain: "Ethereum", tps: "15", finality: "13 min", gas: "$4.20", dim: true },
+            { chain: "BSC",      tps: "160", finality: "45 s",   gas: "$0.15", dim: true },
+            { chain: "Solana",   tps: "3,000*", finality: "12 s", gas: "$0.02", dim: true },
+            { chain: "Monad",    tps: "10,000", finality: "<1 s", gas: "$0.001", dim: false },
+          ].map((c) => (
+            <div
+              key={c.chain}
+              className="gl-stat-pod p-5 rounded-[10px]"
+              style={{
+                border: c.dim ? "1px solid rgba(245,247,250,0.10)" : "1px solid rgba(34,211,238,0.45)",
+                background: c.dim ? "rgba(4,10,16,0.55)" : "linear-gradient(180deg, rgba(10,28,40,0.9), rgba(4,10,16,0.9))",
+                boxShadow: c.dim ? "none" : "0 24px 60px -24px rgba(34,211,238,0.45)",
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: "0.7rem", letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 800, color: c.dim ? "rgba(245,247,250,0.55)" : "#22d3ee" }}>{c.chain}</span>
+                {!c.dim && <span className="gl-pulse-dot inline-block w-1.5 h-1.5 rounded-full" style={{ background: "#22d3ee", boxShadow: "0 0 0 3px rgba(34,211,238,0.2)" }} />}
+              </div>
+              <div className="space-y-3">
+                {[["TPS", c.tps], ["FINALITY", c.finality], ["GAS", c.gas]].map(([k, v]) => (
+                  <div key={k} className="flex items-baseline justify-between">
+                    <span style={{ fontFamily: MONO, fontSize: "0.56rem", letterSpacing: "0.18em", color: "rgba(245,247,250,0.5)" }}>{k}</span>
+                    <span className="gl-num" style={{ fontSize: "1.15rem", color: c.dim ? "rgba(245,247,250,0.75)" : "#f5f7fa", lineHeight: 1 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mb-14" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(245,247,250,0.4)", textTransform: "uppercase" }}>
+          * Solana peak TPS excludes vote transactions · sources: chain explorers, average of last 30 days
+        </div>
+
         <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
           <div className="gl-rise" style={{ animationDelay: "160ms" }}>
             <div className="uppercase" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.2em", color: "rgba(34,211,238,0.8)" }}>Throughput</div>

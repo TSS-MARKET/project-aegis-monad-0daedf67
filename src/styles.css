@@ -607,7 +607,43 @@
 .gl-ch06__row .gl-ch06__chain,
 .gl-ch06__row .gl-ch06__phrase,
 .gl-ch06__row .gl-ch06__rule { transition: filter 500ms ease, color 500ms ease, opacity 500ms ease, letter-spacing 500ms ease, width 500ms ease; }
-.gl-ch06__row.is-dim .gl-ch06__phrase { text-decoration: line-through; text-decoration-color: rgba(245,247,250,0.28); text-decoration-thickness: 1px; }
+/* Custom animated strike-through — thicker, more visible, sweeps in */
+.gl-ch06__row.is-dim .gl-ch06__phrase {
+  position: relative;
+  display: inline-block;
+}
+.gl-ch06__row.is-dim .gl-ch06__phrase::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 52%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(239,68,68,0.85) 12%, rgba(239,68,68,0.95) 50%, rgba(239,68,68,0.85) 88%, transparent 100%);
+  transform-origin: left center;
+  animation: gl-ch06-strike 3.2s cubic-bezier(.22,.98,.24,1) infinite;
+  box-shadow: 0 0 12px rgba(239,68,68,0.6);
+  border-radius: 2px;
+}
+@keyframes gl-ch06-strike {
+  0%   { transform: scaleX(0); opacity: 0; }
+  25%  { transform: scaleX(1); opacity: 1; }
+  75%  { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+/* Auto shimmer on ALL phrase rows so both dim and bright breathe */
+.gl-ch06__row .gl-ch06__phrase {
+  background: linear-gradient(90deg, rgba(245,247,250,0.55) 0%, #f5f7fa 45%, #ffffff 55%, rgba(245,247,250,0.55) 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: gl-hero-shimmer 6s linear infinite;
+}
+.gl-ch06__row.is-bright .gl-ch06__phrase {
+  background: linear-gradient(90deg, #ffffff 0%, #67e8f9 45%, #22d3ee 55%, #ffffff 100%);
+  background-size: 220% auto;
+  animation: gl-hero-shimmer 4.5s linear infinite;
+}
 .gl-ch06__row:hover { transform: translateX(6px); }
 .gl-ch06__row:hover .gl-ch06__chain { letter-spacing: 0.44em; filter: drop-shadow(0 0 12px rgba(34,211,238,0.4)); }
 .gl-ch06__row.is-bright .gl-ch06__chain {
@@ -637,12 +673,15 @@
   animation: gl-hero-shimmer 6s linear infinite;
 }
 
-/* Manifesto shimmer — for hero italic pull line */
+/* Manifesto shimmer — for hero italic pull line. White-dominant so the
+   line stays legible; a soft cyan highlight sweeps across on loop. */
 .gl-manifesto-shine {
-  background: linear-gradient(90deg, #f5f7fa 0%, #22d3ee 50%, #f5f7fa 100%);
+  background: linear-gradient(90deg, #f5f7fa 0%, #f5f7fa 42%, #67e8f9 50%, #f5f7fa 58%, #f5f7fa 100%);
   background-size: 220% auto;
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
   animation: gl-hero-shimmer 6.5s linear infinite;
+  text-shadow: 0 0 24px rgba(34,211,238,0.18);
 }
 
 @media (prefers-reduced-motion: reduce) {
