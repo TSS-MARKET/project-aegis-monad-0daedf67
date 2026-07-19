@@ -716,18 +716,28 @@ function Landing() {
 
       {/* Why Monad — closing manifesto, editorial two column with big pull quote */}
       <section id="monad" className="relative mx-auto max-w-[1560px] px-6 md:px-10 pb-24 pt-8">
-        <div className="grid lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)] gap-10 mb-10">
-          <div className="gl-rise">
-            <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
-            <div className="mt-2" style={{ fontFamily: MONO, fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
-          </div>
-          <div className="gl-rise" style={{ animationDelay: "100ms" }}>
-            <h2 style={{ fontFamily: SERIF, fontSize: "clamp(2rem,5vw,3.8rem)", lineHeight: 1.0, letterSpacing: "-0.03em", color: "#f5f7fa" }}>
-              Ethereum priced people out.<br/>
-              Solana keeps breaking.<br/>
-              <em className="gl-hero__shimmer" style={{ fontStyle: "italic" }}>Monad is what came next.</em>
-            </h2>
-          </div>
+        <div className="flex flex-col items-center text-center mb-14 gl-rise">
+          <span className="gl-chapter" style={{ fontSize: "clamp(3rem,7vw,5.5rem)" }}>06</span>
+          <div className="mt-3" style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.28em", textTransform: "uppercase", color: "rgba(34,211,238,0.9)" }}>Chapter · Why Monad</div>
+          <h2
+            className="mt-8 max-w-[1100px]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 800,
+              fontSize: "clamp(1.75rem, 4.6vw, 3.6rem)",
+              lineHeight: 1.08,
+              letterSpacing: "0.005em",
+              textTransform: "uppercase",
+              color: "#f5f7fa",
+            }}
+          >
+            <span className="block">Ethereum <span style={{ color: "rgba(245,247,250,0.55)" }}>priced people out.</span></span>
+            <span className="block mt-2">Solana <span style={{ color: "rgba(245,247,250,0.55)" }}>keeps breaking.</span></span>
+            <span className="block mt-3">
+              <em className="gl-hero__shimmer" style={{ fontStyle: "normal", fontFamily: "var(--font-display)", fontWeight: 900 }}>Monad is what came next.</em>
+            </span>
+          </h2>
+          <div className="mt-6 h-px w-40" style={{ background: "linear-gradient(90deg, transparent, rgba(34,211,238,0.6), transparent)" }} />
         </div>
 
         <div className="grid md:grid-cols-[1fr_auto_1fr] gap-8 items-stretch">
