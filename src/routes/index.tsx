@@ -790,7 +790,7 @@ function Landing() {
 
         <div className="mt-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-6 rounded-[12px]" style={{ border: "1px solid rgba(34,211,238,0.22)", background: "linear-gradient(90deg, rgba(10,18,28,0.9), rgba(4,10,16,0.9))" }}>
           <div style={{ fontFamily: SERIF, fontSize: "1.6rem", color: "#f5f7fa", letterSpacing: "-0.015em" }}>
-            Ready to see the chain <em className="gl-accent-cyan">translated</em>?
+            Ready to see the chain <em className="gl-accent-cyan">translated</em>&nbsp;?
           </div>
           <Link to="/app" className="group relative inline-flex items-center gap-2.5 cta-cyan rounded-[6px] overflow-hidden gl-hero__cta-pulse" style={{ fontFamily: "var(--font-display)", fontSize: "0.78rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.18em", padding: "0.9rem 1.5rem" }}>
             <span aria-hidden className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" style={{ background: "linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent)" }} />
