@@ -113,8 +113,8 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
             className="h-2 w-2 rounded-full"
             style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.8)" }}
           />
-          <span className="whitespace-nowrap">30s Tour</span>
-          <span className="hidden sm:inline whitespace-nowrap">econd</span>
+          <span className="whitespace-nowrap sm:hidden">30s Tour</span>
+          <span className="whitespace-nowrap hidden sm:inline">30-Second Tour</span>
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
         </span>
       </button>
