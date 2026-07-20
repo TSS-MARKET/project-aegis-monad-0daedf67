@@ -122,10 +122,17 @@ function buildRealEvents(
         : isTransfer
           ? `${monStr} MON transfer · ${shortAddr(tx.from)} → ${shortAddr(tx.to!)}`
           : `Contract call · ${shortAddr(tx.from)} → ${shortAddr(tx.to!)}`;
-      const importance = Math.min(
-        95,
-        Math.round(40 + Math.log10(Math.max(1, valueMon)) * 15 + (isCreate ? 8 : 0)),
-      );
+      // Rank by USD notional, not raw MON count — 25 MON (~$0.50) must not
+      // out-rank a real six-figure transfer. Sub-$1k transfers score very low
+      // so the headline never lands on dust or burn-address noise.
+      const usd = amountUsd ?? 0;
+      const importance = isTransfer
+        ? usd < 1_000
+          ? Math.max(6, Math.round(6 + Math.log10(Math.max(1, usd + 1)) * 4)) // 6–18 for dust
+          : Math.min(96, Math.round(30 + Math.log10(usd) * 14)) // $1k→42, $10k→56, $100k→70, $1M→84
+        : isCreate
+          ? 34
+          : 22;
       events.push({
         id: `real-${bn}-${tx.hash.slice(2, 10)}`,
         ts,
@@ -147,7 +154,11 @@ function buildRealEvents(
             : `Contract interactions accumulate into TVL, volume and narrative strength — the raw fuel of Monad growth.`,
         importance,
         confidence: 100, // real RPC read, no synthesis
-        unusualness: isTransfer ? Math.min(90, Math.round(20 + Math.log10(Math.max(1, valueMon)) * 12)) : 20,
+        unusualness: isTransfer
+          ? usd < 1_000
+            ? 8
+            : Math.min(88, Math.round(15 + Math.log10(Math.max(1, usd)) * 11))
+          : 18,
         tags: [isTransfer ? "transfer" : isCreate ? "deploy" : "call", "real", "monad-rpc"],
         asset: isTransfer ? { symbol: "MON", narrative: "L1 Beta" } : undefined,
         protocol: ACTIVE_MONAD.chainName,
@@ -451,10 +462,28 @@ export async function getLiveMonadEvents(windowHours: 1 | 6 | 24 = 6, limit = 15
 
 export async function getLiveHeadlineEvent() {
   const feed = await getLiveMonadEvents(1, 120);
-  // Prefer real events for the headline — verifiable > synthetic.
-  const pool = feed.events.filter((e) => e.isReal).length > 0 ? feed.events.filter((e) => e.isReal) : feed.events;
-  const event = pool
+  // Headline = the single most consequential event on Monad right now.
+  // Requires meaningful USD notional so dust transfers (25 MON ≈ $0.50) or
+  // burn-address noise never win the hero slot. Preference order:
+  //   1. Real transfer ≥ $10k, ranked by USD notional
+  //   2. Any real event with USD ≥ $1k, ranked by USD
+  //   3. Highest-importance real event (deploy, big call)
+  //   4. Fallback: highest importance × confidence across the feed
+  const real = feed.events.filter((e) => e.isReal);
+  const bigTransfer = real
+    .filter((e) => (e.amountUsd ?? 0) >= 10_000)
+    .sort((a, b) => (b.amountUsd ?? 0) - (a.amountUsd ?? 0))[0];
+  const midTransfer = !bigTransfer
+    ? real
+        .filter((e) => (e.amountUsd ?? 0) >= 1_000)
+        .sort((a, b) => (b.amountUsd ?? 0) - (a.amountUsd ?? 0))[0]
+    : undefined;
+  const topReal = !bigTransfer && !midTransfer
+    ? real.slice().sort((a, b) => b.importance - a.importance)[0]
+    : undefined;
+  const fallback = feed.events
     .slice()
     .sort((a, b) => b.importance * b.confidence - a.importance * a.confidence)[0] ?? null;
+  const event = bigTransfer ?? midTransfer ?? topReal ?? fallback;
   return { event, generatedAt: feed.generatedAt, source: feed.source, error: feed.error };
 }
