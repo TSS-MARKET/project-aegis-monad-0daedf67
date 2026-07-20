@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMarketSnapshot, getOpportunities } from "@/lib/intelligence.functions";
-import { formatUsd, type MonadToken } from "@/lib/monad-data";
+import { formatUsd, getMarketState, type MonadToken } from "@/lib/monad-data";
 import { useMemo } from "react";
 import {
   Activity,
@@ -138,7 +138,12 @@ function Panel({
 function RadarPage() {
   const snap = useServerFn(getMarketSnapshot);
   const opps = useServerFn(getOpportunities);
-  const s = useQuery({ queryKey: ["snap"], queryFn: () => snap(), refetchInterval: 60_000 });
+  const s = useQuery({
+    queryKey: ["snap"],
+    queryFn: () => snap(),
+    refetchInterval: 60_000,
+    placeholderData: () => getMarketState(Date.now()),
+  });
   const o = useQuery({ queryKey: ["opps"], queryFn: () => opps(), refetchInterval: 180_000 });
 
   const tokens = s.data?.tokens ?? [];

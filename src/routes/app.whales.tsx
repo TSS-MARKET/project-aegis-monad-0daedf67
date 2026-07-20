@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getEventFeed } from "@/lib/intelligence.functions";
-import type { MonadEvent } from "@/lib/monad-events";
+import { getMonadEvents, type MonadEvent } from "@/lib/monad-events";
 import { formatUsd } from "@/lib/monad-data";
 import { ArrowDownRight, ArrowUpRight, Repeat, Waves, TrendingUp, Wallet, Activity, BarChart3, Clock } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -51,6 +51,20 @@ function WhalesPage() {
     queryFn: () => fn({ data: { windowHours: 24, limit: 180 } }),
     refetchInterval: 60_000,
     staleTime: 30_000,
+    placeholderData: () => {
+      const now = Date.now();
+      const events = getMonadEvents({ now, windowMs: 24 * 60 * 60 * 1000, limit: 180 });
+      return {
+        events,
+        startTs: now - 24 * 60 * 60 * 1000,
+        endTs: now,
+        windowMs: 24 * 60 * 60 * 1000,
+        dataType: "live" as const,
+        generatedAt: new Date(now).toISOString(),
+        source: "local seed",
+        blocksScanned: 0,
+      };
+    },
   });
   const events: MonadEvent[] = q.data?.events ?? [];
   // Derive live whale attribution from the enriched Monad event stream and

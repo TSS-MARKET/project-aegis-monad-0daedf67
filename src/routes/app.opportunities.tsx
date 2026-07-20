@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { getOpportunityBoard } from "@/lib/intelligence.functions";
 import { ExplainButton } from "@/components/aegis/explain-button";
+import { computeOpportunities } from "@/lib/opportunity-engine";
 
 export const Route = createFileRoute("/app/opportunities")({
   component: OpportunitiesPage,
@@ -39,6 +40,10 @@ function OpportunitiesPage() {
     queryFn: () => fetchBoard({ data: { limit: 6 } }),
     refetchInterval: 120_000,
     staleTime: 60_000,
+    placeholderData: () => ({
+      opportunities: computeOpportunities(Date.now(), 6),
+      generatedAt: new Date().toISOString(),
+    }),
   });
 
   const opportunities = data?.opportunities ?? [];
