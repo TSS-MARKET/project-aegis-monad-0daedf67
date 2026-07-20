@@ -97,11 +97,26 @@ function OpportunitiesPage() {
         </div>
       </header>
 
-      {isLoading || opportunities.length === 0 ? (
+      {isLoading ? (
         <div className="grid md:grid-cols-3 lg:grid-cols-[1fr_1fr_1.4fr] gap-4">
-          <div className="h-[560px] rounded-[10px]" style={{ background: "rgba(10,18,28,0.5)", border: "1px solid rgba(34,211,238,0.1)" }} />
-          <div className="h-[560px] rounded-[10px]" style={{ background: "rgba(10,18,28,0.5)", border: "1px solid rgba(34,211,238,0.1)" }} />
-          <div className="h-[560px] rounded-[10px]" style={{ background: "rgba(10,18,28,0.5)", border: "1px solid rgba(34,211,238,0.1)" }} />
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-[560px] rounded-[10px] animate-pulse flex flex-col items-center justify-center gap-3"
+              style={{ background: "rgba(10,18,28,0.5)", border: "1px solid rgba(34,211,238,0.1)" }}
+            >
+              <div className="h-1.5 w-1.5 rounded-full animate-pulse-glow" style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }} />
+              <div style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.18em", color: "rgba(245,247,250,0.5)" }}>
+                SCORING MONAD SETUPS…
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : opportunities.length === 0 ? (
+        <div className="rounded-[10px] p-10 text-center" style={{ background: "rgba(10,18,28,0.5)", border: "1px solid rgba(34,211,238,0.14)" }}>
+          <div style={{ fontFamily: MONO, fontSize: "0.66rem", letterSpacing: "0.18em", color: "rgba(245,247,250,0.65)" }}>
+            No ranked setups right now — feed will refresh in the background.
+          </div>
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1.15fr_1fr]">
