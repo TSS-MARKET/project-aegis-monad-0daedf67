@@ -36,7 +36,7 @@ function TokensPage() {
             </tr>
           </thead>
           <tbody>
-            {q.data?.tokens.map((t) => (
+            {(q.data?.tokens ?? []).map((t) => (
               <tr key={t.symbol} className="border-b border-border/40 hover:bg-card/40 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-medium">{t.symbol}</div>
@@ -66,6 +66,22 @@ function TokensPage() {
                 </td>
               </tr>
             ))}
+            {!q.data && Array.from({ length: 8 }).map((_, i) => (
+              <tr key={`sk-${i}`} className="border-b border-border/40">
+                {Array.from({ length: 8 }).map((__, j) => (
+                  <td key={j} className="px-4 py-3">
+                    <div className="h-3 rounded bg-white/[0.04] animate-pulse" style={{ width: j === 0 ? 80 : j === 1 ? 60 : 50 }} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+            {q.data && (q.data.tokens?.length ?? 0) === 0 && (
+              <tr>
+                <td colSpan={8} className="px-4 py-8 text-center text-xs text-muted-foreground">
+                  Live market feed is warming up — retrying in the background.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
         </div>

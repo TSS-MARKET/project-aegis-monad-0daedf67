@@ -43,7 +43,15 @@ function Panel({ label, value, sub, accent }: { label: string; value: React.Reac
 
 function WhalesPage() {
   const fn = useServerFn(getEventFeed);
-  const q = useQuery({ queryKey: ["whale-live-blocks"], queryFn: () => fn({ data: { windowHours: 1, limit: 60 } }), refetchInterval: 60_000 });
+  // 24h window with a generous cap so the tape never empties around UTC
+  // midnight and buy/sell direction (from synthesized whale signals) is
+  // always populated alongside real large transfers.
+  const q = useQuery({
+    queryKey: ["whale-live-blocks"],
+    queryFn: () => fn({ data: { windowHours: 24, limit: 180 } }),
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+  });
   const events: MonadEvent[] = q.data?.events ?? [];
   // Derive live whale attribution from the enriched Monad event stream and
   // dedupe rows so identical wallet+action+token entries collapse into one.
@@ -156,7 +164,7 @@ function WhalesPage() {
         <div className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full animate-pulse-glow" style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }} />
           <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-            LIVE RPC · 60s refresh
+            LIVE RPC · 24H WINDOW · 60S REFRESH
           </span>
         </div>
       </header>
