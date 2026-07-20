@@ -6,7 +6,7 @@ export type MonadToken = {
   symbol: string;
   name: string;
   address: string;
-  narrative: "AI" | "DeFi" | "Meme" | "Infra" | "LST" | "Stable" | "Major" | "L1" | "L2";
+  narrative: "AI" | "DeFi" | "Meme" | "Infra" | "LST" | "Stable" | "Major" | "L1" | "L2" | "DePIN" | "Privacy" | "DA" | "Gaming" | "RWA";
   chain?: "Monad" | "External";
   monadRelated?: boolean;
   priceUsd: number;
