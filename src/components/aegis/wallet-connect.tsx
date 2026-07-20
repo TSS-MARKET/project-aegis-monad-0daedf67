@@ -37,7 +37,7 @@ const WALLET_LOGOS: Record<string, string> = {
   Ledger: "/wallet-logos/ledger.svg",
   Solflare: "/wallet-logos/solflare.webp",
   Nightly: "/wallet-logos/nightly.webp",
-  Rabby: "/wallet-logos/metamask.webp", // fallback; overridden by adapter icon
+  Rabby: "/wallet-logos/rabby.png",
 };
 
 const WALLET_INSTALL: Record<string, string> = {
