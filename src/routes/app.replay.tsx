@@ -92,9 +92,11 @@ function ReplayPage() {
   // so pressing Play reveals events immediately instead of after a delay.
   const firstEventOffset = useMemo(() => {
     if (!events.length) return 0;
-    const first = events[0].ts - startTs;
-    // Land 500ms *before* the first event so it enters the stream on play.
-    return Math.max(0, first - 500);
+    // Events arrive newest-first from the server — use the MIN timestamp,
+    // not events[0], otherwise the playhead lands at the end of the window
+    // and Play appears to do nothing. Land 500ms before the earliest event.
+    const earliest = events.reduce((m, e) => (e.ts < m ? e.ts : m), events[0].ts);
+    return Math.max(0, earliest - startTs - 500);
   }, [events, startTs]);
 
   // Reset playhead when window changes — start at first event, not dead space.
