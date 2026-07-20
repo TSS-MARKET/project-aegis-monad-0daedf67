@@ -86,14 +86,14 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
     return (
       <button
         onClick={() => startAegisDemo()}
-        className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5"
+        className="group relative inline-flex items-center gap-2 sm:gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5 max-w-full"
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "0.82rem",
+          fontSize: "clamp(0.7rem, 2.6vw, 0.82rem)",
           fontWeight: 800,
           letterSpacing: "0.18em",
           textTransform: "uppercase",
-          padding: "1rem 1.6rem",
+          padding: "0.85rem 1.05rem",
           color: "#eafcff",
           background:
             "linear-gradient(180deg, rgba(10,22,32,0.95), rgba(4,12,18,0.95))",
@@ -108,12 +108,13 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
           className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
           style={{ background: "linear-gradient(90deg,transparent,rgba(34,211,238,0.45),transparent)" }}
         />
-        <span className="relative inline-flex items-center gap-2.5">
+        <span className="relative inline-flex items-center gap-2 sm:gap-2.5">
           <span
             className="h-2 w-2 rounded-full"
             style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.8)" }}
           />
-          <span className="whitespace-nowrap">30-Second Tour</span>
+          <span className="whitespace-nowrap">30s Tour</span>
+          <span className="hidden sm:inline whitespace-nowrap">econd</span>
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
         </span>
       </button>
