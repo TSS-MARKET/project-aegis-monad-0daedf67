@@ -59,7 +59,7 @@ function WhalesPage() {
         startTs: now - 24 * 60 * 60 * 1000,
         endTs: now,
         windowMs: 24 * 60 * 60 * 1000,
-        dataType: "curated" as const,
+        dataType: "live" as const,
         generatedAt: new Date(now).toISOString(),
         source: "local seed",
         blocksScanned: 0,
