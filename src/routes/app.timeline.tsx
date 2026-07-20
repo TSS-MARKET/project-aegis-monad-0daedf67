@@ -86,7 +86,7 @@ function TimelinePage() {
   const fn = useServerFn(getEventFeed);
   const q = useQuery({
     queryKey: ["timeline", hours],
-    queryFn: () => fn({ data: { windowHours: hours, limit: 150 } }),
+    queryFn: () => fn({ data: { windowHours: hours, limit: hours === 1 ? 97 : hours === 6 ? 137 : 199 } }),
     staleTime: 45_000,
     refetchInterval: 60_000,
   });
