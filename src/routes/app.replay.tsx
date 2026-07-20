@@ -473,31 +473,65 @@ function ReplayPage() {
   );
 }
 
-function EventRow({ e, selected, onSelect }: { e: MonadEvent; selected: boolean; onSelect: () => void }) {
+function EventRow({
+  e,
+  selected,
+  revealed,
+  isLive,
+  onSelect,
+}: {
+  e: MonadEvent;
+  selected: boolean;
+  revealed?: boolean;
+  isLive?: boolean;
+  onSelect: () => void;
+}) {
   const meta = CAT_META[e.category];
   const Icon = meta.icon;
+  const dim = revealed === false;
   return (
     <button
       onClick={onSelect}
       className="w-full text-left px-4 py-3 flex items-start gap-3 transition-all hover:bg-[rgba(34,211,238,0.045)] hover:-translate-y-px"
       style={{
-        background: selected ? "rgba(34,211,238,0.05)" : "transparent",
-        borderLeft: selected ? `2px solid ${meta.color}` : "2px solid transparent",
+        background: isLive
+          ? "rgba(34,211,238,0.09)"
+          : selected
+          ? "rgba(34,211,238,0.05)"
+          : "transparent",
+        borderLeft: isLive
+          ? `2px solid #22d3ee`
+          : selected
+          ? `2px solid ${meta.color}`
+          : "2px solid transparent",
+        opacity: dim ? 0.4 : 1,
       }}
     >
       <span
         className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-[6px] shrink-0"
-        style={{ background: `${meta.color}18`, border: `1px solid ${meta.color}44` }}
+        style={{
+          background: `${meta.color}${dim ? "08" : "18"}`,
+          border: `1px solid ${meta.color}${dim ? "22" : "44"}`,
+          boxShadow: isLive ? `0 0 12px ${meta.color}88` : "none",
+        }}
       >
         <Icon className="h-3.5 w-3.5" style={{ color: meta.color }} />
       </span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span style={{ color: "#f5f7fa", fontSize: "0.86rem", fontWeight: 500 }}>{e.headline}</span>
+          {isLive && (
+            <span
+              className="text-[9px] uppercase tracking-[0.16em] px-1.5 py-0.5 rounded animate-pulse-glow"
+              style={{ fontFamily: MONO, color: "#22d3ee", background: "rgba(34,211,238,0.12)", border: "1px solid rgba(34,211,238,0.4)" }}
+            >
+              Live
+            </span>
+          )}
         </div>
         <div className="mt-1 flex items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
           <span>{fmtClock(e.ts)} UTC</span>
-          <span>· on-chain anchor</span>
+          <span>· {revealed === false ? "pending" : "revealed"}</span>
           <span style={{ color: meta.color }}>· imp {e.importance}</span>
           <span>· conf {e.confidence}%</span>
         </div>
