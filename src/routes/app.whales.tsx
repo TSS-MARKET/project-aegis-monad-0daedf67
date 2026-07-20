@@ -164,7 +164,7 @@ function WhalesPage() {
         <div className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 rounded-full animate-pulse-glow" style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.7)" }} />
           <span style={{ fontFamily: MONO, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(245,247,250,0.6)" }}>
-            LIVE RPC · 60s refresh
+            LIVE RPC · 24H WINDOW · 60S REFRESH
           </span>
         </div>
       </header>
