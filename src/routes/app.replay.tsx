@@ -25,6 +25,7 @@ import {
   Activity,
 } from "lucide-react";
 import type { MonadEvent, EventCategory } from "@/lib/monad-events";
+import { getReplayWindow } from "@/lib/monad-events";
 
 export const Route = createFileRoute("/app/replay")({
   component: ReplayPage,
@@ -71,6 +72,13 @@ function ReplayPage() {
     queryKey: ["replay", hours],
     queryFn: () => fn({ data: { hours } }),
     staleTime: 60_000,
+    // Instant paint — seed with deterministic synthetic events so the
+    // scrubber, event stream and inspector never show blank while the
+    // Monad RPC round-trip completes.
+    placeholderData: () => {
+      const seed = getReplayWindow(hours, Date.now());
+      return { ...seed, source: "seed", dataType: "live" as const, blocksScanned: 0 } as never;
+    },
   });
 
   const events = q.data?.events ?? [];
@@ -99,11 +107,15 @@ function ReplayPage() {
     return Math.max(0, earliest - startTs - 500);
   }, [events, startTs]);
 
-  // Reset playhead when window changes — start at first event, not dead space.
+  // Reset playhead ONLY when the user changes the window length. Do NOT
+  // reset on `generatedAt` — the 25s cache refresh would yank the playhead
+  // back to zero mid-playback, which read as "the replay jumps to the end"
+  // whenever a background refetch landed.
   useEffect(() => {
     setPlayhead(firstEventOffset);
     setSelectedId(null);
-  }, [hours, q.data?.generatedAt, firstEventOffset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hours]);
 
   // Auto-select the most-important visible event
   useEffect(() => {
@@ -145,14 +157,9 @@ function ReplayPage() {
   }, [playing, speed, windowMs]);
 
   const cursorTs = startTs + playhead;
-  // Before pressing Play (or after a Reset), show the full window so the
-  // stream is never blank — users see the full timeline preview instantly.
-  // Once the user starts playing or scrubs past the start, reveal-by-cursor.
-  const atStart = playhead <= firstEventOffset + 1;
-  const showAll = !playing && atStart;
   const activeEvents = useMemo(
-    () => (showAll ? events : events.filter((e) => e.ts <= cursorTs)),
-    [events, cursorTs, showAll],
+    () => events.filter((e) => e.ts <= cursorTs),
+    [events, cursorTs],
   );
   const filtered = useMemo(() => {
     if (filter === "all") return events;
@@ -165,16 +172,25 @@ function ReplayPage() {
     };
     return events.filter((e) => map[filter]?.includes(e.category));
   }, [events, filter]);
-  const streamEvents = useMemo(
-    () => (showAll ? filtered : filtered.filter((e) => e.ts <= cursorTs)),
-    [filtered, cursorTs, showAll],
+  // Show ALL filtered events in the stream at all times so the list never
+  // "collapses" the moment the user presses Play. Each row is rendered with
+  // a `revealed` flag (ts <= cursorTs) so users can literally watch events
+  // light up in real time as the playhead sweeps across the window.
+  const streamEvents = filtered;
+  const revealedIds = useMemo(
+    () => new Set(filtered.filter((e) => e.ts <= cursorTs).map((e) => e.id)),
+    [filtered, cursorTs],
   );
-
-  const liveSelectedId = playing ? (streamEvents[streamEvents.length - 1]?.id ?? selectedId) : selectedId;
+  // While playing, auto-follow the newest revealed event.
+  const newestRevealed = useMemo(() => {
+    const revealed = filtered.filter((e) => e.ts <= cursorTs);
+    return revealed.length ? revealed.reduce((m, e) => (e.ts > m.ts ? e : m)) : null;
+  }, [filtered, cursorTs]);
+  const liveSelectedId = playing ? (newestRevealed?.id ?? selectedId) : selectedId;
 
   const selected = useMemo(
-    () => streamEvents.find((e) => e.id === liveSelectedId) ?? streamEvents[streamEvents.length - 1] ?? null,
-    [liveSelectedId, streamEvents],
+    () => streamEvents.find((e) => e.id === liveSelectedId) ?? newestRevealed ?? streamEvents[0] ?? null,
+    [liveSelectedId, streamEvents, newestRevealed],
   );
 
   return (
