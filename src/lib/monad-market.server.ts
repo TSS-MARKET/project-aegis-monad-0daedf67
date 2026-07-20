@@ -119,8 +119,10 @@ async function fetchMonadStats() {
   const { getLiveMonadReplayWindow } = await import("./monad-live-events.server");
   const replay = await getLiveMonadReplayWindow(1, 90);
   const sampledTx = replay.events.reduce((s, e) => s + Math.max(0, Number(e.evidence.find((x) => x.id === "tx-count")?.value.replace(/,/g, "") ?? 0)), 0);
-  const oldest = replay.events[0]?.ts ?? Date.now();
-  const newest = replay.events[replay.events.length - 1]?.ts ?? Date.now();
+  // Events may arrive newest-first; compute min/max explicitly.
+  const times = replay.events.map((e) => e.ts);
+  const oldest = times.length ? Math.min(...times) : Date.now();
+  const newest = times.length ? Math.max(...times) : Date.now();
   const windowSec = Math.max(1, (newest - oldest) / 1000);
   const tps = sampledTx / windowSec;
   return { replay, sampledTx, tps };
