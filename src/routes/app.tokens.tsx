@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMarketSnapshot } from "@/lib/intelligence.functions";
 import { GlassCard } from "@/components/aegis/glass-card";
-import { formatUsd } from "@/lib/monad-data";
+import { formatUsd, getMarketState } from "@/lib/monad-data";
 
 export const Route = createFileRoute("/app/tokens")({
   component: TokensPage,
@@ -11,7 +11,12 @@ export const Route = createFileRoute("/app/tokens")({
 
 function TokensPage() {
   const fn = useServerFn(getMarketSnapshot);
-  const q = useQuery({ queryKey: ["snap"], queryFn: () => fn(), refetchInterval: 60_000 });
+  const q = useQuery({
+    queryKey: ["snap"],
+    queryFn: () => fn(),
+    refetchInterval: 60_000,
+    placeholderData: () => getMarketState(Date.now()),
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 md:px-10 pt-4 md:pt-6 pb-8 space-y-6">

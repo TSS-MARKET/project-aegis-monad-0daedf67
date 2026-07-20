@@ -9,6 +9,7 @@ import { computeOpportunities } from "@/lib/opportunity-engine";
 import { ExplainButton } from "@/components/aegis/explain-button";
 import { VerifyButton } from "@/components/aegis/verify-button";
 import { getEventFeed } from "@/lib/intelligence.functions";
+import { getMonadEvents } from "@/lib/monad-events";
 
 export const Route = createFileRoute("/app/digest")({
   component: DigestPage,
@@ -27,7 +28,26 @@ function greetingFor(hour: number): { label: string; icon: LucideIcon } {
 
 function DigestPage() {
   const feedFn = useServerFn(getEventFeed);
-  const feed = useQuery({ queryKey: ["digest-events-24h"], queryFn: () => feedFn({ data: { windowHours: 24, limit: 180 } }), staleTime: 60_000, refetchInterval: 60_000 });
+  const feed = useQuery({
+    queryKey: ["digest-events-24h"],
+    queryFn: () => feedFn({ data: { windowHours: 24, limit: 180 } }),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    placeholderData: () => {
+      const now = Date.now();
+      const events = getMonadEvents({ now, windowMs: 24 * 60 * 60 * 1000, limit: 180 });
+      return {
+        events,
+        startTs: now - 24 * 60 * 60 * 1000,
+        endTs: now,
+        windowMs: 24 * 60 * 60 * 1000,
+        dataType: "curated" as const,
+        generatedAt: new Date(now).toISOString(),
+        source: "local seed",
+        blocksScanned: 0,
+      };
+    },
+  });
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 60_000);
