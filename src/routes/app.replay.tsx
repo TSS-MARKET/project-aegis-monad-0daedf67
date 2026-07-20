@@ -145,7 +145,15 @@ function ReplayPage() {
   }, [playing, speed, windowMs]);
 
   const cursorTs = startTs + playhead;
-  const activeEvents = useMemo(() => events.filter((e) => e.ts <= cursorTs), [events, cursorTs]);
+  // Before pressing Play (or after a Reset), show the full window so the
+  // stream is never blank — users see the full timeline preview instantly.
+  // Once the user starts playing or scrubs past the start, reveal-by-cursor.
+  const atStart = playhead <= firstEventOffset + 1;
+  const showAll = !playing && atStart;
+  const activeEvents = useMemo(
+    () => (showAll ? events : events.filter((e) => e.ts <= cursorTs)),
+    [events, cursorTs, showAll],
+  );
   const filtered = useMemo(() => {
     if (filter === "all") return events;
     const map: Record<string, EventCategory[]> = {
@@ -157,7 +165,10 @@ function ReplayPage() {
     };
     return events.filter((e) => map[filter]?.includes(e.category));
   }, [events, filter]);
-  const streamEvents = useMemo(() => filtered.filter((e) => e.ts <= cursorTs), [filtered, cursorTs]);
+  const streamEvents = useMemo(
+    () => (showAll ? filtered : filtered.filter((e) => e.ts <= cursorTs)),
+    [filtered, cursorTs, showAll],
+  );
 
   const liveSelectedId = playing ? (streamEvents[streamEvents.length - 1]?.id ?? selectedId) : selectedId;
 
