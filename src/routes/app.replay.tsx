@@ -443,7 +443,14 @@ function ReplayPage() {
           </div>
           <div className="max-h-[560px] overflow-y-auto divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
             {streamEvents.slice().reverse().map((e) => (
-              <EventRow key={e.id} e={e} selected={e.id === liveSelectedId} onSelect={() => setSelectedId(e.id)} />
+              <EventRow
+                key={e.id}
+                e={e}
+                selected={e.id === liveSelectedId}
+                revealed={revealedIds.has(e.id)}
+                isLive={playing && e.id === newestRevealed?.id}
+                onSelect={() => setSelectedId(e.id)}
+              />
             ))}
             {!streamEvents.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
