@@ -86,14 +86,14 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
     return (
       <button
         onClick={() => startAegisDemo()}
-        className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5"
+        className="group relative inline-flex items-center gap-2 sm:gap-2.5 overflow-hidden rounded-[6px] transition-transform duration-300 hover:-translate-y-0.5 max-w-full"
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "0.82rem",
+          fontSize: "clamp(0.7rem, 2.6vw, 0.82rem)",
           fontWeight: 800,
           letterSpacing: "0.18em",
           textTransform: "uppercase",
-          padding: "1rem 1.6rem",
+          padding: "0.85rem 1.05rem",
           color: "#eafcff",
           background:
             "linear-gradient(180deg, rgba(10,22,32,0.95), rgba(4,12,18,0.95))",
@@ -108,12 +108,13 @@ export function DemoModeButton({ variant = "floating" }: { variant?: "floating" 
           className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"
           style={{ background: "linear-gradient(90deg,transparent,rgba(34,211,238,0.45),transparent)" }}
         />
-        <span className="relative inline-flex items-center gap-2.5">
+        <span className="relative inline-flex items-center gap-2 sm:gap-2.5">
           <span
             className="h-2 w-2 rounded-full"
             style={{ background: "#22d3ee", boxShadow: "0 0 10px rgba(34,211,238,0.8)" }}
           />
-          <span className="whitespace-nowrap">30-Second Tour</span>
+          <span className="whitespace-nowrap sm:hidden">30s Tour</span>
+          <span className="whitespace-nowrap hidden sm:inline">30-Second Tour</span>
           <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
         </span>
       </button>
@@ -233,8 +234,11 @@ function DemoOverlay({ onClose }: { onClose: () => void }) {
         <X className="h-4 w-4" />
       </button>
 
-      {/* Caption card */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[min(680px,calc(100vw-2rem))] pointer-events-auto">
+      {/* Caption card — lifted above the mobile bottom nav */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 w-[min(680px,calc(100vw-1rem))] pointer-events-auto"
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 84px)" }}
+      >
         <div
           key={idx}
           className="rounded-[12px] p-5 md:p-6 animate-in fade-in slide-in-from-bottom-4 duration-500"

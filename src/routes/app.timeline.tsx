@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getEventFeed } from "@/lib/intelligence.functions";
 import { useMemo, useState } from "react";
+import { getReplayWindow } from "@/lib/monad-events";
 import {
   Activity,
   Waves,
@@ -89,6 +90,13 @@ function TimelinePage() {
     queryFn: () => fn({ data: { windowHours: hours, limit: hours === 1 ? 97 : hours === 6 ? 137 : 199 } }),
     staleTime: 45_000,
     refetchInterval: 60_000,
+    // Never show a blank page — hydrate instantly with a deterministic
+    // client-side synthetic window (same MonadEvent shape). Real RPC data
+    // replaces this as soon as the server function resolves.
+    placeholderData: () => {
+      const seed = getReplayWindow(hours, Date.now(), hours === 1 ? 97 : hours === 6 ? 137 : 199);
+      return { ...seed, source: "seed", dataType: "curated" as const, blocksScanned: 0 } as never;
+    },
   });
 
   // Suppress zero-notional entries — they read as "$0.0000" cards and add no

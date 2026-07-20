@@ -25,6 +25,7 @@ import {
   Activity,
 } from "lucide-react";
 import type { MonadEvent, EventCategory } from "@/lib/monad-events";
+import { getReplayWindow } from "@/lib/monad-events";
 
 export const Route = createFileRoute("/app/replay")({
   component: ReplayPage,
@@ -71,6 +72,13 @@ function ReplayPage() {
     queryKey: ["replay", hours],
     queryFn: () => fn({ data: { hours } }),
     staleTime: 60_000,
+    // Instant paint — seed with deterministic synthetic events so the
+    // scrubber, event stream and inspector never show blank while the
+    // Monad RPC round-trip completes.
+    placeholderData: () => {
+      const seed = getReplayWindow(hours, Date.now());
+      return { ...seed, source: "seed", dataType: "live" as const, blocksScanned: 0 } as never;
+    },
   });
 
   const events = q.data?.events ?? [];
@@ -99,11 +107,15 @@ function ReplayPage() {
     return Math.max(0, earliest - startTs - 500);
   }, [events, startTs]);
 
-  // Reset playhead when window changes — start at first event, not dead space.
+  // Reset playhead ONLY when the user changes the window length. Do NOT
+  // reset on `generatedAt` — the 25s cache refresh would yank the playhead
+  // back to zero mid-playback, which read as "the replay jumps to the end"
+  // whenever a background refetch landed.
   useEffect(() => {
     setPlayhead(firstEventOffset);
     setSelectedId(null);
-  }, [hours, q.data?.generatedAt, firstEventOffset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hours]);
 
   // Auto-select the most-important visible event
   useEffect(() => {
@@ -145,14 +157,9 @@ function ReplayPage() {
   }, [playing, speed, windowMs]);
 
   const cursorTs = startTs + playhead;
-  // Before pressing Play (or after a Reset), show the full window so the
-  // stream is never blank — users see the full timeline preview instantly.
-  // Once the user starts playing or scrubs past the start, reveal-by-cursor.
-  const atStart = playhead <= firstEventOffset + 1;
-  const showAll = !playing && atStart;
   const activeEvents = useMemo(
-    () => (showAll ? events : events.filter((e) => e.ts <= cursorTs)),
-    [events, cursorTs, showAll],
+    () => events.filter((e) => e.ts <= cursorTs),
+    [events, cursorTs],
   );
   const filtered = useMemo(() => {
     if (filter === "all") return events;
@@ -165,16 +172,25 @@ function ReplayPage() {
     };
     return events.filter((e) => map[filter]?.includes(e.category));
   }, [events, filter]);
-  const streamEvents = useMemo(
-    () => (showAll ? filtered : filtered.filter((e) => e.ts <= cursorTs)),
-    [filtered, cursorTs, showAll],
+  // Show ALL filtered events in the stream at all times so the list never
+  // "collapses" the moment the user presses Play. Each row is rendered with
+  // a `revealed` flag (ts <= cursorTs) so users can literally watch events
+  // light up in real time as the playhead sweeps across the window.
+  const streamEvents = filtered;
+  const revealedIds = useMemo(
+    () => new Set(filtered.filter((e) => e.ts <= cursorTs).map((e) => e.id)),
+    [filtered, cursorTs],
   );
-
-  const liveSelectedId = playing ? (streamEvents[streamEvents.length - 1]?.id ?? selectedId) : selectedId;
+  // While playing, auto-follow the newest revealed event.
+  const newestRevealed = useMemo(() => {
+    const revealed = filtered.filter((e) => e.ts <= cursorTs);
+    return revealed.length ? revealed.reduce((m, e) => (e.ts > m.ts ? e : m)) : null;
+  }, [filtered, cursorTs]);
+  const liveSelectedId = playing ? (newestRevealed?.id ?? selectedId) : selectedId;
 
   const selected = useMemo(
-    () => streamEvents.find((e) => e.id === liveSelectedId) ?? streamEvents[streamEvents.length - 1] ?? null,
-    [liveSelectedId, streamEvents],
+    () => streamEvents.find((e) => e.id === liveSelectedId) ?? newestRevealed ?? streamEvents[0] ?? null,
+    [liveSelectedId, streamEvents, newestRevealed],
   );
 
   return (
@@ -427,7 +443,14 @@ function ReplayPage() {
           </div>
           <div className="max-h-[560px] overflow-y-auto divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
             {streamEvents.slice().reverse().map((e) => (
-              <EventRow key={e.id} e={e} selected={e.id === liveSelectedId} onSelect={() => setSelectedId(e.id)} />
+              <EventRow
+                key={e.id}
+                e={e}
+                selected={e.id === liveSelectedId}
+                revealed={revealedIds.has(e.id)}
+                isLive={playing && e.id === newestRevealed?.id}
+                onSelect={() => setSelectedId(e.id)}
+              />
             ))}
             {!streamEvents.length && (
               <div className="p-6 text-sm" style={{ color: "rgba(245,247,250,0.5)" }}>
@@ -450,31 +473,65 @@ function ReplayPage() {
   );
 }
 
-function EventRow({ e, selected, onSelect }: { e: MonadEvent; selected: boolean; onSelect: () => void }) {
+function EventRow({
+  e,
+  selected,
+  revealed,
+  isLive,
+  onSelect,
+}: {
+  e: MonadEvent;
+  selected: boolean;
+  revealed?: boolean;
+  isLive?: boolean;
+  onSelect: () => void;
+}) {
   const meta = CAT_META[e.category];
   const Icon = meta.icon;
+  const dim = revealed === false;
   return (
     <button
       onClick={onSelect}
       className="w-full text-left px-4 py-3 flex items-start gap-3 transition-all hover:bg-[rgba(34,211,238,0.045)] hover:-translate-y-px"
       style={{
-        background: selected ? "rgba(34,211,238,0.05)" : "transparent",
-        borderLeft: selected ? `2px solid ${meta.color}` : "2px solid transparent",
+        background: isLive
+          ? "rgba(34,211,238,0.09)"
+          : selected
+          ? "rgba(34,211,238,0.05)"
+          : "transparent",
+        borderLeft: isLive
+          ? `2px solid #22d3ee`
+          : selected
+          ? `2px solid ${meta.color}`
+          : "2px solid transparent",
+        opacity: dim ? 0.4 : 1,
       }}
     >
       <span
         className="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-[6px] shrink-0"
-        style={{ background: `${meta.color}18`, border: `1px solid ${meta.color}44` }}
+        style={{
+          background: `${meta.color}${dim ? "08" : "18"}`,
+          border: `1px solid ${meta.color}${dim ? "22" : "44"}`,
+          boxShadow: isLive ? `0 0 12px ${meta.color}88` : "none",
+        }}
       >
         <Icon className="h-3.5 w-3.5" style={{ color: meta.color }} />
       </span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span style={{ color: "#f5f7fa", fontSize: "0.86rem", fontWeight: 500 }}>{e.headline}</span>
+          {isLive && (
+            <span
+              className="text-[9px] uppercase tracking-[0.16em] px-1.5 py-0.5 rounded animate-pulse-glow"
+              style={{ fontFamily: MONO, color: "#22d3ee", background: "rgba(34,211,238,0.12)", border: "1px solid rgba(34,211,238,0.4)" }}
+            >
+              Live
+            </span>
+          )}
         </div>
         <div className="mt-1 flex items-center gap-3 text-[10px]" style={{ fontFamily: MONO, color: "rgba(245,247,250,0.5)" }}>
           <span>{fmtClock(e.ts)} UTC</span>
-          <span>· on-chain anchor</span>
+          <span>· {revealed === false ? "pending" : "revealed"}</span>
           <span style={{ color: meta.color }}>· imp {e.importance}</span>
           <span>· conf {e.confidence}%</span>
         </div>
