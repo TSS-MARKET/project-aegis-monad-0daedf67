@@ -234,8 +234,11 @@ function DemoOverlay({ onClose }: { onClose: () => void }) {
         <X className="h-4 w-4" />
       </button>
 
-      {/* Caption card */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[min(680px,calc(100vw-2rem))] pointer-events-auto">
+      {/* Caption card — lifted above the mobile bottom nav */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 w-[min(680px,calc(100vw-1rem))] pointer-events-auto"
+        style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 84px)" }}
+      >
         <div
           key={idx}
           className="rounded-[12px] p-5 md:p-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
