@@ -442,7 +442,7 @@ function Landing() {
                   {[
                     { k: "45", unit: "min", v: "saved every morning" },
                     { k: "60", unit: "sec", v: "to read the brief" },
-                    { k: "24", unit: "/7", v: "Aegis never sleeps" },
+                    { k: "24/7", unit: "\n", v: "Aegis never sleeps" },
                   ].map((s) => (
                     <div key={s.k} className="gl-stat-pod group flex flex-col justify-between min-w-[9rem]">
                       <div className="flex items-baseline gap-1">
