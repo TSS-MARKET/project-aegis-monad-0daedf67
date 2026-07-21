@@ -76,9 +76,6 @@ Aegis was built for Monad's characteristics on purpose. Sub-second finality and 
 bun install
 bun dev             # http://localhost:8080
 ```
-
-Set `LOVABLE_API_KEY` (Ask Aegis + Market Brief) and optionally `VITE_AEGIS_CONTRACT_ADDRESS` (on-chain writes).
-
 ---
 
 ## Judging in 30 seconds
@@ -87,7 +84,7 @@ The landing hero has a premium **30-Second Tour** button. One click auto-navigat
 
 ---
 
-## Demo script (~90s)
+## Demo (~90s)
 
 1. **0:00** Landing hero → the "daily problem" callout, live price ticker (Binance), Monad Mainnet chip.
 2. **0:10** Address Inspector: paste any Monad address → A–F grade in one call.
