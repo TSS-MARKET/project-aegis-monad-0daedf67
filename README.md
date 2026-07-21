@@ -1,3 +1,5 @@
+new github - https://github.com/TSS-MARKET/project-aegis-monad-86dae17d
+
 # Aegis — Monad-Native Intelligence
 
 > Every morning: 14 open tabs, 6 Discords, 3 Telegrams, one Twitter timeline of screenshots. Twenty minutes of scrolling to answer *"what actually moved on Monad since I slept?"* — Aegis answers it in **seven seconds**, with block-anchored proof.
